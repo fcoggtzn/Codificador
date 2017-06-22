@@ -6,6 +6,9 @@
 package ejb;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -17,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -34,12 +38,11 @@ public class Firma implements FirmaLocal {
     public byte[] firmar(byte[] cadenaOriginal, String rfc) {
         /*falta el proceso de obtener Certificados y Sellos del rfc en cuestion */
         try {
-            
-            ClassLoader loader = Firma.class.getClassLoader(); 
-           
-       
+
+            ClassLoader loader = Firma.class.getClassLoader();
+
             BufferedInputStream bis = null;
-            InputStream keyResource = loader.getResourceAsStream("resources/"+rfc+"/"+rfc+".key");
+            InputStream keyResource = loader.getResourceAsStream("resources/" + rfc + "/" + rfc + ".key");
 
             bis = new BufferedInputStream(keyResource);
 
@@ -47,11 +50,10 @@ public class Firma implements FirmaLocal {
             bis.read(privKeyBytes);
             bis.close();
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-               PKCS8Key pkcs8;
-            pkcs8 = new PKCS8Key(privKeyBytes, "12345678a".toCharArray());
-        PrivateKey privKey = pkcs8.getPrivateKey();       
-        
-        
+            PKCS8Key pkcs8;
+            pkcs8 = new PKCS8Key(privKeyBytes, getClave(rfc).toCharArray());
+            PrivateKey privKey = pkcs8.getPrivateKey();
+
             Signature signature = Signature.getInstance("SHA1withRSA");
             signature.initSign(privKey);
             signature.update(cadenaOriginal);
@@ -63,5 +65,22 @@ public class Firma implements FirmaLocal {
         }
         return null;
     }
+
+    private String getClave(String rfc) {
+        StringBuilder result = new StringBuilder("");
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("resources/" + rfc + "/clave.txt").getFile());
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                result.append(line);
+            }
+            scanner.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.toString();
+
+    }
+
 }
-    

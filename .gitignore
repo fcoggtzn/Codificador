@@ -4,3 +4,6 @@
 /Codificador-war/build/
 /Codificador-war/dist/
 /Codificador-ejb/dist/
+/Codificador-ejb/nbproject/private/
+/Codificador-war/nbproject/private/
+/nbproject/private/
