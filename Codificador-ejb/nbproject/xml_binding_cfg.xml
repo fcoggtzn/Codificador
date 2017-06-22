@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='Codificador-ejb' version='1.0'>
+	<schema type='-xmlschema' package='sat' name='Comprobante'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='src/conf/xml-resources/jaxb/Comprobante/www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd' origLocation='http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd' origLocationType='url'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='sat' name='Nominia'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='src/conf/xml-resources/jaxb/Nominia/www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd' origLocation='http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd' origLocationType='url'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='sat' name='TimbreFiscal'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='src/conf/xml-resources/jaxb/TimbreFiscal/www.sat.gob.mx/sitio_internet/cfd/timbrefiscaldigital/TimbreFiscalDigitalv11.xsd' origLocation='http://www.sat.gob.mx/sitio_internet/cfd/timbrefiscaldigital/TimbreFiscalDigitalv11.xsd' origLocationType='url'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>

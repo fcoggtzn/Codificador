@@ -36,6 +36,7 @@ public class Firma implements FirmaLocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+    @Override
     public byte[] firmar(byte[] cadenaOriginal, String rfc) {
         /*falta el proceso de obtener Certificados y Sellos del rfc en cuestion */
         try {

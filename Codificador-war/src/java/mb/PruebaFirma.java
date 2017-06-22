@@ -5,11 +5,18 @@
  */
 package mb;
 
-import com.sun.xml.wss.impl.misc.Base64;
+import ejb.CrearCFDILocal;
 import ejb.FirmaLocal;
+import java.io.FileNotFoundException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  *
@@ -20,7 +27,11 @@ import javax.enterprise.context.RequestScoped;
 public class PruebaFirma {
 
     @EJB
+    private CrearCFDILocal crearCFDI;
+
+    @EJB
     private FirmaLocal firma;
+     
  
     /**
      * Creates a new instance of PruebaFirma
@@ -31,6 +42,17 @@ public class PruebaFirma {
     
     public String getFirma(){
         byte[] firmar = firma.firmar("VivaMexico".getBytes(),"TME960709LR2");
-        return Base64.encode(firmar);
+        try {
+            this.crearCFDI.crear();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DatatypeConfigurationException ex) {
+            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformerException ex) {
+            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Base64.getEncoder().encodeToString(firmar);
     }    
 }

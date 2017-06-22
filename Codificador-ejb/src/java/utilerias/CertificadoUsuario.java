@@ -5,12 +5,12 @@
  */
 package utilerias;
 
-import com.sun.xml.wss.impl.misc.Base64;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,13 +49,13 @@ public class CertificadoUsuario  implements Serializable {
     }
     
      public String getBase64Llave() {
-        return Base64.encode(llave);
+        return Base64.getEncoder().encodeToString(llave);
     }
 
    
 
     public String getBase64Certificado() {
-        return Base64.encode(certificado);
+        return Base64.getEncoder().encodeToString(certificado);
     }
 
    
