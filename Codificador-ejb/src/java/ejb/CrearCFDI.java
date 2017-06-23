@@ -43,9 +43,9 @@ import utilerias.MyNameSpaceMapper;
 public class CrearCFDI implements CrearCFDILocal {
 
     @EJB
-    private Xslt2Cadena xslt2Cadena;
+    private Xslt2CadenaLocal xslt2Cadena;
     @EJB
-    private Firma firma;
+    private FirmaLocal firma;
     private String cadenaOriginal;
 
     /**

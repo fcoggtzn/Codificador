@@ -13,5 +13,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface Xslt2CadenaLocal {
+
+    public String cadena(String factura);
     
 }
