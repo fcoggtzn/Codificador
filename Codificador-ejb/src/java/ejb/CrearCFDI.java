@@ -15,6 +15,7 @@ import java.math.RoundingMode;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,15 +26,21 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.ws.WebServiceRef;
 import sat.CMetodoPago;
 import sat.CMoneda;
 import sat.CTipoDeComprobante;
 import sat.CTipoFactor;
 import sat.Comprobante;
+import utilerias.Archivo;
+import utilerias.CertificadoUsuario;
 import utilerias.MyNameSpaceMapper;
+import webServiceSatPrueba.Resultado;
+import webServiceSatPrueba.TimbradoServiceService;
 
 /**
  *
@@ -41,6 +48,9 @@ import utilerias.MyNameSpaceMapper;
  */
 @Stateless
 public class CrearCFDI implements CrearCFDILocal {
+
+    @WebServiceRef(wsdlLocation = "META-INF/wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/TimbradoService.wsdl")
+    private TimbradoServiceService service;
 
     @EJB
     private Xslt2CadenaLocal xslt2Cadena;
@@ -73,6 +83,7 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.setMetodoPago(CMetodoPago.PUE);
         /*   cfdi.setF*/
         cfdi.setLugarExpedicion("20140");
+        cfdi.setVersion("3.3");
         /*
         CfdiRelacionado relacion =  new CfdiRelacionado();
         relacion.setUUID("5FB2822E-396D-4725-8521-CDC4BDD20CCF");
@@ -81,12 +92,16 @@ public class CrearCFDI implements CrearCFDILocal {
          */
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(Calendar.getInstance().getTime());
+        XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        newXMLGregorianCalendar.setMillisecond(0);
+        newXMLGregorianCalendar.setTimezone(0);
+        cfdi.setFecha(newXMLGregorianCalendar);
+       
+        CertificadoUsuario certificadoUsuario = new CertificadoUsuario("TME960709LR2");
 
-        cfdi.setFecha(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+        
 
-        InputStream certificadoResource = new FileInputStream("cer.cer");
-
-        cfdi.setCertificado(Base64.getEncoder().encodeToString(getBytes(certificadoResource)));
+        cfdi.setCertificado(certificadoUsuario.getBase64Certificado());
         cfdi.setNoCertificado("20001000000300022763");
 
         cfdi.setTipoCambio(new BigDecimal(1.0));
@@ -154,7 +169,7 @@ public class CrearCFDI implements CrearCFDILocal {
         cadenaOriginal = xslt2Cadena.cadena(factura);
 
         try {
-            byte[] firmar = firma.firmar(cadenaOriginal.getBytes("UTF-8"), cfdi.getEmisor().getRfc());
+            byte[] firmar = firma.firmar(cadenaOriginal.getBytes("UTF-8"), "TME960709LR2");
             cfdi.setSello(Base64.getEncoder().encodeToString(firmar));
 
             try {
@@ -171,6 +186,11 @@ public class CrearCFDI implements CrearCFDILocal {
             /**
              * *** metodo para mandar timbrar ***
              */
+            
+            Resultado resultadoDeTimbre = timbrado(factura);
+            System.out.println(resultadoDeTimbre.getStatus());
+            System.out.println(resultadoDeTimbre.getCodigo());
+            System.out.println(resultadoDeTimbre.getTimbre());
             /**
              * *** metodo para generar PDF ***
              */
@@ -196,4 +216,16 @@ public class CrearCFDI implements CrearCFDILocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
+    private Resultado timbrado(java.lang.String cfdi) {
+        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+        // If the calling of port operations may lead to race condition some synchronization is required.
+        String usuario= "WEB070411754";
+        String clave="WEB070411754";
+        String cfdiString;
+        Archivo archivo = new Archivo();
+        cfdiString = archivo.LeerString(cfdi);
+        webServiceSatPrueba.TimbradoService port = service.getTimbradoServicePort();
+        return port.timbrado(cfdiString, usuario, clave);
+    }
 }
