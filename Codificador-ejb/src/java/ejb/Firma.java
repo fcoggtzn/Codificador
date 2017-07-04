@@ -49,7 +49,7 @@ public class Firma implements FirmaLocal {
             pkcs8 = new PKCS8Key(certificadoUsuario.getLlave(),certificadoUsuario.getClave());
             PrivateKey privKey = pkcs8.getPrivateKey();
 
-            Signature signature = Signature.getInstance("SHA1withRSA");
+            Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privKey);
             signature.update(cadenaOriginal);
             return signature.sign();

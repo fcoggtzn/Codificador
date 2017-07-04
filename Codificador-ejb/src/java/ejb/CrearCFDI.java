@@ -25,6 +25,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.TransformerConfigurationException;
@@ -35,6 +36,7 @@ import sat.CMetodoPago;
 import sat.CMoneda;
 import sat.CTipoDeComprobante;
 import sat.CTipoFactor;
+import sat.CUsoCFDI;
 import sat.Comprobante;
 import utilerias.Archivo;
 import utilerias.CertificadoUsuario;
@@ -77,6 +79,14 @@ public class CrearCFDI implements CrearCFDILocal {
         Comprobante.Receptor receptor = new Comprobante.Receptor();
         receptor.setNombre("Pruebas y Mas S de RL MI de CV");
         receptor.setRfc("WEB070411754");
+        
+        // uso del cfdi
+        receptor.setUsoCFDI(CUsoCFDI.G_01);
+        
+        
+         /*ingresar emisor y receptor */
+         cfdi.setEmisor(emisor);
+         cfdi.setReceptor(receptor);
 
         //   cfdi.setMoneda(CMoneda.);
         cfdi.setTipoCambio(BigDecimal.ONE);
@@ -84,6 +94,9 @@ public class CrearCFDI implements CrearCFDILocal {
         /*   cfdi.setF*/
         cfdi.setLugarExpedicion("20140");
         cfdi.setVersion("3.3");
+        
+        
+        
         /*
         CfdiRelacionado relacion =  new CfdiRelacionado();
         relacion.setUUID("5FB2822E-396D-4725-8521-CDC4BDD20CCF");
@@ -93,8 +106,9 @@ public class CrearCFDI implements CrearCFDILocal {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(Calendar.getInstance().getTime());
         XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        newXMLGregorianCalendar.setMillisecond(0);
-        newXMLGregorianCalendar.setTimezone(0);
+        newXMLGregorianCalendar.setTimezone( DatatypeConstants.FIELD_UNDEFINED );
+        newXMLGregorianCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        
         cfdi.setFecha(newXMLGregorianCalendar);
        
         CertificadoUsuario certificadoUsuario = new CertificadoUsuario("TME960709LR2");
@@ -111,6 +125,9 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.setFormaPago("01");
 
         Comprobante.Conceptos.Concepto concepto = new Comprobante.Conceptos.Concepto();
+        
+        
+        /*agregar concepto */
         concepto.setCantidad(new BigDecimal(1));
         concepto.setClaveProdServ("01010101");
         concepto.setNoIdentificacion("001-002");
@@ -120,6 +137,25 @@ public class CrearCFDI implements CrearCFDILocal {
         concepto.setValorUnitario(new BigDecimal(130).setScale(2));
         concepto.setImporte(new BigDecimal(130).setScale(2));
         concepto.setDescuento(BigDecimal.ZERO);
+        
+        
+        /*impuestos del concepto */ 
+        Comprobante.Conceptos.Concepto.Impuestos impuestosConcepto = new Comprobante.Conceptos.Concepto.Impuestos();
+        Comprobante.Conceptos.Concepto.Impuestos.Traslados transladosConcepto = new Comprobante.Conceptos.Concepto.Impuestos.Traslados();
+        Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado translado = new Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado();
+        translado.setImpuesto("002");
+        translado.setTasaOCuota(new BigDecimal(0.16).setScale(2, RoundingMode.HALF_UP));
+        translado.setBase(new BigDecimal(130).setScale(2));
+        translado.setImporte(new BigDecimal(130 * 0.16).setScale(2, RoundingMode.HALF_UP));
+        translado.setTipoFactor(CTipoFactor.TASA);      
+        transladosConcepto.getTraslado().add(translado);
+        impuestosConcepto.setTraslados(transladosConcepto);
+
+        
+        /*agregar impuesto al concepto*/
+        concepto.setImpuestos(impuestosConcepto);
+        
+        
 
         cfdi.setDescuento(BigDecimal.ZERO);
         cfdi.setSubTotal(new BigDecimal(130).setScale(2));
