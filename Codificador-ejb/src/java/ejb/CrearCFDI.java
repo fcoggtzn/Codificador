@@ -104,7 +104,10 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.getCfdiRelacionados().getCfdiRelacionado().add(relacion);
          */
         GregorianCalendar c = new GregorianCalendar();
-        c.setTime(Calendar.getInstance().getTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, -2);
+        Date time = calendar.getTime();        
+        c.setTime(time);
         XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         newXMLGregorianCalendar.setTimezone( DatatypeConstants.FIELD_UNDEFINED );
         newXMLGregorianCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
