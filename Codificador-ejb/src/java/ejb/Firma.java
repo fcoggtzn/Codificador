@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 
@@ -20,6 +21,7 @@ import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,25 +39,39 @@ public class Firma implements FirmaLocal {
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
-    public byte[] firmar(byte[] cadenaOriginal, String rfc) {
+    public String firmar(String cadenaOriginal, String rfc) {
         /*falta el proceso de obtener Certificados y Sellos del rfc en cuestion */
         try {
 
             CertificadoUsuario certificadoUsuario = new CertificadoUsuario(rfc);
             
             
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            
             PKCS8Key pkcs8;
             pkcs8 = new PKCS8Key(certificadoUsuario.getLlave(),certificadoUsuario.getClave());
-            PrivateKey privKey = pkcs8.getPrivateKey();
-
+            PrivateKey privKey = pkcs8.getPrivateKey();            
+            
+            
+            
             Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initSign(privKey);
+            byte[] bytesCadenaOriginal = cadenaOriginal.getBytes("UTF-8");
+            signature.update(bytesCadenaOriginal);
+            byte[] bytesSigned = signature.sign();
+            
+            return Base64.getEncoder().encodeToString(bytesSigned);
+            //return new String(bytesEncoded);
+            
+
+            /*
+            signature.initSign(privKey);
             signature.update(cadenaOriginal);
-            return signature.sign();
+            return signature.sign();*/
         } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException | InvalidKeySpecException e) {
             System.out.println(e);
         } catch (GeneralSecurityException ex) {
+            Logger.getLogger(Firma.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Firma.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;

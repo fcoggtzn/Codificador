@@ -10,19 +10,25 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
  * @author franciscogutierrez
  */
 public class CertificadoUsuario  implements Serializable {
-    private byte[] llave;
-    private byte[] certificado;
+    private byte[] llave;    
     private char[] clave;
+    private X509Certificate cert;
 
     public byte[] getLlave() {
         return llave;
@@ -33,12 +39,17 @@ public class CertificadoUsuario  implements Serializable {
     }
 
     public byte[] getCertificado() {
-        return certificado;
+        
+       
+        try {
+            return cert.getEncoded();
+        } catch (CertificateEncodingException ex) {
+            Logger.getLogger(CertificadoUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
-    public void setCertificado(byte[] certificado) {
-        this.certificado = certificado;
-    }
+    
 
     public char[] getClave() {
         return clave;
@@ -55,7 +66,7 @@ public class CertificadoUsuario  implements Serializable {
    
 
     public String getBase64Certificado() {
-        return Base64.getEncoder().encodeToString(certificado);
+        return Base64.getEncoder().encodeToString(getCertificado());
     }
 
    
@@ -70,14 +81,23 @@ public class CertificadoUsuario  implements Serializable {
             bis.close();
             keyResource = CertificadoUsuario.class.getResourceAsStream("../resources/" + rfc + "/" + rfc + ".cer");
             bis = new BufferedInputStream(keyResource);
+           
+            
+            /*load X509 cert instead of raw data */ 
+            CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+            cert = (X509Certificate)certFactory.generateCertificate(bis);
+            cert.checkValidity();
+            
+            
+         /*   bis = new BufferedInputStream(keyResource);
             certificado = new byte[keyResource.available()];
-            bis.read(certificado);
+            bis.read(certificado);*/
             bis.close();
-           
-           
             clave = getClave(rfc).toCharArray();
             
         } catch (IOException ex) {
+            Logger.getLogger(CertificadoUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CertificateException ex) {
             Logger.getLogger(CertificadoUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
   }    
@@ -96,5 +116,11 @@ public class CertificadoUsuario  implements Serializable {
             e.printStackTrace();
         }
         return result.toString();}
+  
+  
+  public String getCertNumber(){
+        BigInteger serialNumber = cert.getSerialNumber();
+      return new String(serialNumber.toByteArray());
+  }
       
 }

@@ -116,8 +116,8 @@ public class CrearCFDI implements CrearCFDILocal {
         
 
         cfdi.setCertificado(certificadoUsuario.getBase64Certificado());
-        cfdi.setNoCertificado("20001000000300022763");
-
+        //cfdi.setNoCertificado("20001000000300022763");
+        cfdi.setNoCertificado(certificadoUsuario.getCertNumber());
         cfdi.setTipoCambio(new BigDecimal(1.0));
         cfdi.setMoneda(CMoneda.MXN);
         cfdi.setTipoDeComprobante(CTipoDeComprobante.I);
@@ -204,18 +204,20 @@ public class CrearCFDI implements CrearCFDILocal {
         String factura = "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml";
         cadenaOriginal = xslt2Cadena.cadena(factura);
 
-        try {
-            byte[] firmar = firma.firmar(cadenaOriginal.getBytes("UTF-8"), "TME960709LR2");
-            cfdi.setSello(Base64.getEncoder().encodeToString(firmar));
+        
+            String firmar = firma.firmar(cadenaOriginal, "TME960709LR2");
+            cfdi.setSello(firmar);
 
             try {
                 JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class);
                 Marshaller m = jc.createMarshaller();
-                m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
+                m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE); 
+                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
+                
                 //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
                 m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
                 m.marshal(cfdi, result);
+                
             } catch (JAXBException e) {
                 System.out.println(e.getCause());
             }
@@ -231,9 +233,6 @@ public class CrearCFDI implements CrearCFDILocal {
              * *** metodo para generar PDF ***
              */
 
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(CrearCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
     }
 

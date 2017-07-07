@@ -41,7 +41,7 @@ public class PruebaFirma {
     }
     
     public String getFirma(){
-        byte[] firmar = firma.firmar("VivaMexico".getBytes(),"TME960709LR2");
+        String firmar = firma.firmar("VivaMexico","TME960709LR2");
         try {
             this.crearCFDI.crear();
         } catch (FileNotFoundException ex) {
@@ -53,6 +53,6 @@ public class PruebaFirma {
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return Base64.getEncoder().encodeToString(firmar);
+        return firmar;
     }    
 }

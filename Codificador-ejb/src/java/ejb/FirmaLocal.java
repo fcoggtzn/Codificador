@@ -14,6 +14,6 @@ import javax.ejb.Local;
 @Local
 public interface FirmaLocal {
 
-    public byte[] firmar(byte[] cadenaOriginal, String rfc);
+    public String firmar(String cadenaOriginal, String rfc);
     
 }
