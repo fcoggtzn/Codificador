@@ -38,6 +38,9 @@ import sat.CTipoDeComprobante;
 import sat.CTipoFactor;
 import sat.CUsoCFDI;
 import sat.Comprobante;
+import satNomina.CEstado;
+import satNomina.CTipoNomina;
+import satNomina.Nomina;
 import utilerias.Archivo;
 import utilerias.CertificadoUsuario;
 import utilerias.MyNameSpaceMapper;
@@ -184,6 +187,24 @@ public class CrearCFDI implements CrearCFDILocal {
         Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
         conceptos.getConcepto().add(concepto);
         cfdi.setConceptos(conceptos);
+        
+        
+        
+        
+        /*Complemento de nomina */
+        Nomina nomina = new Nomina();
+        nomina.setVersion("1.2");
+        nomina.setTipoNomina(CTipoNomina.E);
+        nomina.setFechaPago(newXMLGregorianCalendar);
+        nomina.setFechaInicialPago(newXMLGregorianCalendar);
+        nomina.setFechaFinalPago(newXMLGregorianCalendar);
+        Nomina.Receptor empleado = new Nomina.Receptor();
+        empleado.setCurp("GUNF750511HASTJR05");
+        empleado.setClaveEntFed(CEstado.AGU);
+        empleado.setTipoRegimen("02"); //02-Sueldos,03 Jubilados, 04 Pensionados, 09 Asimilados Honorarios
+        empleado.setNumEmpleado("001");
+        empleado.setPeriodicidadPago("06"); //ver hoja 34
+        
 
         /**
          * ***** metodo de serializar ****
@@ -207,7 +228,7 @@ public class CrearCFDI implements CrearCFDILocal {
         String factura = "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml";
         cadenaOriginal = xslt2Cadena.cadena(factura);
 
-        
+               
             String firmar = firma.firmar(cadenaOriginal, "TME960709LR2");
             cfdi.setSello(firmar);
 
