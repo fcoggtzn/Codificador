@@ -26,12 +26,13 @@
             <fileset dir="build/generated/jaxbCache/Comprobante"/>
         </copy>
         <mkdir dir="build/generated/jaxbCache/Nomina"/>
-        <xjc package="satNomina" destdir="build/generated/jaxbCache/Nomina" catalog="catalog.xml">
+        <xjc package="sat" destdir="build/generated/jaxbCache/Nomina" catalog="catalog.xml">
             <classpath>
                 <pathelement location="${src.dir}"/>
                 <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
             </classpath>
             <arg value="-xmlschema"/>
+            <arg value="-npa"/>
             <schema file="src/conf/xml-resources/jaxb/Nomina/www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd"/>
             <depends file="src/conf/xml-resources/jaxb/Nomina/www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd"/>
             <produces dir="build/generated/jaxbCache/Nomina"/>

@@ -10,8 +10,9 @@
 		</bindings>
 		<catalog/>
 	</schema>
-	<schema type='-xmlschema' package='satNomina' name='Nomina'>
+	<schema type='-xmlschema' package='sat' name='Nomina'>
 		<xjc-options>
+			<xjc-option name='-npa' value='true'/>
 		</xjc-options>
 		<schema-sources>
 			<schema-source location='src/conf/xml-resources/jaxb/Nomina/www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd' origLocation='http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd' origLocationType='url'/>

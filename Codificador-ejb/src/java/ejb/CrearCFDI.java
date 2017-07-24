@@ -38,9 +38,10 @@ import sat.CTipoDeComprobante;
 import sat.CTipoFactor;
 import sat.CUsoCFDI;
 import sat.Comprobante;
-import satNomina.CEstado;
-import satNomina.CTipoNomina;
-import satNomina.Nomina;
+import sat.Comprobante.Complemento;
+import sat.CEstado;
+import sat.CTipoNomina;
+import sat.Nomina;
 import utilerias.Archivo;
 import utilerias.CertificadoUsuario;
 import utilerias.MyNameSpaceMapper;
@@ -62,6 +63,7 @@ public class CrearCFDI implements CrearCFDILocal {
     @EJB
     private FirmaLocal firma;
     private String cadenaOriginal;
+    private boolean activoNomina= Boolean.FALSE;
 
     /**
      * @param args the command line arguments
@@ -189,7 +191,7 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.setConceptos(conceptos);
         
         
-        
+        if(activoNomina){
         
         /*Complemento de nomina */
         Nomina nomina = new Nomina();
@@ -203,7 +205,11 @@ public class CrearCFDI implements CrearCFDILocal {
         empleado.setClaveEntFed(CEstado.AGU);
         empleado.setTipoRegimen("02"); //02-Sueldos,03 Jubilados, 04 Pensionados, 09 Asimilados Honorarios
         empleado.setNumEmpleado("001");
-        empleado.setPeriodicidadPago("06"); //ver hoja 34
+        empleado.setPeriodicidadPago("06"); //ver hoja 34        
+        Complemento complemento = new Complemento();
+        complemento.getAny().add(nomina);
+        cfdi.getComplemento().add(complemento);
+        }
         
 
         /**
@@ -212,6 +218,7 @@ public class CrearCFDI implements CrearCFDILocal {
         StreamResult result = new StreamResult("factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
         try {
             JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class);
+            
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
@@ -237,7 +244,9 @@ public class CrearCFDI implements CrearCFDILocal {
                 Marshaller m = jc.createMarshaller();
                 m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE); 
                 m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
-                
+                if (activoNomina){
+                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/informacion_fiscal/factura_electronica/Documents/Complementoscfdi/nomina12.xsd");
+                }
                 //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
                 m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
                 m.marshal(cfdi, result);
