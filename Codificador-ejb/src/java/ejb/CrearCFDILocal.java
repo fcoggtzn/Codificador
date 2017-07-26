@@ -11,6 +11,7 @@ import javax.ejb.Local;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import sat.Comprobante;
 
 /**
  *
@@ -19,6 +20,6 @@ import javax.xml.transform.TransformerException;
 @Local
 public interface CrearCFDILocal {
 
-    public void crear() throws FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException;
+    public void crear(Comprobante cfdi) throws FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException;
     
 }
