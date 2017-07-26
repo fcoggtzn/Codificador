@@ -92,8 +92,7 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.setEmisor(emisor);
         cfdi.setReceptor(receptor);
 
-        //   cfdi.setMoneda(CMoneda.);
-        cfdi.setTipoCambio(BigDecimal.ONE);
+        //   cfdi.setMoneda(CMoneda.);        
         cfdi.setMetodoPago(CMetodoPago.PUE);
         /*   cfdi.setF*/
         cfdi.setLugarExpedicion("20140");
@@ -113,7 +112,31 @@ public class CrearCFDI implements CrearCFDILocal {
         XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         newXMLGregorianCalendar.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         newXMLGregorianCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        
+        c.setTime(calendar.getTime());
+          XMLGregorianCalendar fechaPago = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaPago.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+        fechaPago.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        fechaPago.setTime(DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED);
+        
+        
+        calendar.add(Calendar.MONTH, -1);         
+        c.setTime(calendar.getTime());
+          XMLGregorianCalendar fechaIPapgo = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaIPapgo.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+        fechaIPapgo.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        fechaIPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED);
 
+        calendar.add(Calendar.YEAR, -1);         
+        c.setTime(calendar.getTime());
+          XMLGregorianCalendar fechaInicio = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaInicio.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+        fechaInicio.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        fechaInicio.setTime(DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED);
+        
+ 
+        
+        
         cfdi.setFecha(newXMLGregorianCalendar);
 
         CertificadoUsuario certificadoUsuario = new CertificadoUsuario("TME960709LR2");
@@ -128,6 +151,7 @@ public class CrearCFDI implements CrearCFDILocal {
 
         Comprobante.Conceptos.Concepto concepto = new Comprobante.Conceptos.Concepto();
         if (this.activoNomina) {
+            cfdi.setFormaPago("PAGO EN UNA SOLA EXHIBICION");
             //        <cfdi:Concepto cantidad="1" unidad="ACT" descripcion="Pago de nómina" valorUnitario="7500.05" importe="7500.05" />
             /*agregar concepto */
             concepto.setCantidad(new BigDecimal(1));
@@ -140,6 +164,7 @@ public class CrearCFDI implements CrearCFDILocal {
             concepto.setDescripcion("Pago de nómina");
             concepto.setValorUnitario(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP));
             concepto.setImporte(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP));
+            concepto.setDescuento(new BigDecimal(1054.75+179.34).setScale(2, RoundingMode.HALF_UP));
 
             //subTotal="7500.05" descuento="1234.09" Moneda="MXN" TipoCambio="1" total="6265.96" 
             cfdi.setSubTotal(new BigDecimal(7500.05).setScale(2, RoundingMode.HALF_UP));
@@ -152,20 +177,29 @@ public class CrearCFDI implements CrearCFDILocal {
             Nomina nomina = new Nomina();
             nomina.setVersion("1.2");
             nomina.setTipoNomina(CTipoNomina.O);
-            nomina.setFechaPago(newXMLGregorianCalendar);
-            nomina.setFechaInicialPago(newXMLGregorianCalendar);
-            nomina.setFechaFinalPago(newXMLGregorianCalendar);
-            nomina.setNumDiasPagados(new BigDecimal(14.5).setScale(2, RoundingMode.HALF_UP));
+            nomina.setFechaPago(fechaPago);
+            
+            nomina.setFechaInicialPago(fechaIPapgo);
+            nomina.setFechaFinalPago(fechaPago);
+            nomina.setNumDiasPagados(new BigDecimal(14.5).setScale(3, RoundingMode.HALF_UP));
             Nomina.Emisor emisorNomina = new Nomina.Emisor();
-            emisorNomina.setRfcPatronOrigen(emisor.getRfc());
+        //    emisorNomina.setRfcPatronOrigen(emisor.getRfc());
+            emisorNomina.setRegistroPatronal("5525665412");
+            
             nomina.setEmisor(emisorNomina);
+            
             Nomina.Receptor empleado = new Nomina.Receptor();
             empleado.setCurp("GUNF750511HASTJR05");
-
+            empleado.setNumSeguridadSocial("04078873454");
+            empleado.setTipoContrato("01");
+            empleado.setFechaInicioRelLaboral(fechaInicio);
+            empleado.setAntigüedad("P21W");
             empleado.setClaveEntFed(CEstado.AGU);
             empleado.setTipoRegimen("02"); //02-Sueldos,03 Jubilados, 04 Pensionados, 09 Asimilados Honorarios
             empleado.setNumEmpleado("001");
             empleado.setPeriodicidadPago("06"); //ver hoja 34  
+            empleado.setRiesgoPuesto("2");
+            empleado.setSalarioDiarioIntegrado(new BigDecimal(435.50).setScale(2, RoundingMode.HALF_UP));
             nomina.setReceptor(empleado);
             Nomina.Percepciones percepciones = new Nomina.Percepciones();
             Nomina.Percepciones.Percepcion salario = new Nomina.Percepciones.Percepcion();
@@ -230,7 +264,9 @@ public class CrearCFDI implements CrearCFDILocal {
              cfdi.setFormaPago("99");
         } else {
             
-             cfdi.setFormaPago("01");
+            cfdi.setTipoCambio(BigDecimal.ONE);
+            
+            cfdi.setFormaPago("01");
             cfdi.setTipoDeComprobante(CTipoDeComprobante.I);
 
             /*agregar concepto */
@@ -312,12 +348,12 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.setSello(firmar);
 
         try {
-            JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class);
+            JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class,sat.Nomina.class);
             Marshaller m = jc.createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);            
             m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
-            if (activoNomina) {
-                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/informacion_fiscal/factura_electronica/Documents/Complementoscfdi/nomina12.xsd");
+            if (activoNomina) {                
+                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
             }
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
             m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
