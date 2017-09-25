@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Nomina</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body onunload="#{contribuyenteController.setEmpleadoNomina(null)}" >
+
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+
+                <p:panel header="Busqueda" id="busquedaEmp">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Empleado: " styleClass="it-align-right"/>
+                        <p:autoComplete id="acSimple" value="#{contribuyenteController.empleadoNomina}"
+                                        completeMethod="#{contribuyenteController.completeTextEmpleado}"
+                                        var="valor" itemLabel="#{valor.contribuyente.nombre}" itemValue="#{valor}"
+                                        immediate="true" converter="empleadoConverter"
+                                        size="55">
+
+                            <p:ajax event="itemSelect" update=":formemp"/>
+                            <p:column>
+                                <h:outputLabel value="#{valor.contribuyente.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{valor.contribuyente.rfc}"/>
+                            </p:column>
+                        </p:autoComplete>
+                    </p:panelGrid>
+                </p:panel>
+                <p:panel header="Nomina" id="panelemp"  visible="#{contribuyenteController.empleadoNomina != null}">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+
+                        <p:separator/> 
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <h:outputLabel value="Emisor"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <h:outputLabel value="Emisor" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empresaActual.empresa}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Descripción" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empresaActual.descripcion}" styleClass="it-negrita"/>
+                        <h:outputLabel value="RFC" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empresaActual.contribuyente.rfc}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Regimen Fiscal" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empresaActual.regimenFiscal}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Registro Patronal" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empresaActual.registroPatronal}" styleClass="it-negrita"/>
+                        <p:separator/>
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <h:outputLabel value="Receptor"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <h:outputLabel value="N° Empleado" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.numEmpleado}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Empleado" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.contribuyente.nombre}" styleClass="it-negrita"/>
+                        <h:outputLabel value="RFC-Receptor" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.contribuyente.rfc}" styleClass="it-negrita"/>
+                        <h:outputLabel value="CURP" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.curp}" styleClass="it-negrita"/>
+                        <h:outputLabel value="NSS" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.numseguroSocial}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Fecha de Inicio Laboral" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.fechaInicio}" styleClass="it-negrita">
+                            <f:convertDateTime pattern="dd-MM-yyyy" />
+                        </h:outputLabel>
+                        <h:outputLabel value="Antigüedad" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.antiguedad}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Tipo de Contrato" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.tipoContrato}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Tipo de Regimen" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.tipoRegimen}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Riesgo de Puesto" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.riesgoPuesto}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Perioricidad de Pago" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.periodicidadPago}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Salario Diario Integrado" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.salarioDiarioIntegrado}" styleClass="it-negrita"/>
+                        <h:outputLabel value="Entidad Federativa" styleClass="it-align-right"/>
+                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.claveEntFed}" styleClass="it-negrita"/>
+                    </p:panelGrid>
+                    <p:panel header="Percepciones">
+                        <p:dataTable id="outp" var="pe" value="#{contribuyenteController.percepcionesEmpleadoNomina}" editable="true" style="margin-bottom:10px">
+                            <p:ajax event="rowEdit" listener="#{contribuyenteController.onRowEdit}"  />
+                            <p:ajax event="rowEditCancel" listener="#{contribuyenteController.onRowCancel}"  />
+                            <p:column headerText="Concepto" >
+                                <p:outputLabel value="#{pe.percepcion.concepto}" styleClass="it-negrita"/>
+                            </p:column>
+                            <p:column headerText="Tipo de Percepción">
+                                <p:outputLabel value="#{pe.percepcion.tipoPercepcion}" styleClass="it-negrita"/>
+                            </p:column>
+                            <p:column headerText="Tipo de Clave">
+                                <p:outputLabel value="#{pe.percepcion.tipoClave}" styleClass="it-negrita"/>
+                            </p:column>
+                            <p:column headerText="Cantidad">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{pe.cantidad}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{pe.cantidad}" style="width:96%" label="Cantidad"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column style="width:40px">
+                                <p:rowEditor />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:panel header="Deducciones">
+                        <p:dataTable id="outd" var="de" value="#{contribuyenteController.deduccionesEmpleadoNomina}" editable="true" style="margin-bottom:10px">
+                            <p:ajax event="rowEdit" listener="#{contribuyenteController.onRowEditD}"  />
+                            <p:ajax event="rowEditCancel" listener="#{contribuyenteController.onRowCancelD}"  />
+                            <p:column headerText="Concepto" >
+                                <p:outputLabel value="#{de.deduccion.concepto}" styleClass="it-negrita"/>
+                            </p:column>
+                            <p:column headerText="Tipo de Deducción">
+                                <p:outputLabel value="#{de.deduccion.tipoDeduccion}" styleClass="it-negrita"/>
+                            </p:column>
+                            <p:column headerText="Tipo de Clave">
+                                <p:outputLabel value="#{de.deduccion.tipoClave}" styleClass="it-negrita"/>
+                            </p:column>
+                            <p:column headerText="Cantidad">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{de.cantidad}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{de.cantidad}" style="width:96%" label="Cantidad"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column style="width:40px">
+                                <p:rowEditor />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </p:panel>
+                <p:panel header="Acciones">
+                    <p:commandButton value="Generar Nomina" actionListener="#{generaCFDI.llenarCFDI}"/>
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+
+    </h:body>
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns="http://www.w3.org/1999/xhtml">
+    <link href="../Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    <p:menubar autoDisplay="false">
+        <f:facet name="options">
+            <p:outputLabel value="Usuario: #{accesoController.nombreUsuario()}, Empresa: #{accesoController.empresaUsuario()}" styleClass="colorRojo"/>
+        </f:facet>
+        
+        <p:menuitem value="Cerrar" actionListener="#{accesoController.logoutAmbito()}" ajax="false" icon="ico_power" immediate="true"/>
+        <p:submenu label="Nomina" icon="ico_money">
+            <p:submenu label="Configuraciones" icon="ico_settings">
+                <p:menuitem value="Empleado" actionListener="#{accesoController.redireccionar('iEmpleado.xhtml')}" ajax="false" icon="ico_empleado" immediate="true"/>
+                <p:menuitem value="Percepción" actionListener="#{accesoController.redireccionar('iPercepcion.xhtml')}" ajax="false" icon="ico_percepcion" immediate="true"/>
+                <p:menuitem value="Deducción" actionListener="#{accesoController.redireccionar('iDeduccion.xhtml')}" ajax="false" icon="ico_deduccion" immediate="true"/>
+            </p:submenu>
+            <p:submenu label="Empresa" icon="ico_empresa">
+                <p:menuitem value="Usuario" actionListener="#{accesoController.redireccionar('iConfiguracion.xhtml')}" ajax="false" icon="ico_usuario" immediate="true"/>
+                <p:menuitem value="Empresa" actionListener="#{accesoController.redireccionar('iEmpresa.xhtml')}"
+                            ajax="false" icon="ico_empresa" immediate="true"/>
+                <p:menuitem value="Empresa-Contribuyente" actionListener="#{accesoController.redireccionar('iEmpresaContribuyente.xhtml')}" ajax="false" icon="ico_econt" immediate="true"/>
+            </p:submenu>
+            <p:menuitem value="Contribuyente" actionListener="#{accesoController.redireccionar('iContribuyente.xhtml')}" ajax="false" icon="ico_ec" immediate="true"/>
+            <p:menuitem value="Nomina" actionListener="#{accesoController.redireccionar('iNomina.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
+            <p:menuitem value="GenerarCFDI" actionListener="#{pruebaFirma.generaCFDI}" ajax="false" icon="ico_cfdi" immediate="true"/>
+        </p:submenu>
+    </p:menubar>
+</ui:composition>

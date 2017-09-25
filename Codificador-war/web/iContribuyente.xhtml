@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Contribuyente</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Contribuyente" id="panelemp">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Nombre: " styleClass="it-align-right"/>
+                        <p:inputText id="empresa" value="#{contribuyenteController.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="RFC: " styleClass="it-align-right"/>
+                        <p:inputText id="desce" value="#{contribuyenteController.contribuyente.rfc}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{contribuyenteController.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{contribuyenteController.guardarContribuyente()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{contribuyenteController.limpiarContribuyente()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+            <p:dataTable id="out2" var="contr" value="#{contribuyenteController.contribuyentes}">
+                <p:column headerText="id">
+                    <h:outputLabel value="#{contr.idContribuyente}"/>
+                </p:column>
+                <p:column headerText="Contribuyente">
+                    <h:outputLabel value="#{contr.nombre}"/>
+                </p:column>
+                <p:column headerText="RFC">
+                    <h:outputLabel value="#{contr.rfc}"/>
+                </p:column>
+                <p:column headerText="">
+                    <center>
+                        <p:commandButton id="modif" icon="ui-icon-pencil" process="@form" actionListener="#{contribuyenteController.actualizar(contr)}" immediate="true" update=":formemp :formAct">
+                            <p:tooltip for="modif" value="Editar"/>
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-closethick" actionListener="#{contribuyenteController.actualizar(contr)}" oncomplete="PF('dlg').show();" />
+                    </center>
+                </p:column>
+            </p:dataTable>
+            <p:dialog header="Eliminar #{contr.nombre}" widgetVar="dlg">
+                <center>
+                    <p:commandButton value="Eliminar" actionListener="#{contribuyenteController.eliminarContribuyente()}" onclick="PF('dlg').hide();" update=":formemp :formGrid :formAct"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" />
+                </center>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</html>

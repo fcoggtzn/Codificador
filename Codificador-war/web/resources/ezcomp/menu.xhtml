@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    
+    <cc:interface>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/hojaEstilo.css" rel="stylesheet" type="text/css"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:form>
+            <p:menubar>
+                <p:submenu label="Nomina" icon="ui-icon-folder-collapsed">
+                    <p:menuitem value="Empleado" actionListener="#{accesoController.redireccionar('iEmpleado.xhtml')}" ajax="false" icon="ui-icon-person"/>
+                </p:submenu>
+            </p:menubar>
+        </h:form>        
+    </cc:implementation>
+</html>

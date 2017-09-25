@@ -73,6 +73,7 @@ public class CrearCFDI implements CrearCFDILocal {
         /**
          * ***** metodo de serializar ****
          */
+        
         StreamResult result = new StreamResult("factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
         try {
             JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class);
@@ -93,7 +94,7 @@ public class CrearCFDI implements CrearCFDILocal {
         String factura = "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml";
         cadenaOriginal = xslt2Cadena.cadena(factura);
 
-        String firmar = firma.firmar(cadenaOriginal, "TME960709LR2");
+        String firmar = firma.firmar(cadenaOriginal, cfdi.getEmisor().getRfc());
         cfdi.setSello(firmar);
 
         try {

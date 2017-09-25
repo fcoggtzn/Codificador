@@ -1,0 +1,122 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 07-ago-2017, 16:15:42
+    Author     : ovante
+*/
+
+.no-border {
+    border-style: hidden !important ; /* or none */
+}
+.it-size{
+    width:500px;
+}
+
+.som-size{
+    width:510px !important;
+}
+
+.it-align-right{
+    float: right !important;
+}
+
+.it-negrita{
+    font-weight: bold;
+}
+
+.calendar{
+    width:450px !important;
+}
+
+.ui-panel .ui-panel-content {
+    padding:0px;
+}
+
+.colorVerde{
+    color: green;
+}
+
+.colorRojo{
+    color: red;
+}
+
+.ico_empresa {
+    background: url(../Style/icon/ic_store.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_empleado{
+    background: url(../Style/ic_actors.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_percepcion{
+    background: url(../Style/icon/ic_percepcion.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_deduccion{
+    background: url(../Style/icon/ic_deduccion.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_usuario{
+    background: url(../Style/icon/ic_usuario.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_ec{
+    background: url(../Style/icon/ic_ec.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_econt{
+    background: url(../Style/icon/ic_econt.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_keyboard{
+    background: url(../Style/icon/ic_keyboard.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_settings{
+    background: url(../Style/icon/ic_settings.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_power{
+    background: url(../Style/icon/ic_power.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_cfdi{
+    background: url(../Style/icon/ic_description.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_money{
+    background: url(../Style/icon/ic_money.png) !important;
+    height:16px;
+    width:16px;
+}
+
+.ico_empleado{
+    background: url(../Style/icon/ic_empleado.png) !important;
+    height:16px;
+    width:16px;
+}

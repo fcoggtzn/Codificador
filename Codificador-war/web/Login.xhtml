@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Login</title>
+        <link href="css/Estilos.css" rel="stylesheet" type="text/css"/>
+        <script src="js/custom.js" type="text/javascript"></script>
+    </h:head>
+    <h:body styleClass="fondoImagen" onload="nobackbutton();">
+        <h:form id="loginForm" style="padding: 5% 0;position: relative" >
+            <p:growl autoUpdate="true" />
+            <p:panel id="pnl" header="Login" style="width: 550px; position:relative; top: 0; bottom: 0; margin:auto;">
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:panel>
+                        <p:graphicImage url="Complementos/img/login_icon_mini.png"/>
+                    </p:panel>
+                    <h:panelGrid id="log" columns="2" cellpadding="5" >
+                        <h:outputLabel for="username" value="Usuario:" />  
+                        <p:inputText value="#{accesoController.configuracion.login}"  id="username" required="true" label="Nombre de Usuario" />
+                        <h:outputLabel for="password" value="Password:" />  
+                        <p:password value="#{accesoController.configuracion.password}" id="password" required="true" label="Password" />
+                    </h:panelGrid>
+                </h:panelGrid>
+                <p:panel  style="text-align: center;">
+                    <p:commandButton ajax="true" update="loginForm" action="#{accesoController.loginSesion()}" id="loginButton" value="Login" icon=" ui-icon-locked"/>
+                </p:panel>
+                <p:draggable for="pnl" revert="true"/>
+            </p:panel>
+            <p:draggable for="pnl" axis=""/> 
+        </h:form>
+    </h:body>   
+</html>

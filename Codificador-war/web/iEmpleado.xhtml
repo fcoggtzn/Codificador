@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Empleados</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+
+    <h:body>
+        
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Empleado" id="panelemp">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Empleado" styleClass="it-align-right"/>
+                        <p:inputText id="empleado" value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true" >
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="RFC" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.rfc}" styleClass="it-size" required="true" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="CURP" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.curp}" styleClass="it-size">
+                            <p:ajax immediate="true"/> 
+                        </p:inputText>
+                        <h:outputLabel value="N° Seguro Social" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.numseguroSocial}" styleClass="it-size">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Tipo de Contrato" styleClass="it-align-right"/>
+                        <p:selectOneMenu id="tc" value="#{empleadoController.tipoContrato}" styleClass="som-size" panelStyleClass="som-size" converter="TipoContratoConverter">
+                            <f:selectItems value="#{empleadoController.tiposContrato}" var="tcont" itemValue="#{tcont}" itemLabel="#{tcont.descripcion}"/>
+                            <p:ajax event="change" listener="#{empleadoController.setTipoContrato(tcont)}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Fecha de Inicio" styleClass="it-align-right"/>
+                        <p:calendar id="button" value="#{empleadoController.empleado.fechaInicio}"/>
+                        <h:outputLabel value="Antigüedad" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.antiguedad}" styleClass="it-size"/>
+                        <h:outputLabel value="Régimen Fiscal" styleClass="it-align-right"/>
+                        <p:selectOneMenu value="#{empleadoController.tipoRegimen}" styleClass="som-size" converter="RegimenConverter">
+                            <f:selectItems value="#{empleadoController.tiposRegimen}" var="regf" itemValue="#{regf}" itemLabel="#{regf.descripcion}"/>
+                            <p:ajax event="change" listener="#{empleadoController.setTipoRegimen(regf)}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Entidad Federativa" styleClass="it-align-right"/>
+                        <p:selectOneMenu value="#{empleadoController.estado}" styleClass="som-size" converter="EntidadConverter">
+                            <f:selectItems value="#{empleadoController.estados}" var="est" itemValue="#{est}" itemLabel="#{est.estado}"/>
+                            <p:ajax event="change" listener="#{empleadoController.setEstado(est)}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Periodicidad de Pago" styleClass="it-align-right"/>
+                        <p:selectOneMenu value="#{empleadoController.periodicidadPago}" styleClass="som-size" converter="PeriodicidadPagoConverter">
+                            <f:selectItems value="#{empleadoController.periodicidadesPago}" var="perp" itemValue="#{perp}" itemLabel="#{perp.descripcion}"/>
+                            <p:ajax event="change" listener="#{empleadoController.setPeriodicidadPago(perp)}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Riesgo del Puesto" styleClass="it-align-right"/>
+                        <p:selectOneMenu value="#{empleadoController.riesgoPuesto}" styleClass="som-size" converter="RiesgoPuestoConverter">
+                            <f:selectItems value="#{empleadoController.riesgosPuesto}" var="ripe" itemValue="#{ripe}" itemLabel="#{ripe.descripcion}"/>
+                            <p:ajax event="change" listener="#{empleadoController.setRiesgoPuesto(ripe)}"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel value="Salario Diario Integrado" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.salarioDiarioIntegrado}" styleClass="it-size"/>
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{empleadoController.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.guardarEmpleado()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.limpiarEmpleado()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+            <p:dataTable id="out2" var="emp" value="#{empleadoController.empleados}">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="12" headerText="Empleado" />
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="RFC"/>
+                        <p:column headerText="CURP"/>
+                        <p:column headerText="NSS" />
+                        <p:column headerText="Tipo de Contrato"/>
+                        <p:column headerText="Fecha de Inicio"/>
+                        <p:column headerText="Antigüedad" />
+                        <p:column headerText="Régimen Fiscal"/>
+                        <p:column headerText="Entidad F." />
+                        <p:column headerText="Periodicidad"/>
+                        <p:column headerText="Riesgo" />
+                        <p:column headerText="Salario diario integrado" />
+                        <p:column headerText="" />
+                    </p:row>
+                </p:columnGroup>
+                <p:subTable var="empleado" value="empleadoController.empleados">
+                    <f:facet name="header">
+                        <h:outputText value="#{emp.numEmpleado}" style="color: red" />
+                        <h:outputLabel value=" - " style="color: red"/>
+                        <h:outputText value="#{emp.contribuyente.nombre}" style="color: red"/>
+                    </f:facet>
+                    <p:column headerText="RFC">
+                        <h:outputText value="#{emp.contribuyente.rfc}" />
+                    </p:column>
+                    <p:column headerText="CURP">
+                        <h:outputText value="#{emp.curp}" />
+                    </p:column>
+                    <p:column headerText="N° S.S.">
+                        <h:outputText value="#{emp.numseguroSocial}" />
+                    </p:column>
+                    <p:column headerText="T. Contrato">
+                        <h:outputText value="#{emp.tipoContrato}" converter="TipoContratoConverter" style="font-size: 15px" />
+                    </p:column>
+                    <p:column headerText="F. Inicio">
+                        <h:outputText value="#{emp.fechaInicio}" style="font-size: 15px">
+                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Antigüedad">
+                        <h:outputText value="#{emp.antiguedad}" />
+                    </p:column>
+                    <p:column headerText="Regimen Fiscal">
+                        <h:outputText value="#{emp.tipoRegimen}" converter="RegimenConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Entidad F.">
+                        <h:outputText value="#{emp.claveEntFed}" converter="EntidadConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Periodicidad">
+                        <h:outputText value="#{emp.periodicidadPago}" converter="PeriodicidadPagoConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Riesgo">
+                        <h:outputText value="#{emp.riesgoPuesto}" converter="RiesgoPuestoConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Salario Diario">
+                        <h:outputText value="#{emp.salarioDiarioIntegrado}" />
+                    </p:column>
+                    <p:column headerText="">
+                        <center>
+                            <p:commandButton id="modif" icon="ui-icon-pencil" process="@form" actionListener="#{empleadoController.actualizar(emp)}" immediate="true" update=":formemp :formAct">
+                                <p:tooltip for="modif" value="Editar"/>
+                            </p:commandButton>
+                            <p:commandButton actionListener="#{accesoController.redireccionar('iDeduccionPercepcion.xhtml')}" action="#{contribuyenteController.setEmpleadoPD(emp)}" ajax="false" icon="ui-icon-gear" immediate="true"/>
+                            <p:commandButton icon="ui-icon-closethick" actionListener="#{empleadoController.actualizar(emp)}" oncomplete="PF('dlg').show();" />
+                            
+                        </center>
+                    </p:column>
+                </p:subTable>
+            </p:dataTable>
+            
+            <p:dialog header="Eliminar" widgetVar="dlg">
+                <center>
+                    #{empleadoController.empleado.contribuyente.nombre}
+                    <p:commandButton value="Eliminar" actionListener="#{empleadoController.eliminarEmpleado()}" onclick="PF('dlg').hide();" update=":formemp :formGrid :formAct"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" />
+                </center>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+
+</html>

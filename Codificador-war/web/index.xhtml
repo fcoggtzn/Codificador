@@ -3,22 +3,21 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
     <h:head>
         <f:facet name="first">
             <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-            <title>PrimeFaces</title>
+            <title>Sole</title>
         </f:facet>
     </h:head>
 
     <h:body>
-        <h:form>   
-            <h:outputLabel value="#{pruebaFirma.firma}"></h:outputLabel>
-
-            <p:commandButton ajax="false" actionListener="#{pruebaFirma.generaCFDI}" value="Genera CFDI"></p:commandButton>
-            <p:growl  life="200000" />
-
+        <h:form>
+            <ui:include src="resources/menu.xhtml"/>
+          <!--  <h:outputLabel value="{pruebaFirma.firma}"></h:outputLabel> -->
+            <p:growl  life="5000" />
         </h:form>
     </h:body>
 

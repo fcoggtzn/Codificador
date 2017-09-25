@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Deducción</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Deducción" id="panelemp">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Deducción: " styleClass="it-align-right"/>
+                        <p:inputText value="#{contribuyenteController.deduccion.tipoDeduccion}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Clave: " styleClass="it-align-right"/>
+                        <p:inputText value="#{contribuyenteController.deduccion.tipoClave}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Concepto: " styleClass="it-align-right"/>
+                        <p:inputText value="#{contribuyenteController.deduccion.concepto}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{contribuyenteController.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{contribuyenteController.guardarDeduccion()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{contribuyenteController.limpiarDeduccion()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+            <p:dataTable id="out2" var="dedu" value="#{contribuyenteController.deducciones}">
+                <p:column headerText="Tipo de Percepción">
+                    <h:outputLabel value="#{dedu.tipoDeduccion}"/>
+                </p:column>
+                <p:column headerText="Tipo Clave">
+                    <h:outputLabel value="#{dedu.tipoClave}"/>
+                </p:column>
+                <p:column headerText="Concepto">
+                    <h:outputLabel value="#{dedu.concepto}"/>
+                </p:column>
+                <p:column headerText="">
+                    <center>
+                        <p:commandButton id="modif" icon="ui-icon-pencil" process="@form" actionListener="#{contribuyenteController.actualizarDeduccion(dedu)}" immediate="true" update=":formemp :formAct">
+                            <p:tooltip for="modif" value="Editar"/>
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-closethick" actionListener="#{contribuyenteController.actualizarDeduccion(dedu)}" oncomplete="PF('dlg').show();" />
+                    </center>
+                </p:column>
+            </p:dataTable>
+            <p:dialog header="Eliminar" widgetVar="dlg">
+                <center>
+                    <p:commandButton value="Eliminar" actionListener="#{contribuyenteController.eliminarDeduccion()}" onclick="PF('dlg').hide();" update=":formemp :formGrid :formAct"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

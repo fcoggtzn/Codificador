@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Deducción - Percepción</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+        <h:form id="formemp">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Empleado" id="panelemp">
+                    <h:outputLabel value="#{contribuyenteController.empleado.contribuyente.nombre}" styleClass="colorVerde"/>
+                    <br/>
+                    <p:commandButton icon="ui-icon-circle-arrow-w" value="Regresar" actionListener="#{accesoController.redireccionar('iEmpleado.xhtml')}" ajax="false" immediate="true"/>
+                </p:panel>
+                <p:panel header="Percepción - Deducción" id="perc">
+                    <p:panelGrid columns="3" columnClasses="no-border, no-border, no-border">
+                        <h:outputLabel value="Percepción: " styleClass="it-align-right"/>
+                        <p:selectOneMenu  value="#{contribuyenteController.percepcion}" styleClass="som-size" converter="percepcionConverter" immediate="true">
+                            <f:selectItem itemLabel="Seleccionar Percepción" itemValue="#{contribuyenteController.firstPercepcion}" noSelectionOption="true"/>
+                            <f:selectItems value="#{contribuyenteController.percepciones}" var="perc" itemValue="#{perc}" itemLabel="#{perc.concepto}"/>
+                            <p:ajax event="change" listener="#{contribuyenteController.setPercepcion(perc)}"/>
+                            <p:ajax event="keydown" listener="#{contribuyenteController.setPercepcion(perc)}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton actionListener="#{contribuyenteController.guardarPercepcionEmpleado()}" icon="ui-icon-plus" immediate="true" update=":formemp"/>
+                    </p:panelGrid>
+                    <p:dataTable id="outper" var="percepcionX" value="#{contribuyenteController.percepcionesEmpleado}" editable="true" style="margin-bottom:10px">
+                        <p:ajax event="rowEdit" listener="#{contribuyenteController.onRowEdit}"  />
+                        <p:ajax event="rowEditCancel" listener="#{contribuyenteController.onRowCancel}"  />
+                        <p:column headerText="Percepción">
+                            <h:outputLabel value="#{percepcionX.percepcion.concepto}"/>
+                        </p:column>
+                        <p:column headerText="Tipo de Percepción">
+                            <h:outputLabel value="#{percepcionX.percepcion.tipoPercepcion}"/>
+                        </p:column>
+                        <p:column headerText="Tipo de Clave">
+                            <h:outputLabel value="#{percepcionX.percepcion.tipoClave}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{percepcionX.cantidad}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{percepcionX.cantidad}" style="width:96%" label="Cantidad"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width:40px">
+                            <p:rowEditor />
+                        </p:column>
+                        <p:column headerText="">
+                            <center>
+                                <p:commandButton icon="ui-icon-closethick" actionListener="#{contribuyenteController.actualizarDeduccionPercepcion(percepcionX)}" oncomplete="PF('dlg').show();" immediate="true" update=":formemp"/>
+                            </center>
+                        </p:column>
+                    </p:dataTable>
+                    
+                    <hr/>
+                    <p:panelGrid columns="3" columnClasses="no-border, no-border, no-border">
+                        <h:outputLabel value="Deduccion: " styleClass="it-align-right"/>
+                        <p:selectOneMenu  value="#{contribuyenteController.deduccion}" styleClass="som-size" converter="deduccionConverter" immediate="true">
+                            <f:selectItem itemLabel="Seleccionar Deduccion" itemValue="#{contribuyenteController.firstDeduccion}" noSelectionOption="true"/>
+                            <f:selectItems value="#{contribuyenteController.deducciones}" var="dedu" itemValue="#{dedu}" itemLabel="#{dedu.concepto}"/>
+                            <p:ajax event="change" listener="#{contribuyenteController.setDeduccion(dedu)}"/>
+                            <p:ajax event="keydown" listener="#{contribuyenteController.setDeduccion(dedu)}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton actionListener="#{contribuyenteController.guardarDeduccionEmpleado()}" icon="ui-icon-plus" immediate="true" update=":formemp"/>
+                    </p:panelGrid>
+                    <p:dataTable id="outded" var="deduccionx" value="#{contribuyenteController.deduccionesEmpleado}" editable="true" style="margin-bottom:10px">
+                        <p:ajax event="rowEdit" listener="#{contribuyenteController.onRowEditD}"  />
+                        <p:ajax event="rowEditCancel" listener="#{contribuyenteController.onRowCancel}"  />
+                        <p:column headerText="Deduccion">
+                            <h:outputLabel value="#{deduccionx.deduccion.concepto}"/>
+                        </p:column>
+                        <p:column headerText="Tipo de Deducción">
+                            <h:outputLabel value="#{deduccionx.deduccion.tipoDeduccion}"/>
+                        </p:column>
+                        <p:column headerText="Tipo de Clave">
+                            <h:outputLabel value="#{deduccionx.deduccion.tipoClave}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{deduccionx.cantidad}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{deduccionx.cantidad}" style="width:96%" label="Cantidad"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width:40px">
+                            <p:rowEditor />
+                        </p:column>
+                        <p:column headerText="">
+                            <center>
+                                <p:commandButton icon="ui-icon-closethick" actionListener="#{contribuyenteController.actualizarDeduccionPercepcion(deduccionx)}" oncomplete="PF('dlg').show();" immediate="true" update=":formemp"/>
+                            </center>
+                        </p:column>
+                    </p:dataTable>
+                    
+                </p:panel>
+            </center>
+            <p:dialog header="Eliminar" widgetVar="dlg">
+                <center>
+                    <p:commandButton value="Eliminar" actionListener="#{contribuyenteController.eliminarDeduccionPercepcion()}" onclick="PF('dlg').hide();" update=":formemp"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" />
+                </center>
+            </p:dialog>
+
+        </h:form>
+
+
+    </h:body>
+</html>

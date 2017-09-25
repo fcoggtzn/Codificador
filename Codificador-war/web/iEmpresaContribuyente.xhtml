@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Empresa - Contribuyente</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Empresa-Contribuyente" id="panelemp">
+                    <p:panelGrid id="pgemp" columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Empresa (RFC): " styleClass="it-align-right"/>
+                        <p:autoComplete id="empSimple" value="#{contribuyenteController.empresaContribuyente.empresa}"
+                                        completeMethod="#{contribuyenteController.completeTextRFCEC}"
+                                        var="valor1" itemLabel="#{valor1.contribuyente.rfc}" itemValue="#{valor1}"
+                                        immediate="true" converter="empresaConverter"
+                                        size="55">
+                            <p:ajax immediate="true"/>
+                            <p:ajax event="itemSelect" update=":formemp"/>
+                            <p:column>
+                                <h:outputLabel value="#{valor1.empresa}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{valor1.descripcion}"/>
+                            </p:column>
+                        </p:autoComplete>
+                         <h:outputLabel value=" " />
+                        <p:inputText id="emp" value="#{valor1.empresa}" styleClass="it-size" immediate="true" disabled="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Contribuyente (RFC): " styleClass="it-align-right"/>
+                        <p:autoComplete id="acSimple" value="#{contribuyenteController.empresaContribuyente.contribuyente}"
+                                        completeMethod="#{contribuyenteController.completeTextRFC}"
+                                        var="valor" itemLabel="#{valor.rfc}" itemValue="#{valor}"
+                                        immediate="true" converter="contribuyenteConverter"
+                                        size="55">
+                            <p:ajax immediate="true"/>
+                            <p:ajax event="itemSelect" update=":formemp"/>
+                            <p:column>
+                                <h:outputLabel value="#{valor.rfc}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{valor.nombre}"/>
+                            </p:column>
+                        </p:autoComplete>
+                        <h:outputLabel value=" " />
+                        <p:inputText id="nombre" value="#{valor.nombre}" styleClass="it-size" immediate="true" disabled="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{contribuyenteController.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{contribuyenteController.guardarEmpresaContribuyente()}" immediate="true" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{contribuyenteController.limpiarEmpresaContribuyente()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+            <p:dataTable id="out2" var="val" value="#{contribuyenteController.empresasContribuyentes}">
+                <p:column headerText="Empresa">
+                    <h:outputLabel value="#{val.empresa.empresa} - #{val.empresa.contribuyente.rfc}"/>
+                </p:column>
+                <p:column headerText="Contribuyente">
+                    <h:outputLabel value="#{val.contribuyente.nombre} - #{val.contribuyente.rfc}"/>
+                </p:column>
+                <p:column headerText="">
+                    <center>
+                        <p:commandButton id="modif" icon="ui-icon-pencil" process="@form" actionListener="#{contribuyenteController.actualizarEmpresaContribuyente(val)}" immediate="true" update=":formemp :formAct">
+                            <p:tooltip for="modif" value="Editar"/>
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-closethick" actionListener="#{contribuyenteController.actualizarEmpresaContribuyente(val)}" oncomplete="PF('dlg').show();" />
+                    </center>
+                </p:column>
+            </p:dataTable>
+            <p:dialog header="Eliminar #{contr.nombre}" widgetVar="dlg">
+                <center>
+                    <p:commandButton value="Eliminar" actionListener="#{contribuyenteController.eliminarEmpresaContribuyente()}" onclick="PF('dlg').hide();" update=":formemp :formGrid :formAct"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" />
+                </center>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</html>

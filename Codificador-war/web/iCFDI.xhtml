@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>CFDI</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+
+    <h:body>
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Nomina">
+                    <f:facet name="header">
+                        <p:commandButton value="Empleado" oncomplete="PF('dlgemp').show();" immediate="true"/>
+                    </f:facet>
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <p:separator/>
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <h:outputLabel value="Comprobante"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <h:outputLabel value="Serie" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Folio" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Fecha" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Forma de Pago" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Sub Total" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Descuento" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Total" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+                        <h:outputLabel value="Tipo de Comprobante" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Metodo de Pago" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Lugar de Expedicion" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+                        <p:separator/>
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <h:outputLabel value="Emisor"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <h:outputLabel value="Emisor" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="RFC-Emisor" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Regimen Fiscal" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Registro Patronal" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+                        <p:separator/>
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <h:outputLabel value="Receptor"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <h:outputLabel value="N° Empleado" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Receptor" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="RFC-Receptor" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="CURP" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="NSS" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Fecha Inicio Laboral" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Antigüedad" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Tipo de Contrato" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Tipo de Regimen" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Riesgo de Puesto" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Perioricidad de Pago" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Salario Diario Integrado" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Entidad Federativa" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+                        <p:separator/>
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <h:outputLabel value="Concepto"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <h:outputLabel value="Producto-Servocio" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Descripcion" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Cantidad" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Clave Unitaria" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+                        <h:outputLabel value="Valor Unitario" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Importe" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Descuento" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+
+                    </p:panelGrid>
+
+                </p:panel>
+                <p:panel header="Persepcion">
+
+                </p:panel>
+                <p:panel header="Deduccion">
+
+                </p:panel>
+            </center>
+            <p:dialog header="Empleado" widgetVar="dlgemp">
+                <center>
+                    <p:panelGrid columns="2">
+                        <h:outputLabel value="Empleado"/>
+                        <p:autoComplete id="empSimple" value="#{contribuyenteController.empleado}"
+                                        completeMethod="#{contribuyenteController.completeTextRFC}"
+                                        var="valor1" itemLabel="#{valor1.contribuyente.rfc}" itemValue="#{valor1}"
+                                        immediate="true" converter="contribuyenteConverter"
+                                        size="55">
+                            <p:ajax immediate="true"/>
+                            <p:ajax event="itemSelect" update=":formemp"/>
+                            <p:column>
+                                <h:outputLabel value="#{valor1.contribuyente.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{valor1.contribuyente.rfc}"/>
+                            </p:column>
+                        </p:autoComplete>
+
+                    </p:panelGrid>
+                    <p:commandButton value="Eliminar" actionListener="#{contribuyenteController.eliminarEmpresa()}" onclick="PF('dlgemp').hide();" update=":formemp :formGrid :formAct"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgemp').hide();" />
+
+                </center>
+            </p:dialog>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+            <p:dataTable id="out2" var="emp" value="#{empleadoController.empleados}">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column colspan="12" headerText="Empleado" />
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="RFC"/>
+                        <p:column headerText="CURP"/>
+                        <p:column headerText="NSS" />
+                        <p:column headerText="Tipo de Contrato"/>
+                        <p:column headerText="Fecha de Inicio"/>
+                        <p:column headerText="Antigüedad" />
+                        <p:column headerText="Régimen Fiscal"/>
+                        <p:column headerText="Entidad F." />
+                        <p:column headerText="Periodicidad"/>
+                        <p:column headerText="Riesgo" />
+                        <p:column headerText="Salario diario integrado" />
+                        <p:column headerText="" />
+                    </p:row>
+                </p:columnGroup>
+                <p:subTable var="empleado" value="empleadoController.empleados">
+                    <f:facet name="header">
+                        <h:outputText value="#{emp.numEmpleado}" style="color: red" />
+                        <h:outputLabel value=" - " style="color: red"/>
+                        <h:outputText value="#{emp.contribuyente.nombre}" style="color: red"/>
+                    </f:facet>
+                    <p:column headerText="RFC">
+                        <h:outputText value="#{emp.contribuyente.rfc}" />
+                    </p:column>
+                    <p:column headerText="CURP">
+                        <h:outputText value="#{emp.curp}" />
+                    </p:column>
+                    <p:column headerText="N° S.S.">
+                        <h:outputText value="#{emp.numseguroSocial}" />
+                    </p:column>
+                    <p:column headerText="T. Contrato">
+                        <h:outputText value="#{emp.tipoContrato}" converter="TipoContratoConverter" style="font-size: 15px" />
+                    </p:column>
+                    <p:column headerText="F. Inicio">
+                        <h:outputText value="#{emp.fechaInicio}" style="font-size: 15px">
+                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Antigüedad">
+                        <h:outputText value="#{emp.antiguedad}" />
+                    </p:column>
+                    <p:column headerText="Regimen Fiscal">
+                        <h:outputText value="#{emp.tipoRegimen}" converter="RegimenConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Entidad F.">
+                        <h:outputText value="#{emp.claveEntFed}" converter="EntidadConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Periodicidad">
+                        <h:outputText value="#{emp.periodicidadPago}" converter="PeriodicidadPagoConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Riesgo">
+                        <h:outputText value="#{emp.riesgoPuesto}" converter="RiesgoPuestoConverter" style="font-size: 15px"/>
+                    </p:column>
+                    <p:column headerText="Salario Diario">
+                        <h:outputText value="#{emp.salarioDiarioIntegrado}" />
+                    </p:column>
+                    <p:column headerText="">
+                        <center>
+                            <p:commandButton id="modif" icon="ui-icon-pencil" process="@form" actionListener="#{empleadoController.actualizar(emp)}" immediate="true" update=":formemp :formAct">
+                                <p:tooltip for="modif" value="Editar"/>
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-closethick" actionListener="#{empleadoController.actualizar(emp)}" oncomplete="PF('dlg').show();" />
+                        </center>
+                    </p:column>
+                </p:subTable>
+            </p:dataTable>
+
+            <p:dialog header="Eliminar" widgetVar="dlg">
+                <center>
+                    #{empleadoController.empleado.contribuyente.nombre}
+                    <p:commandButton value="Eliminar" actionListener="#{empleadoController.eliminarEmpleado()}" onclick="PF('dlg').hide();"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlg').hide();" />
+                </center>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+
+</html>
