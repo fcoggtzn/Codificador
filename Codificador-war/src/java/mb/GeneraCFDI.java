@@ -5,22 +5,34 @@
  */
 package mb;
 
+import ejb.CrearCFDILocal;
+import java.io.FileNotFoundException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.NoSuchAlgorithmException;
+import java.time.temporal.ChronoUnit;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import javax.faces.bean.ManagedProperty;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.TransformerException;
+import nomina.entidad.DeduccionPercepcion;
 import nomina.entidad.Empleado;
+import nomina.entidad.Empresa;
 import sat.CEstado;
 import sat.CMetodoPago;
 import sat.CMoneda;
@@ -39,37 +51,94 @@ import utilerias.CertificadoUsuario;
 @Named(value = "generaCFDI")
 @SessionScoped
 public class GeneraCFDI implements Serializable {
-    
+
+    @EJB
+    private CrearCFDILocal crearCFDI;
+
     private Comprobante cfdi;
     private final boolean activoNomina = true;
-    @Inject
-    private ContribuyenteController contribuyente;
-    
+    private Date fechaIPago;
+    private Double diasPagados = 0.0;
+
+    Empleado empleado;
+    Empresa empresa;
+
+    public Date getFechaIPago() {
+        return fechaIPago;
+    } 
+
+    public void setFechaIPago(Date fechaIPago) {
+        this.fechaIPago = fechaIPago;
+    }
+
+    public Double getDiasPagados() {
+        return diasPagados;
+    }
+
+    public void setDiasPagados(Double diasPagados) {
+        this.diasPagados = diasPagados;
+    }
 
     /**
      * Creates a new instance of GeneraCFDI
      */
     public GeneraCFDI() {
-      
+        empleado = (Empleado) this.recuperarParametroObject("empleadoN");
+        empresa = (Empresa) this.recuperarParametroObject("empresaActual");
+        Calendar calendar = Calendar.getInstance();
+        fechaIPago = calendar.getTime();
+    }
+
+    protected Object recuperarParametroObject(String parametro) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
+        Object retorno = session.getAttribute(parametro);
+        return retorno;
     }
     
     
-   public void llenarCFDI(ActionEvent event) throws DatatypeConfigurationException{
-          // TODO code application logic here
+    
+    public void addMessage(String summary) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary,  null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+   
+        
+    
+    
+    public void generarNomina(ActionEvent event){
+         try {
+            llenarCFDI();
+        } catch (DatatypeConfigurationException ex) {
+            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         addMessage("Generando Nomina");
+          // String firmar = firma.firmar("VivaMexico","TME960709LR2");
+        try {
+            this.crearCFDI.crear(cfdi);
+        } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
+            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     
+    }
+
+    public void llenarCFDI() throws DatatypeConfigurationException {
+        // TODO code application logic here
         /*  Crear xml */
+        empleado = (Empleado) this.recuperarParametroObject("empleadoN");
 
         cfdi = new Comprobante();
         cfdi.setSerie("A");
         cfdi.setFolio("01");
         Comprobante.Emisor emisor = new Comprobante.Emisor();
-        emisor.setNombre(contribuyente.getEmpresa().getContribuyente().getNombre());
-        emisor.setRfc(contribuyente.getEmpresa().getContribuyente().getRfc());
-        emisor.setRegimenFiscal(contribuyente.getEmpresa().getRegimenFiscal());
+        emisor.setNombre(empresa.getContribuyente().getNombre());
+        emisor.setRfc(empresa.getContribuyente().getRfc());
+        emisor.setRegimenFiscal(empresa.getRegimenFiscal());
         //601 Morales
         //603 
         Comprobante.Receptor receptor = new Comprobante.Receptor();
         //  receptor.setNombre("Pruebas y Mas S de RL MI de CV");
-        receptor.setRfc(contribuyente.getEmpleado().getContribuyente().getRfc());
+        receptor.setRfc(empleado.getContribuyente().getRfc());
 
         // uso del cfdi
         //receptor.setUsoCFDI(CUsoCFDI.G_01); //aquieren mercancias
@@ -82,7 +151,7 @@ public class GeneraCFDI implements Serializable {
         //   cfdi.setMoneda(CMoneda.);        
         cfdi.setMetodoPago(CMetodoPago.PUE);
         /*   cfdi.setF*/
-        cfdi.setLugarExpedicion("20140");//falta codigo postal
+        cfdi.setLugarExpedicion(empresa.getCp());//falta codigo postal
         cfdi.setVersion("3.3");
 
         /*
@@ -99,34 +168,40 @@ public class GeneraCFDI implements Serializable {
         XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         newXMLGregorianCalendar.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         newXMLGregorianCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        
+
         c.setTime(calendar.getTime());
-          XMLGregorianCalendar fechaPago = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        XMLGregorianCalendar fechaPago = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         fechaPago.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         fechaPago.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        fechaPago.setTime(DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED);
-        
-        
-        calendar.add(Calendar.MONTH, -1);         
-        c.setTime(calendar.getTime());
-          XMLGregorianCalendar fechaIPapgo = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaPago.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+
+        calendar.add(Calendar.MONTH, -1);
+        c.setTime(this.fechaIPago);
+        XMLGregorianCalendar fechaIPapgo = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         fechaIPapgo.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         fechaIPapgo.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        fechaIPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED);
-
-        calendar.add(Calendar.YEAR, -1);         
-        c.setTime(calendar.getTime());
-          XMLGregorianCalendar fechaInicio = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaIPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+        
+        calendar.add(Calendar.YEAR, -1);
+        c.setTime(empleado.getFechaInicio());
+        XMLGregorianCalendar fechaInicio = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         fechaInicio.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         fechaInicio.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        fechaInicio.setTime(DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED,DatatypeConstants.FIELD_UNDEFINED);
+        fechaInicio.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
         
- 
+        //Interval interval = new Interval(empleado.getFechaInicio(), this.fechaIPago);
+                Calendar calendarInicio = Calendar.getInstance();
+                calendarInicio.setTime(empleado.getFechaInicio());
+                Calendar calendarPago = Calendar.getInstance();
+                calendarPago.setTime(this.fechaIPago);
+
+       
+        long daysBetween = ChronoUnit.DAYS.between(calendarInicio.toInstant(), calendarPago.toInstant());
         
-        
+
         cfdi.setFecha(newXMLGregorianCalendar);
 
-        CertificadoUsuario certificadoUsuario = new CertificadoUsuario("TME960709LR2");
+        CertificadoUsuario certificadoUsuario = new CertificadoUsuario(empresa.getContribuyente().getRfc()/*"TME960709LR2"*/);
 
         cfdi.setCertificado(certificadoUsuario.getBase64Certificado());
         //cfdi.setNoCertificado("20001000000300022763");
@@ -134,11 +209,93 @@ public class GeneraCFDI implements Serializable {
         cfdi.setTipoCambio(new BigDecimal(1.0));
         cfdi.setMoneda(CMoneda.MXN);
 
-       
-
         Comprobante.Conceptos.Concepto concepto = new Comprobante.Conceptos.Concepto();
         if (this.activoNomina) {
             cfdi.setFormaPago("PAGO EN UNA SOLA EXHIBICION");
+            
+            
+            cfdi.setTipoDeComprobante(CTipoDeComprobante.N);
+
+            /*Complemento de nomina */
+            Nomina nomina = new Nomina();
+            nomina.setVersion("1.2");
+            nomina.setTipoNomina(CTipoNomina.O);
+            nomina.setFechaPago(fechaPago);
+
+            nomina.setFechaInicialPago(fechaIPapgo);
+            nomina.setFechaFinalPago(fechaPago);
+            nomina.setNumDiasPagados(new BigDecimal(this.diasPagados).setScale(3, RoundingMode.HALF_UP));
+            Nomina.Emisor emisorNomina = new Nomina.Emisor();
+            //    emisorNomina.setRfcPatronOrigen(emisor.getRfc());
+            emisorNomina.setRegistroPatronal(empresa.getRegistroPatronal()/*"5525665412"*/);
+
+            nomina.setEmisor(emisorNomina);
+
+            Nomina.Receptor empleado = new Nomina.Receptor();
+            empleado.setCurp(this.empleado.getCurp()/*"GUNF750511HASTJR05"*/);
+            empleado.setNumSeguridadSocial(this.empleado.getNumseguroSocial()/*"04078873454"*/);
+            empleado.setTipoContrato(this.empleado.getTipoContrato()/*"01"*/);
+            empleado.setFechaInicioRelLaboral(fechaInicio);
+            
+            empleado.setAntigüedad("P"+(daysBetween/7)+"W");
+            empleado.setClaveEntFed(CEstado.AGU);
+            empleado.setTipoRegimen(this.empleado.getTipoRegimen()/*"02"*/); //02-Sueldos,03 Jubilados, 04 Pensionados, 09 Asimilados Honorarios
+            empleado.setNumEmpleado(this.empleado.getNumEmpleado().toString()/*"001"*/);
+            empleado.setPeriodicidadPago(this.empleado.getPeriodicidadPago()/*"06"*/); //ver hoja 34  
+            empleado.setRiesgoPuesto(this.empleado.getRiesgoPuesto()/*"2"*/);
+            empleado.setSalarioDiarioIntegrado(new BigDecimal(this.empleado.getSalarioDiarioIntegrado()/*435.50*/).setScale(2, RoundingMode.HALF_UP));
+            nomina.setReceptor(empleado);
+            Nomina.Percepciones percepciones = new Nomina.Percepciones();
+            Nomina.Deducciones deducciones = new Nomina.Deducciones();
+            Double pTotalExento = 0.0;
+            Double pTotalGravado = 0.0;
+            Double pTotalT = 0.0;
+            Double dTotalExento = 0.0;
+            Double dTotalGravado = 0.0;
+            Double dTotalT = 0.0;
+            for (DeduccionPercepcion perDed : this.empleado.getDeduccionPercepcionCollection()) {
+                if (perDed.getPercepcion() != null) {
+                    Nomina.Percepciones.Percepcion valPer = new Nomina.Percepciones.Percepcion();
+                    valPer.setTipoPercepcion(perDed.getPercepcion().getTipoPercepcion());
+                    valPer.setClave(perDed.getPercepcion().getTipoClave());
+                    valPer.setConcepto(perDed.getPercepcion().getConcepto());
+                    valPer.setImporteExento(new BigDecimal(perDed.getExento()).setScale(2, RoundingMode.HALF_UP));
+                    valPer.setImporteGravado(new BigDecimal(perDed.getGravado()).setScale(2, RoundingMode.HALF_UP));
+                    percepciones.getPercepcion().add(valPer);
+                    pTotalExento = pTotalExento + perDed.getExento();
+                    pTotalGravado = pTotalGravado + perDed.getGravado();
+                    pTotalT = pTotalExento + pTotalGravado;
+                } else {
+                    Nomina.Deducciones.Deduccion valDed = new Nomina.Deducciones.Deduccion();
+                    valDed.setTipoDeduccion(perDed.getDeduccion().getTipoDeduccion());
+                    valDed.setClave(perDed.getDeduccion().getTipoClave());
+                    valDed.setConcepto(perDed.getDeduccion().getConcepto());
+                    valDed.setImporte(new BigDecimal(perDed.getExento()+perDed.getGravado()).setScale(2, RoundingMode.HALF_UP));
+                    deducciones.getDeduccion().add(valDed);
+                    dTotalExento = dTotalExento + perDed.getExento();
+                    dTotalGravado = dTotalGravado + perDed.getGravado();
+                    dTotalT = dTotalExento + dTotalGravado;
+                }
+
+            }
+            percepciones.setTotalExento(new BigDecimal(pTotalExento).setScale(2, RoundingMode.HALF_UP)); //suma de percepciones 
+            percepciones.setTotalGravado(new BigDecimal(pTotalGravado).setScale(2, RoundingMode.HALF_UP)); //suma de percepciones 
+            percepciones.setTotalSueldos(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP)); //suma de percepciones 
+            deducciones.setTotalImpuestosRetenidos(new BigDecimal(dTotalGravado).setScale(2, RoundingMode.HALF_UP));
+            deducciones.setTotalOtrasDeducciones(new BigDecimal(dTotalExento).setScale(2, RoundingMode.HALF_UP));
+
+            nomina.setPercepciones(percepciones);
+            nomina.setDeducciones(deducciones);
+
+            //nomina con calculos TotalDeducciones="1234.09" TotalOtrosPagos="0.0" TotalPercepciones="7500.05"
+            nomina.setTotalOtrosPagos(new BigDecimal(pTotalExento).setScale(2, RoundingMode.HALF_UP));
+            nomina.setTotalPercepciones(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
+            nomina.setTotalDeducciones(new BigDecimal(dTotalT).setScale(2, RoundingMode.HALF_UP));
+
+            Comprobante.Complemento complemento = new Comprobante.Complemento();
+            complemento.getAny().add(nomina);
+            cfdi.getComplemento().add(complemento);
+
             //        <cfdi:Concepto cantidad="1" unidad="ACT" descripcion="Pago de nómina" valorUnitario="7500.05" importe="7500.05" />
             /*agregar concepto */
             concepto.setCantidad(new BigDecimal(1));
@@ -149,110 +306,22 @@ public class GeneraCFDI implements Serializable {
             concepto.setClaveProdServ("84111505");
             // concepto.setUnidad("ACT");
             concepto.setDescripcion("Pago de nómina");
-            concepto.setValorUnitario(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP));
-            concepto.setImporte(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP));
-            concepto.setDescuento(new BigDecimal(1054.75+179.34).setScale(2, RoundingMode.HALF_UP));
 
+            concepto.setValorUnitario(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
+            concepto.setImporte(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
+            concepto.setDescuento(new BigDecimal(dTotalT).setScale(2, RoundingMode.HALF_UP));
+            
             //subTotal="7500.05" descuento="1234.09" Moneda="MXN" TipoCambio="1" total="6265.96" 
-            cfdi.setSubTotal(new BigDecimal(7500.05).setScale(2, RoundingMode.HALF_UP));
-            cfdi.setDescuento(new BigDecimal(1234.09).setScale(2, RoundingMode.HALF_UP));
-            cfdi.setTotal(new BigDecimal(6265.96).setScale(2, RoundingMode.HALF_UP));
+            cfdi.setSubTotal(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
+            cfdi.setDescuento(new BigDecimal(dTotalT).setScale(2, RoundingMode.HALF_UP));
+            cfdi.setTotal(new BigDecimal(pTotalT-dTotalT).setScale(2, RoundingMode.HALF_UP));
 
-            cfdi.setTipoDeComprobante(CTipoDeComprobante.N);
 
-            /*Complemento de nomina */
-            Nomina nomina = new Nomina();
-            nomina.setVersion("1.2");
-            nomina.setTipoNomina(CTipoNomina.O);
-            nomina.setFechaPago(fechaPago);
-            
-            nomina.setFechaInicialPago(fechaIPapgo);
-            nomina.setFechaFinalPago(fechaPago);
-            nomina.setNumDiasPagados(new BigDecimal(14.5).setScale(3, RoundingMode.HALF_UP));
-            Nomina.Emisor emisorNomina = new Nomina.Emisor();
-        //    emisorNomina.setRfcPatronOrigen(emisor.getRfc());
-            emisorNomina.setRegistroPatronal("5525665412");
-            
-            nomina.setEmisor(emisorNomina);
-            
-            Nomina.Receptor empleado = new Nomina.Receptor();
-            empleado.setCurp("GUNF750511HASTJR05");
-            empleado.setNumSeguridadSocial("04078873454");
-            empleado.setTipoContrato("01");
-            empleado.setFechaInicioRelLaboral(fechaInicio);
-            empleado.setAntigüedad("P21W");
-            empleado.setClaveEntFed(CEstado.AGU);
-            empleado.setTipoRegimen("02"); //02-Sueldos,03 Jubilados, 04 Pensionados, 09 Asimilados Honorarios
-            empleado.setNumEmpleado("001");
-            empleado.setPeriodicidadPago("06"); //ver hoja 34  
-            empleado.setRiesgoPuesto("2");
-            empleado.setSalarioDiarioIntegrado(new BigDecimal(435.50).setScale(2, RoundingMode.HALF_UP));
-            nomina.setReceptor(empleado);
-            Nomina.Percepciones percepciones = new Nomina.Percepciones();
-            Nomina.Percepciones.Percepcion salario = new Nomina.Percepciones.Percepcion();
-            salario.setTipoPercepcion("001");
-            salario.setClave("001");
-            salario.setConcepto("Sueldos, Salarios Rayas y Jornales");
-            salario.setImporteExento(new BigDecimal(0.0).setScale(2, RoundingMode.HALF_UP));
-            salario.setImporteGravado(new BigDecimal(6250.05).setScale(2, RoundingMode.HALF_UP));
-            Nomina.Percepciones.Percepcion asistencia = new Nomina.Percepciones.Percepcion();
-            asistencia.setTipoPercepcion("049");
-            asistencia.setClave("014");
-            asistencia.setConcepto("Premios de asistencia");
-            asistencia.setImporteExento(new BigDecimal(0.0).setScale(2, RoundingMode.HALF_UP));
-            asistencia.setImporteGravado(new BigDecimal(625.0).setScale(2, RoundingMode.HALF_UP));
-            Nomina.Percepciones.Percepcion puntualidad = new Nomina.Percepciones.Percepcion();
-            puntualidad.setTipoPercepcion("010");
-            puntualidad.setClave("013");
-            puntualidad.setConcepto("Premios por puntualidad");
-            puntualidad.setImporteExento(new BigDecimal(0.0).setScale(2, RoundingMode.HALF_UP));
-            puntualidad.setImporteGravado(new BigDecimal(625.0).setScale(2, RoundingMode.HALF_UP));
-
-            percepciones.setTotalExento(new BigDecimal(0.0).setScale(2, RoundingMode.HALF_UP)); //suma de percepciones 
-            percepciones.setTotalGravado(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP)); //suma de percepciones 
-            percepciones.setTotalSueldos(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP)); //suma de percepciones 
-
-            percepciones.getPercepcion().add(salario);
-            percepciones.getPercepcion().add(asistencia);
-            percepciones.getPercepcion().add(puntualidad);
-
-            Nomina.Deducciones deducciones = new Nomina.Deducciones();
-            Nomina.Deducciones.Deduccion ISR = new Nomina.Deducciones.Deduccion();
-            ISR.setTipoDeduccion("002");
-            ISR.setClave("001");
-            ISR.setConcepto("ISR");
-            ISR.setImporte(new BigDecimal(1054.75).setScale(2, RoundingMode.HALF_UP));
-
-            Nomina.Deducciones.Deduccion seguro = new Nomina.Deducciones.Deduccion();
-            seguro.setTipoDeduccion("001");
-            seguro.setClave("012");
-            seguro.setConcepto("Seguridad social");
-            seguro.setImporte(new BigDecimal(179.34).setScale(2, RoundingMode.HALF_UP));
-
-            deducciones.setTotalImpuestosRetenidos(new BigDecimal(1054.75).setScale(2, RoundingMode.HALF_UP)); //el isr es retenido
-            deducciones.setTotalOtrasDeducciones(new BigDecimal(179.34).setScale(2, RoundingMode.HALF_UP)); //el isr es retenido
-
-            deducciones.getDeduccion().add(ISR);
-            deducciones.getDeduccion().add(seguro);
-
-            nomina.setPercepciones(percepciones);
-            nomina.setDeducciones(deducciones);
-            
-            //nomina con calculos TotalDeducciones="1234.09" TotalOtrosPagos="0.0" TotalPercepciones="7500.05"
-            nomina.setTotalOtrosPagos(new BigDecimal(0.0).setScale(2, RoundingMode.HALF_UP));
-            nomina.setTotalPercepciones(new BigDecimal(625.0 + 625.0 + 6250.05).setScale(2, RoundingMode.HALF_UP));
-            nomina.setTotalDeducciones(new BigDecimal(1054.75+179.34).setScale(2, RoundingMode.HALF_UP));
-            
-
-            Comprobante.Complemento complemento = new Comprobante.Complemento();
-            complemento.getAny().add(nomina);
-            cfdi.getComplemento().add(complemento);
-
-             cfdi.setFormaPago("99");
+            cfdi.setFormaPago("99");
         } else {
-            
+
             cfdi.setTipoCambio(BigDecimal.ONE);
-            
+
             cfdi.setFormaPago("01");
             cfdi.setTipoDeComprobante(CTipoDeComprobante.I);
 
@@ -309,5 +378,5 @@ public class GeneraCFDI implements Serializable {
         cfdi.setConceptos(conceptos);
 
     }
-    
+
 }

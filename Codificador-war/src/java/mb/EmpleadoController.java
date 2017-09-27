@@ -219,5 +219,5 @@ public class EmpleadoController implements Serializable {
         riesgoPuesto = riesgoPuestoFacade.RiesgoPuestoByCve(empleado.getRiesgoPuesto());
         tipoRegimen = tipoRegimenFacade.getTipoRegimenByRF(empleado.getTipoRegimen());
     }
-
+    
 }

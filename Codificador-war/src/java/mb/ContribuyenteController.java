@@ -5,6 +5,10 @@
  */
 package mb;
 
+import catalogo.servicio.PeriodicidadPagoFacadeLocal;
+import catalogo.servicio.RiesgoPuestoFacadeLocal;
+import catalogo.servicio.TipoContratoFacadeLocal;
+import catalogo.servicio.TipoRegimenFacadeLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -14,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import nomina.entidad.Configuracion;
 import nomina.entidad.Contribuyente;
 import nomina.entidad.Deduccion;
@@ -58,6 +63,15 @@ public class ContribuyenteController extends BaseController implements Serializa
     @EJB
     EmpleadoFacadeLocal empleadoFacade;
 
+    @EJB
+    TipoContratoFacadeLocal tipoContratoFacade;
+    @EJB
+    TipoRegimenFacadeLocal tipoRegimenFacade;
+    @EJB
+    RiesgoPuestoFacadeLocal riesgoPuestoFacade;
+    @EJB
+    PeriodicidadPagoFacadeLocal periodicidadPagoFacade;
+
     private Contribuyente contribuyente;
     private List<Contribuyente> contribuyentes;
     private String textoBoton = "Guardar";
@@ -74,7 +88,6 @@ public class ContribuyenteController extends BaseController implements Serializa
 
     private EmpresaContribuyente empresaContribuyenteNomina;
     private Empleado empleadoNomina;
-    private double cantidad = 0.0;
 
     private DeduccionPercepcion deduccionPercepcionTemp;
     List<DeduccionPercepcion> deduccionesPercepcionesP;
@@ -423,7 +436,7 @@ public class ContribuyenteController extends BaseController implements Serializa
             dp.setDeduccion(null);
             dp.setPercepcion(percepcion);
             dp.setEmpleado(empleado);
-            dp.setCantidad(cantidad);
+            //dp.setExento();
 
             DeduccionPercepcion pTemp = deduccionPercepcionFacade.getPercepcionEmpleado(dp);
             if (pTemp == null) {
@@ -444,7 +457,7 @@ public class ContribuyenteController extends BaseController implements Serializa
             dp.setDeduccion(deduccion);
             dp.setPercepcion(null);
             dp.setEmpleado(empleado);
-            dp.setCantidad(cantidad);
+            //dp.setExento();
             if (deduccionPercepcionFacade.getDeduccionEmpleado(dp) == null) {
                 deduccionPercepcionFacade.create(dp);
                 deduccionesPercepcionesD = deduccionPercepcionFacade.findDeduccionEmpleado(empleado);
@@ -495,8 +508,8 @@ public class ContribuyenteController extends BaseController implements Serializa
     public void setEmpleadoNomina(Empleado empleadoNomina) {
         if (empleadoNomina == null) {
             this.empleadoNomina = new Empleado();
-            percepcionesEmpleadoNomina=new ArrayList<>();
-            deduccionesEmpleadoNomina=new ArrayList<>();
+            percepcionesEmpleadoNomina = new ArrayList<>();
+            deduccionesEmpleadoNomina = new ArrayList<>();
         } else {
             this.empleadoNomina = empleadoNomina;
             percepcionesEmpleadoNomina = deduccionPercepcionFacade.findPercepcionesEmpleado(empleadoNomina);
@@ -508,13 +521,6 @@ public class ContribuyenteController extends BaseController implements Serializa
         return (Empresa) this.recuperarParametroObject("empresaActual");
     }
 
-    public Double getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Double cantidad) {
-        this.cantidad = cantidad;
-    }
 
     public List<DeduccionPercepcion> getPercepcionesEmpleadoNomina() {
         /*
@@ -575,5 +581,46 @@ public class ContribuyenteController extends BaseController implements Serializa
     public void setDeduccionPercepcionTemp(DeduccionPercepcion deduccionPercepcionTemp) {
         this.deduccionPercepcionTemp = deduccionPercepcionTemp;
     }
+
+    public void subirDatosContext() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
+        session.setAttribute("empleadoN", empleadoNomina);
+        //session.setAttribute("empresaN", configuracion.getEmpresa());
+    }
+
+    public String tipoContratoByT() {
+        if (empleadoNomina.getTipoContrato() != null) {
+            return tipoContratoFacade.getTipoContratoByTC(empleadoNomina.getTipoContrato()).getDescripcion();
+        } else {
+            return "";
+        }
+    }
+
+    public String tipoRegimenByT() {
+        if (empleadoNomina.getTipoRegimen() != null) {
+            return tipoRegimenFacade.getTipoRegimenByRF(empleadoNomina.getTipoRegimen()).getDescripcion();
+        } else {
+            return "";
+        }
+    }
+    
+    public String riesgoByT() {
+        if (empleadoNomina.getRiesgoPuesto() != null) {
+            return riesgoPuestoFacade.RiesgoPuestoByCve(empleadoNomina.getRiesgoPuesto()).getDescripcion();
+        } else {
+            return "";
+        }
+    }
+    
+    public String perioricidadByT() {
+        if (empleadoNomina.getPeriodicidadPago() != null) {
+            return periodicidadPagoFacade.getPeriodicidadByPer(empleadoNomina.getPeriodicidadPago()).getDescripcion();
+        } else {
+            return "";
+        }
+    }
+    
+    
 
 }

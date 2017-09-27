@@ -39,6 +39,10 @@ public class DeduccionPercepcion implements Serializable {
     @Column(name = "idaplicable")
     private Integer idaplicable;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "exento")
+    private Double exento;
+    @Column(name = "gravado")
+    private Double gravado;
     @Column(name = "cantidad")
     private Double cantidad;
     @JoinColumn(name = "deduccion_id_deduccion", referencedColumnName = "id_deduccion")
@@ -97,6 +101,24 @@ public class DeduccionPercepcion implements Serializable {
     public void setPercepcion(Percepcion percepcion) {
         this.percepcion = percepcion;
     }
+
+    public Double getExento() {
+        return exento;
+    }
+
+    public void setExento(Double exento) {
+        this.exento = exento;
+    }
+
+    public Double getGravado() {
+        return gravado;
+    }
+
+    public void setGravado(Double gravado) {
+        this.gravado = gravado;
+    }
+    
+    
 
     @Override
     public int hashCode() {

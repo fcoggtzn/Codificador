@@ -45,6 +45,14 @@ and open the template in the editor.
                 </p:panel>
                 <p:panel header="Nomina" id="panelemp"  visible="#{contribuyenteController.empleadoNomina != null}">
                     <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <p:separator/>
+                        <p:separator/>
+                        <h:outputLabel value="Fecha de inicio de Pago:" styleClass="it-align-right"/>
+                        <p:calendar id="fip" value="#{generaCFDI.fechaIPago}" styleClass="it-align-right"/>
+                        <h:outputLabel value="Numero de días pagados:" styleClass="it-align-right"/>
+                        <p:inputText value="#{generaCFDI.diasPagados}" styleClass="it-size">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
 
                         <p:separator/> 
                         <p:toolbar>
@@ -85,13 +93,14 @@ and open the template in the editor.
                         <h:outputLabel value="Antigüedad" styleClass="it-align-right"/>
                         <h:outputLabel value="#{contribuyenteController.empleadoNomina.antiguedad}" styleClass="it-negrita"/>
                         <h:outputLabel value="Tipo de Contrato" styleClass="it-align-right"/>
-                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.tipoContrato}" styleClass="it-negrita"/>
+                        
+                        <h:outputLabel value="#{contribuyenteController.tipoContratoByT()}" styleClass="it-negrita"/>
                         <h:outputLabel value="Tipo de Regimen" styleClass="it-align-right"/>
-                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.tipoRegimen}" styleClass="it-negrita"/>
+                        <h:outputLabel value="#{contribuyenteController.tipoRegimenByT()}" styleClass="it-negrita"/>
                         <h:outputLabel value="Riesgo de Puesto" styleClass="it-align-right"/>
-                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.riesgoPuesto}" styleClass="it-negrita"/>
+                        <h:outputLabel value="#{contribuyenteController.riesgoByT()}" styleClass="it-negrita"/>
                         <h:outputLabel value="Perioricidad de Pago" styleClass="it-align-right"/>
-                        <h:outputLabel value="#{contribuyenteController.empleadoNomina.periodicidadPago}" styleClass="it-negrita"/>
+                        <h:outputLabel value="#{contribuyenteController.perioricidadByT()}" styleClass="it-negrita"/>
                         <h:outputLabel value="Salario Diario Integrado" styleClass="it-align-right"/>
                         <h:outputLabel value="#{contribuyenteController.empleadoNomina.salarioDiarioIntegrado}" styleClass="it-negrita"/>
                         <h:outputLabel value="Entidad Federativa" styleClass="it-align-right"/>
@@ -110,10 +119,16 @@ and open the template in the editor.
                             <p:column headerText="Tipo de Clave">
                                 <p:outputLabel value="#{pe.percepcion.tipoClave}" styleClass="it-negrita"/>
                             </p:column>
-                            <p:column headerText="Cantidad">
+                            <p:column headerText="Exento">
                                 <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{pe.cantidad}" /></f:facet>
-                                    <f:facet name="input"><p:inputText value="#{pe.cantidad}" style="width:96%" label="Cantidad"/></f:facet>
+                                    <f:facet name="output"><h:outputText value="#{pe.exento}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{pe.exento}" style="width:96%" label="Exento"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Gravado">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{pe.gravado}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{pe.gravado}" style="width:96%" label="Gravado"/></f:facet>
                                 </p:cellEditor>
                             </p:column>
                             <p:column style="width:40px">
@@ -134,10 +149,16 @@ and open the template in the editor.
                             <p:column headerText="Tipo de Clave">
                                 <p:outputLabel value="#{de.deduccion.tipoClave}" styleClass="it-negrita"/>
                             </p:column>
-                            <p:column headerText="Cantidad">
+                            <p:column headerText="Otras Deducciones">
                                 <p:cellEditor>
-                                    <f:facet name="output"><h:outputText value="#{de.cantidad}" /></f:facet>
-                                    <f:facet name="input"><p:inputText value="#{de.cantidad}" style="width:96%" label="Cantidad"/></f:facet>
+                                    <f:facet name="output"><h:outputText value="#{de.exento}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{de.exento}" style="width:96%" label="Exento"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Impuestos Retenidos">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{de.gravado}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{de.gravado}" style="width:96%" label="Gravado"/></f:facet>
                                 </p:cellEditor>
                             </p:column>
                             <p:column style="width:40px">
@@ -147,7 +168,9 @@ and open the template in the editor.
                     </p:panel>
                 </p:panel>
                 <p:panel header="Acciones">
-                    <p:commandButton value="Generar Nomina" actionListener="#{generaCFDI.llenarCFDI}"/>
+                    <p:commandButton value="Generar Nomina" actionListener="#{generaCFDI.generarNomina}" rendered="#{contribuyenteController.empleadoNomina.numEmpleado!=null}" >
+                        <p:ajax listener="#{contribuyenteController.subirDatosContext()}"/>
+                    </p:commandButton>
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>

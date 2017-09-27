@@ -53,6 +53,10 @@ and open the template in the editor.
                         <p:inputText id="nombre" value="#{valor.nombre}" styleClass="it-size" immediate="true" disabled="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
+                        <h:outputLabel value="C.P.: " styleClass="it-align-right"/>
+                        <p:inputText value="#{contribuyenteController.empresa.cp}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
                         <h:outputLabel value="Regimen Fiscal: " styleClass="it-align-right"/>
                         <p:inputText value="#{contribuyenteController.empresa.regimenFiscal}" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
@@ -91,6 +95,9 @@ and open the template in the editor.
                 </p:column>
                 <p:column headerText="Registro Patronal">
                     <h:outputLabel value="#{empresa.registroPatronal}"/>
+                </p:column>
+                <p:column headerText="C.P.">
+                    <h:outputLabel value="#{empresa.cp}"/>
                 </p:column>
                 <p:column headerText="">
                     <center>

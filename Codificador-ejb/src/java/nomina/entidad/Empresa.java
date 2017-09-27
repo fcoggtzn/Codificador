@@ -63,6 +63,9 @@ public class Empresa implements Serializable {
     @Size(max = 255)
     @Column(name = "registro_patronal")
     private String registroPatronal;
+    @Size(max = 6)
+    @Column(name = "cp")
+    private String cp;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private Collection<EmpresaContribuyente> empresaContribuyenteCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
@@ -148,6 +151,14 @@ public class Empresa implements Serializable {
 
     public void setContribuyente(Contribuyente contribuyente) {
         this.contribuyente = contribuyente;
+    }
+
+    public String getCp() {
+        return cp;
+    }
+
+    public void setCp(String cp) {
+        this.cp = cp;
     }
 
     @Override
