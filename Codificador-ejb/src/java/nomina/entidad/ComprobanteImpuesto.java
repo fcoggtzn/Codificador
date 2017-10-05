@@ -44,9 +44,9 @@ public class ComprobanteImpuesto implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "cantidad")
     private Double cantidad;
-    @JoinColumn(name = "comprobante_id_comprobante", referencedColumnName = "id_comprobante")
+    @JoinColumn(name = "comprobante_id_comprobante1", referencedColumnName = "id_comprobante")
     @ManyToOne(optional = false)
-    private Comprobante comprobante;
+    private ComprobanteL comprobanteL;
 
     public ComprobanteImpuesto() {
     }
@@ -79,12 +79,12 @@ public class ComprobanteImpuesto implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public Comprobante getComprobante() {
-        return comprobante;
+    public ComprobanteL getComprobanteL() {
+        return comprobanteL;
     }
 
-    public void setComprobante(Comprobante comprobante) {
-        this.comprobante = comprobante;
+    public void setComprobanteL(ComprobanteL comprobanteL) {
+        this.comprobanteL = comprobanteL;
     }
 
     @Override

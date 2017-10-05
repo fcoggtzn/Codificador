@@ -18,7 +18,6 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,12 +58,12 @@ public class Contribuyente implements Serializable {
     private Collection<Empleado> empleadoCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente")
     private Collection<EmpresaContribuyente> empresaContribuyenteCollection;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "contribuyente")
-    private Comprobante comprobante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente1")
-    private Collection<Comprobante> comprobanteCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente")
     private Collection<Empresa> empresaCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente")
+    private Collection<ComprobanteL> comprobanteLCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente1")
+    private Collection<ComprobanteL> comprobanteLCollection1;
 
     public Contribuyente() {
     }
@@ -121,23 +120,6 @@ public class Contribuyente implements Serializable {
         this.empresaContribuyenteCollection = empresaContribuyenteCollection;
     }
 
-    public Comprobante getComprobante() {
-        return comprobante;
-    }
-
-    public void setComprobante(Comprobante comprobante) {
-        this.comprobante = comprobante;
-    }
-
-    @XmlTransient
-    public Collection<Comprobante> getComprobanteCollection() {
-        return comprobanteCollection;
-    }
-
-    public void setComprobanteCollection(Collection<Comprobante> comprobanteCollection) {
-        this.comprobanteCollection = comprobanteCollection;
-    }
-
     @XmlTransient
     public Collection<Empresa> getEmpresaCollection() {
         return empresaCollection;
@@ -145,6 +127,24 @@ public class Contribuyente implements Serializable {
 
     public void setEmpresaCollection(Collection<Empresa> empresaCollection) {
         this.empresaCollection = empresaCollection;
+    }
+
+    @XmlTransient
+    public Collection<ComprobanteL> getComprobanteLCollection() {
+        return comprobanteLCollection;
+    }
+
+    public void setComprobanteLCollection(Collection<ComprobanteL> comprobanteLCollection) {
+        this.comprobanteLCollection = comprobanteLCollection;
+    }
+
+    @XmlTransient
+    public Collection<ComprobanteL> getComprobanteLCollection1() {
+        return comprobanteLCollection1;
+    }
+
+    public void setComprobanteLCollection1(Collection<ComprobanteL> comprobanteLCollection1) {
+        this.comprobanteLCollection1 = comprobanteLCollection1;
     }
 
     @Override

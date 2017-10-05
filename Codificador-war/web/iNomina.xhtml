@@ -48,12 +48,11 @@ and open the template in the editor.
                         <p:separator/>
                         <p:separator/>
                         <h:outputLabel value="Fecha de inicio de Pago:" styleClass="it-align-right"/>
-                        <p:calendar id="fip" value="#{generaCFDI.fechaIPago}" styleClass="it-align-right"/>
+                        <p:calendar id="fip" value="#{generaCFDI.fechaIPago}" styleClass="it-negrita"/>
                         <h:outputLabel value="Numero de días pagados:" styleClass="it-align-right"/>
-                        <p:inputText value="#{generaCFDI.diasPagados}" styleClass="it-size">
+                        <p:inputText value="#{generaCFDI.diasPagados}"  styleClass="it-size" onkeypress="if(event.which &lt; 46 || event.which &gt; 57 ) if(event.which != 10) return false;">
                             <p:ajax immediate="true"/>
                         </p:inputText>
-
                         <p:separator/> 
                         <p:toolbar>
                             <f:facet name="left">

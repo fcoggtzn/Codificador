@@ -85,11 +85,11 @@ public class PruebaFirma implements Serializable {
         
         addMessage("Generando CFDI");
           // String firmar = firma.firmar("VivaMexico","TME960709LR2");
-        try {
-            this.crearCFDI.crear(cfdi);
-        } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
-            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
-        }
+     //   try {
+          //  this.crearCFDI.crear(cfdi,comprobanteX);
+    //    } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
+    //        Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+    //    }
     }
     
     public void llenarCFDI() throws DatatypeConfigurationException{

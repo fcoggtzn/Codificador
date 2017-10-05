@@ -52,7 +52,7 @@ public class Archivos implements Serializable {
     private byte[] contenido;
     @JoinColumn(name = "comprobante_id_comprobante", referencedColumnName = "id_comprobante")
     @ManyToOne(optional = false)
-    private Comprobante comprobante;
+    private ComprobanteL comprobanteL;
 
     public Archivos() {
     }
@@ -93,12 +93,12 @@ public class Archivos implements Serializable {
         this.contenido = contenido;
     }
 
-    public Comprobante getComprobante() {
-        return comprobante;
+    public ComprobanteL getComprobanteL() {
+        return comprobanteL;
     }
 
-    public void setComprobante(Comprobante comprobante) {
-        this.comprobante = comprobante;
+    public void setComprobanteL(ComprobanteL comprobanteL) {
+        this.comprobanteL = comprobanteL;
     }
 
     @Override

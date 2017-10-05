@@ -33,6 +33,11 @@ import javax.xml.transform.TransformerException;
 import nomina.entidad.DeduccionPercepcion;
 import nomina.entidad.Empleado;
 import nomina.entidad.Empresa;
+import nomina.entidad.Folio;
+import nomina.entidad.ComprobanteL;
+import nomina.servicio.ComprobanteLFacadeLocal;
+import nomina.servicio.FolioFacadeLocal;
+
 import sat.CEstado;
 import sat.CMetodoPago;
 import sat.CMoneda;
@@ -54,14 +59,23 @@ public class GeneraCFDI implements Serializable {
 
     @EJB
     private CrearCFDILocal crearCFDI;
+    @EJB private FolioFacadeLocal folioFacade;
+    @EJB private ComprobanteLFacadeLocal comprobanteFacade;
 
     private Comprobante cfdi;
     private final boolean activoNomina = true;
     private Date fechaIPago;
     private Double diasPagados = 0.0;
+    private ComprobanteL comprobanteX;
+    
 
     Empleado empleado;
     Empresa empresa;
+    Folio folio;
+    Comprobante.Emisor emisor;
+    Comprobante.Receptor receptor;
+    Nomina.Percepciones percepciones;
+    Nomina.Deducciones deducciones;
 
     public Date getFechaIPago() {
         return fechaIPago;
@@ -85,7 +99,8 @@ public class GeneraCFDI implements Serializable {
     public GeneraCFDI() {
         empleado = (Empleado) this.recuperarParametroObject("empleadoN");
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(); 
+        calendar.add(Calendar.MONTH, -1);
         fechaIPago = calendar.getTime();
     }
 
@@ -115,7 +130,11 @@ public class GeneraCFDI implements Serializable {
          addMessage("Generando Nomina");
           // String firmar = firma.firmar("VivaMexico","TME960709LR2");
         try {
-            this.crearCFDI.crear(cfdi);
+            guardarComprobante("N",1);
+            this.crearCFDI.crear(cfdi,comprobanteX);
+            
+            
+
         } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
             Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -128,15 +147,17 @@ public class GeneraCFDI implements Serializable {
         empleado = (Empleado) this.recuperarParametroObject("empleadoN");
 
         cfdi = new Comprobante();
-        cfdi.setSerie("A");
-        cfdi.setFolio("01");
-        Comprobante.Emisor emisor = new Comprobante.Emisor();
+        folio=folioFacade.getFolioEmpresa(empresa);
+        cfdi.setSerie(folio.getSerie());
+        cfdi.setFolio(folio.getFolio().toString());
+        folioFacade.folioInc(folio);
+        emisor = new Comprobante.Emisor();
         emisor.setNombre(empresa.getContribuyente().getNombre());
         emisor.setRfc(empresa.getContribuyente().getRfc());
         emisor.setRegimenFiscal(empresa.getRegimenFiscal());
         //601 Morales
         //603 
-        Comprobante.Receptor receptor = new Comprobante.Receptor();
+        receptor = new Comprobante.Receptor();
         //  receptor.setNombre("Pruebas y Mas S de RL MI de CV");
         receptor.setRfc(empleado.getContribuyente().getRfc());
 
@@ -245,8 +266,8 @@ public class GeneraCFDI implements Serializable {
             empleado.setRiesgoPuesto(this.empleado.getRiesgoPuesto()/*"2"*/);
             empleado.setSalarioDiarioIntegrado(new BigDecimal(this.empleado.getSalarioDiarioIntegrado()/*435.50*/).setScale(2, RoundingMode.HALF_UP));
             nomina.setReceptor(empleado);
-            Nomina.Percepciones percepciones = new Nomina.Percepciones();
-            Nomina.Deducciones deducciones = new Nomina.Deducciones();
+            percepciones = new Nomina.Percepciones();
+            deducciones = new Nomina.Deducciones();
             Double pTotalExento = 0.0;
             Double pTotalGravado = 0.0;
             Double pTotalT = 0.0;
@@ -376,7 +397,26 @@ public class GeneraCFDI implements Serializable {
         Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
         conceptos.getConcepto().add(concepto);
         cfdi.setConceptos(conceptos);
+        
 
+    }
+    
+    public void guardarComprobante(String tipo, int estatus){
+        comprobanteX=new ComprobanteL();
+        comprobanteX.setIdComprobante(0);
+        comprobanteX.setFolio(folio.getFolio().toString());
+        comprobanteX.setSerie(folio.getSerie());
+        comprobanteX.setContribuyente(empresa.getContribuyente());
+        comprobanteX.setContribuyente1(empleado.getContribuyente());
+        comprobanteX.setTipo(tipo);
+        comprobanteX.setTotal(cfdi.getTotal().doubleValue());
+        comprobanteX.setFecha(cfdi.getFecha().toGregorianCalendar().getTime());
+        comprobanteX.setEstatus(estatus);
+        comprobanteX.setImpuesto(deducciones.getTotalImpuestosRetenidos().doubleValue() + deducciones.getTotalOtrasDeducciones().byteValue());
+        comprobanteX.setSubtotal(cfdi.getSubTotal().doubleValue());
+        comprobanteX.setUnico(empresa.getIdempresa()+"-"+comprobanteX.getSerie()+"-"+comprobanteX.getFolio());
+        comprobanteX.setUuid(cfdi.getNoCertificado());
+        comprobanteFacade.create(comprobanteX);
     }
 
 }

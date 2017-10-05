@@ -8,6 +8,8 @@ package nomina.servicio;
 import java.util.List;
 import javax.ejb.Local;
 import nomina.entidad.Archivos;
+import nomina.entidad.Empleado;
+import nomina.entidad.Empresa;
 
 /**
  *
@@ -29,5 +31,7 @@ public interface ArchivosFacadeLocal {
     List<Archivos> findRange(int[] range);
 
     int count();
+
+    public List<Archivos> findArchivoEmpleadoEmpresa(Empleado empleado, Empresa empresa);
     
 }

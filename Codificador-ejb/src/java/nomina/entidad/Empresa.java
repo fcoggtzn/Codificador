@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Empresa.findByEmpresa", query = "SELECT e FROM Empresa e WHERE e.empresa = :empresa")
     , @NamedQuery(name = "Empresa.findByDescripcion", query = "SELECT e FROM Empresa e WHERE e.descripcion = :descripcion")
     , @NamedQuery(name = "Empresa.findByRegimenFiscal", query = "SELECT e FROM Empresa e WHERE e.regimenFiscal = :regimenFiscal")
-    , @NamedQuery(name = "Empresa.findByRegistroPatronal", query = "SELECT e FROM Empresa e WHERE e.registroPatronal = :registroPatronal")})
+    , @NamedQuery(name = "Empresa.findByRegistroPatronal", query = "SELECT e FROM Empresa e WHERE e.registroPatronal = :registroPatronal")
+    , @NamedQuery(name = "Empresa.findByCp", query = "SELECT e FROM Empresa e WHERE e.cp = :cp")})
 public class Empresa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,6 +69,8 @@ public class Empresa implements Serializable {
     private String cp;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private Collection<EmpresaContribuyente> empresaContribuyenteCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    private Collection<Folio> folioCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private Collection<Configuracion> configuracionCollection;
     @JoinColumn(name = "contribuyente_id_contribuyente", referencedColumnName = "id_contribuyente")
@@ -127,6 +130,14 @@ public class Empresa implements Serializable {
         this.registroPatronal = registroPatronal;
     }
 
+    public String getCp() {
+        return cp;
+    }
+
+    public void setCp(String cp) {
+        this.cp = cp;
+    }
+
     @XmlTransient
     public Collection<EmpresaContribuyente> getEmpresaContribuyenteCollection() {
         return empresaContribuyenteCollection;
@@ -134,6 +145,15 @@ public class Empresa implements Serializable {
 
     public void setEmpresaContribuyenteCollection(Collection<EmpresaContribuyente> empresaContribuyenteCollection) {
         this.empresaContribuyenteCollection = empresaContribuyenteCollection;
+    }
+
+    @XmlTransient
+    public Collection<Folio> getFolioCollection() {
+        return folioCollection;
+    }
+
+    public void setFolioCollection(Collection<Folio> folioCollection) {
+        this.folioCollection = folioCollection;
     }
 
     @XmlTransient
@@ -151,14 +171,6 @@ public class Empresa implements Serializable {
 
     public void setContribuyente(Contribuyente contribuyente) {
         this.contribuyente = contribuyente;
-    }
-
-    public String getCp() {
-        return cp;
-    }
-
-    public void setCp(String cp) {
-        this.cp = cp;
     }
 
     @Override

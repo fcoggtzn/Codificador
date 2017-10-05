@@ -5,10 +5,13 @@
  */
 package nomina.servicio;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import nomina.entidad.Archivos;
+import nomina.entidad.Empleado;
+import nomina.entidad.Empresa;
 
 /**
  *
@@ -27,6 +30,13 @@ public class ArchivosFacade extends AbstractFacade<Archivos> implements Archivos
 
     public ArchivosFacade() {
         super(Archivos.class);
+    }
+    
+    @Override
+     public List<Archivos> findArchivoEmpleadoEmpresa(Empleado empleado, Empresa empresa){
+        List<Archivos> query;
+        query = em.createQuery("Select a from Archivos a where a.comprobanteL.contribuyente.idContribuyente=:idEmpresa and a.comprobanteL.contribuyente1.idContribuyente=:idEmpleado").setParameter("idEmpresa", empresa.getContribuyente().getIdContribuyente()).setParameter("idEmpleado", empleado.getContribuyente().getIdContribuyente()).getResultList();
+        return query;
     }
     
 }

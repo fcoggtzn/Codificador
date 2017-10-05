@@ -9,6 +9,7 @@ import catalogo.servicio.PeriodicidadPagoFacadeLocal;
 import catalogo.servicio.RiesgoPuestoFacadeLocal;
 import catalogo.servicio.TipoContratoFacadeLocal;
 import catalogo.servicio.TipoRegimenFacadeLocal;
+import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -17,8 +18,11 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import nomina.entidad.Archivos;
+import nomina.entidad.ComprobanteL;
 import nomina.entidad.Configuracion;
 import nomina.entidad.Contribuyente;
 import nomina.entidad.Deduccion;
@@ -27,6 +31,8 @@ import nomina.entidad.Empleado;
 import nomina.entidad.Empresa;
 import nomina.entidad.EmpresaContribuyente;
 import nomina.entidad.Percepcion;
+import nomina.servicio.ArchivosFacadeLocal;
+import nomina.servicio.ComprobanteLFacadeLocal;
 import nomina.servicio.ConfiguracionFacadeLocal;
 import nomina.servicio.ContribuyenteFacadeLocal;
 import nomina.servicio.DeduccionFacadeLocal;
@@ -71,12 +77,15 @@ public class ContribuyenteController extends BaseController implements Serializa
     RiesgoPuestoFacadeLocal riesgoPuestoFacade;
     @EJB
     PeriodicidadPagoFacadeLocal periodicidadPagoFacade;
+    @EJB
+    ComprobanteLFacadeLocal comprobanteLFacade;
 
     private Contribuyente contribuyente;
     private List<Contribuyente> contribuyentes;
     private String textoBoton = "Guardar";
 
     private Empresa empresa;
+    private Empresa empresaLocal;
     private EmpresaContribuyente empresaContribuyente;
 
     private Configuracion configuracion;
@@ -104,7 +113,10 @@ public class ContribuyenteController extends BaseController implements Serializa
     @PostConstruct
     public void init() {
         contribuyente = new Contribuyente();
+        empleadoNomina=new Empleado();
         empresa = new Empresa();
+        empresaLocal=(Empresa) this.recuperarParametroObject("empresaActual");
+        empleado = new Empleado();
         empresa.setContribuyente(new Contribuyente());
         empresaContribuyente = new EmpresaContribuyente();
         empresaContribuyente.setContribuyente(new Contribuyente());
@@ -521,7 +533,6 @@ public class ContribuyenteController extends BaseController implements Serializa
         return (Empresa) this.recuperarParametroObject("empresaActual");
     }
 
-
     public List<DeduccionPercepcion> getPercepcionesEmpleadoNomina() {
         /*
         List<DeduccionPercepcion> lista =new ArrayList<>();
@@ -604,7 +615,7 @@ public class ContribuyenteController extends BaseController implements Serializa
             return "";
         }
     }
-    
+
     public String riesgoByT() {
         if (empleadoNomina.getRiesgoPuesto() != null) {
             return riesgoPuestoFacade.RiesgoPuestoByCve(empleadoNomina.getRiesgoPuesto()).getDescripcion();
@@ -612,7 +623,7 @@ public class ContribuyenteController extends BaseController implements Serializa
             return "";
         }
     }
-    
+
     public String perioricidadByT() {
         if (empleadoNomina.getPeriodicidadPago() != null) {
             return periodicidadPagoFacade.getPeriodicidadByPer(empleadoNomina.getPeriodicidadPago()).getDescripcion();
@@ -620,7 +631,21 @@ public class ContribuyenteController extends BaseController implements Serializa
             return "";
         }
     }
+
+    //Comprobante
+    public List<ComprobanteL> getComprobantesL() {
+        if (!empleadoNomina.equals(new Empleado())) {
+            return comprobanteLFacade.findComprobanteEmpleadoEmpresa(empleadoNomina, empresaLocal);
+        } else {
+            return new ArrayList<>();
+        }
+    }
     
-    
+    public void redirect(ComprobanteL compr, String tipo) throws IOException {
+    // ...
+
+    ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+    externalContext.redirect("descargas?serie="+compr.getSerie()+"&folio="+compr.getFolio()+"&rfc="+compr.getContribuyente().getRfc()+"&tipo="+tipo);
+}
 
 }

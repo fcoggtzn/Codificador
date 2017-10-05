@@ -32,6 +32,9 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.WebServiceRef;
+import nomina.entidad.ComprobanteL;
+import nomina.servicio.ArchivosFacadeLocal;
+import nomina.servicio.ComprobanteLFacadeLocal;
 import sat.CMetodoPago;
 import sat.CMoneda;
 import sat.CTipoDeComprobante;
@@ -55,6 +58,10 @@ import webServiceSatPrueba.TimbradoServiceService;
 @Stateless
 public class CrearCFDI implements CrearCFDILocal {
 
+    @EJB
+    private ArchivosFacadeLocal archivosFacade;
+
+      
     @WebServiceRef(wsdlLocation = "META-INF/wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/TimbradoService.wsdl")
     private TimbradoServiceService service;
 
@@ -62,13 +69,14 @@ public class CrearCFDI implements CrearCFDILocal {
     private Xslt2CadenaLocal xslt2Cadena;
     @EJB
     private FirmaLocal firma;
+      
     private String cadenaOriginal;
     
 
     /**
      * @param args the command line arguments
      */
-    public void crear(Comprobante cfdi) throws FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException {
+    public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException {
       
         /**
          * ***** metodo de serializar ****
@@ -120,6 +128,27 @@ public class CrearCFDI implements CrearCFDILocal {
         System.out.println(resultadoDeTimbre.getStatus());
         System.out.println(resultadoDeTimbre.getCodigo());
         System.out.println(resultadoDeTimbre.getTimbre());
+        
+        nomina.entidad.Archivos archivo_XML = new nomina.entidad.Archivos();
+        archivo_XML.setComprobanteL(comprobanteX);
+        archivo_XML.setContenido(resultadoDeTimbre.getTimbre().getBytes());
+        archivo_XML.setTipo("XML");
+        archivo_XML.setNombre(comprobanteX.getSerie()+comprobanteX.getFolio()+".xml");
+        archivo_XML.setIdarchivos(0);
+        this.archivosFacade.create(archivo_XML);
+        
+        nomina.entidad.Archivos archivo_CBB = new nomina.entidad.Archivos();
+        archivo_CBB.setComprobanteL(comprobanteX);
+        archivo_CBB.setContenido(Base64.getDecoder().decode(resultadoDeTimbre.getCodigo().getBytes()));
+        archivo_CBB.setTipo("CBB");
+        archivo_CBB.setNombre(comprobanteX.getSerie()+comprobanteX.getFolio()+".png");
+        archivo_CBB.setIdarchivos(0);
+        this.archivosFacade.create(archivo_CBB);
+        
+        
+        
+        
+        
         /**
          * *** metodo para generar PDF ***
          */

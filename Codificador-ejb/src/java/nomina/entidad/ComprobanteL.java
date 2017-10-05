@@ -20,7 +20,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,20 +33,22 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author ovante
  */
 @Entity
-@Table(name = "comprobante", catalog = "sole3", schema = "")
+@Table(name = "comprobante_l", catalog = "sole3", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Comprobante.findAll", query = "SELECT c FROM Comprobante c")
-    , @NamedQuery(name = "Comprobante.findByIdComprobante", query = "SELECT c FROM Comprobante c WHERE c.idComprobante = :idComprobante")
-    , @NamedQuery(name = "Comprobante.findBySerie", query = "SELECT c FROM Comprobante c WHERE c.serie = :serie")
-    , @NamedQuery(name = "Comprobante.findByFolio", query = "SELECT c FROM Comprobante c WHERE c.folio = :folio")
-    , @NamedQuery(name = "Comprobante.findByTipo", query = "SELECT c FROM Comprobante c WHERE c.tipo = :tipo")
-    , @NamedQuery(name = "Comprobante.findByTotal", query = "SELECT c FROM Comprobante c WHERE c.total = :total")
-    , @NamedQuery(name = "Comprobante.findByFecha", query = "SELECT c FROM Comprobante c WHERE c.fecha = :fecha")
-    , @NamedQuery(name = "Comprobante.findByEstatus", query = "SELECT c FROM Comprobante c WHERE c.estatus = :estatus")
-    , @NamedQuery(name = "Comprobante.findBySubtotal", query = "SELECT c FROM Comprobante c WHERE c.subtotal = :subtotal")
-    , @NamedQuery(name = "Comprobante.findByImpuesto", query = "SELECT c FROM Comprobante c WHERE c.impuesto = :impuesto")})
-public class Comprobante implements Serializable {
+    @NamedQuery(name = "ComprobanteL.findAll", query = "SELECT c FROM ComprobanteL c")
+    , @NamedQuery(name = "ComprobanteL.findByIdComprobante", query = "SELECT c FROM ComprobanteL c WHERE c.idComprobante = :idComprobante")
+    , @NamedQuery(name = "ComprobanteL.findBySerie", query = "SELECT c FROM ComprobanteL c WHERE c.serie = :serie")
+    , @NamedQuery(name = "ComprobanteL.findByFolio", query = "SELECT c FROM ComprobanteL c WHERE c.folio = :folio")
+    , @NamedQuery(name = "ComprobanteL.findByTipo", query = "SELECT c FROM ComprobanteL c WHERE c.tipo = :tipo")
+    , @NamedQuery(name = "ComprobanteL.findByTotal", query = "SELECT c FROM ComprobanteL c WHERE c.total = :total")
+    , @NamedQuery(name = "ComprobanteL.findByFecha", query = "SELECT c FROM ComprobanteL c WHERE c.fecha = :fecha")
+    , @NamedQuery(name = "ComprobanteL.findByEstatus", query = "SELECT c FROM ComprobanteL c WHERE c.estatus = :estatus")
+    , @NamedQuery(name = "ComprobanteL.findBySubtotal", query = "SELECT c FROM ComprobanteL c WHERE c.subtotal = :subtotal")
+    , @NamedQuery(name = "ComprobanteL.findByImpuesto", query = "SELECT c FROM ComprobanteL c WHERE c.impuesto = :impuesto")
+    , @NamedQuery(name = "ComprobanteL.findByUnico", query = "SELECT c FROM ComprobanteL c WHERE c.unico = :unico")
+    , @NamedQuery(name = "ComprobanteL.findByUuid", query = "SELECT c FROM ComprobanteL c WHERE c.uuid = :uuid")})
+public class ComprobanteL implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -82,29 +83,41 @@ public class Comprobante implements Serializable {
     private Double subtotal;
     @Column(name = "impuesto")
     private Double impuesto;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobante")
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "unico")
+    private String unico;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 40)
+    @Column(name = "uuid")
+    private String uuid;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobanteL")
     private Collection<ComprobanteImpuesto> comprobanteImpuestoCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobanteL")
     private Collection<Archivos> archivosCollection;
     @JoinColumn(name = "emisor", referencedColumnName = "id_contribuyente")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private Contribuyente contribuyente;
     @JoinColumn(name = "receptor", referencedColumnName = "id_contribuyente")
     @ManyToOne(optional = false)
     private Contribuyente contribuyente1;
 
-    public Comprobante() {
+    public ComprobanteL() {
     }
 
-    public Comprobante(Integer idComprobante) {
+    public ComprobanteL(Integer idComprobante) {
         this.idComprobante = idComprobante;
     }
 
-    public Comprobante(Integer idComprobante, String serie, String folio, String tipo) {
+    public ComprobanteL(Integer idComprobante, String serie, String folio, String tipo, String unico, String uuid) {
         this.idComprobante = idComprobante;
         this.serie = serie;
         this.folio = folio;
         this.tipo = tipo;
+        this.unico = unico;
+        this.uuid = uuid;
     }
 
     public Integer getIdComprobante() {
@@ -179,6 +192,22 @@ public class Comprobante implements Serializable {
         this.impuesto = impuesto;
     }
 
+    public String getUnico() {
+        return unico;
+    }
+
+    public void setUnico(String unico) {
+        this.unico = unico;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     @XmlTransient
     public Collection<ComprobanteImpuesto> getComprobanteImpuestoCollection() {
         return comprobanteImpuestoCollection;
@@ -223,10 +252,10 @@ public class Comprobante implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Comprobante)) {
+        if (!(object instanceof ComprobanteL)) {
             return false;
         }
-        Comprobante other = (Comprobante) object;
+        ComprobanteL other = (ComprobanteL) object;
         if ((this.idComprobante == null && other.idComprobante != null) || (this.idComprobante != null && !this.idComprobante.equals(other.idComprobante))) {
             return false;
         }
@@ -235,7 +264,7 @@ public class Comprobante implements Serializable {
 
     @Override
     public String toString() {
-        return "nomina.entidad.Comprobante[ idComprobante=" + idComprobante + " ]";
+        return "nomina.entidad.ComprobanteL[ idComprobante=" + idComprobante + " ]";
     }
     
 }

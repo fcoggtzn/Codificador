@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Comprobantes</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Comprobantes" id="panelemp">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Empleado: " styleClass="it-align-right"/>
+                        <p:autoComplete id="acSimple" value="#{contribuyenteController.empleadoNomina}"
+                                        completeMethod="#{contribuyenteController.completeTextEmpleado}"
+                                        var="valor" itemLabel="#{valor.contribuyente.nombre}" itemValue="#{valor}"
+                                        immediate="true" converter="empleadoConverter"
+                                        size="55">
+                            <p:ajax event="itemSelect" update=":formemp :formGrid"/>
+                            <p:column>
+                                <h:outputLabel value="#{valor.contribuyente.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{valor.contribuyente.rfc}"/>
+                            </p:column>
+                        </p:autoComplete>
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+            <p:dataTable id="out2" var="compr" value="#{contribuyenteController.comprobantesL}">
+                <p:column headerText="Serie">
+                    <h:outputLabel value="#{compr.serie}"/>
+                </p:column>
+                <p:column headerText="Folio">
+                    <h:outputLabel value="#{compr.folio}"/>
+                </p:column>
+                <p:column headerText="">
+                    <center>
+                        <p:commandButton id="xml" icon="ui-icon-comment" action="#{contribuyenteController.redirect(compr, 'XML')}">
+                            <p:tooltip for="xml" value="XML"/>
+                        </p:commandButton>
+                        <p:commandButton id="pdf" icon="ui-icon-document" action="#{contribuyenteController.redirect(compr, 'PDF')}">
+                            <p:tooltip for="pdf" value="PDF"/>
+                        </p:commandButton>    
+                        <p:commandButton id="cbb" icon="ui-icon-image" action="#{contribuyenteController.redirect(compr, 'CBB')}">
+                            <p:tooltip for="cbb" value="CBB"/>
+                        </p:commandButton>
+                    </center>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
