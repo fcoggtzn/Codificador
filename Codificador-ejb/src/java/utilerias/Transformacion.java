@@ -29,10 +29,11 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.util.MimeConstants;
+import sat.Comprobante;
 
 public class Transformacion {
     
-      public byte[] generaPDF(byte[] archivoXslt,byte[] archivoXml){
+      public byte[] generaPDF(byte[] archivoXslt,byte[] archivoXml, Comprobante cfdi){
      try {
 	            System.out.println("FOP ExampleXML2PDF\n");
 	            System.out.println("Preparing...");
@@ -53,7 +54,7 @@ public class Transformacion {
 	            // Setup input and output files
 	            File xmlfile = new File("xml");
 	            File xsltfile = new File("xslt");
-                    File pdffile = new File(outDir, "ResultXML2PDF.pdf");
+                    File pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".pdf");
 	
 	            System.out.println("Input: XML (" + xmlfile + ")");
 	            System.out.println("Stylesheet: " + xsltfile);

@@ -59,15 +59,16 @@ public class GeneraCFDI implements Serializable {
 
     @EJB
     private CrearCFDILocal crearCFDI;
-    @EJB private FolioFacadeLocal folioFacade;
-    @EJB private ComprobanteLFacadeLocal comprobanteFacade;
+    @EJB
+    private FolioFacadeLocal folioFacade;
+    @EJB
+    private ComprobanteLFacadeLocal comprobanteFacade;
 
     private Comprobante cfdi;
     private final boolean activoNomina = true;
     private Date fechaIPago;
     private Double diasPagados = 0.0;
     private ComprobanteL comprobanteX;
-    
 
     Empleado empleado;
     Empresa empresa;
@@ -79,7 +80,7 @@ public class GeneraCFDI implements Serializable {
 
     public Date getFechaIPago() {
         return fechaIPago;
-    } 
+    }
 
     public void setFechaIPago(Date fechaIPago) {
         this.fechaIPago = fechaIPago;
@@ -99,7 +100,7 @@ public class GeneraCFDI implements Serializable {
     public GeneraCFDI() {
         empleado = (Empleado) this.recuperarParametroObject("empleadoN");
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
-        Calendar calendar = Calendar.getInstance(); 
+        Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);
         fechaIPago = calendar.getTime();
     }
@@ -110,35 +111,46 @@ public class GeneraCFDI implements Serializable {
         Object retorno = session.getAttribute(parametro);
         return retorno;
     }
-    
-    
-    
+
     public void addMessage(String summary) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary,  null);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
-   
-        
-    
-    
-    public void generarNomina(ActionEvent event){
-         try {
-            llenarCFDI();
-        } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         addMessage("Generando Nomina");
-          // String firmar = firma.firmar("VivaMexico","TME960709LR2");
-        try {
-            guardarComprobante("N",1);
-            this.crearCFDI.crear(cfdi,comprobanteX);
-            
-            
 
-        } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
-            Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+    public void addMessageError(String summary) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public void generarNomina(ActionEvent event) {
+        try {
+            if (this.fechaIPago != null) {
+                if ((this.diasPagados > 0) || (this.diasPagados != null)) {
+                    try {
+                        llenarCFDI();
+                    } catch (DatatypeConfigurationException ex) {
+                        Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    addMessage("Generando Nomina");
+                    // String firmar = firma.firmar("VivaMexico","TME960709LR2");
+                    try {
+                        guardarComprobante("N", 1);
+                        this.crearCFDI.crear(cfdi, comprobanteX);
+                        
+
+                    } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
+                        Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    addMessageError("Días a pagar debe ser mayor a cero");
+                }
+            }else{
+                addMessageError("El valor de la fecha no debe ser nulo");
+            }
+        } catch (NullPointerException e) {
+            addMessageError("No debe haber valores nulos");
         }
-     
+
     }
 
     public void llenarCFDI() throws DatatypeConfigurationException {
@@ -147,7 +159,7 @@ public class GeneraCFDI implements Serializable {
         empleado = (Empleado) this.recuperarParametroObject("empleadoN");
 
         cfdi = new Comprobante();
-        folio=folioFacade.getFolioEmpresa(empresa);
+        folio = folioFacade.getFolioEmpresa(empresa);
         cfdi.setSerie(folio.getSerie());
         cfdi.setFolio(folio.getFolio().toString());
         folioFacade.folioInc(folio);
@@ -202,23 +214,21 @@ public class GeneraCFDI implements Serializable {
         fechaIPapgo.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         fechaIPapgo.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
         fechaIPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
-        
+
         calendar.add(Calendar.YEAR, -1);
         c.setTime(empleado.getFechaInicio());
         XMLGregorianCalendar fechaInicio = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         fechaInicio.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         fechaInicio.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
         fechaInicio.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
-        
-        //Interval interval = new Interval(empleado.getFechaInicio(), this.fechaIPago);
-                Calendar calendarInicio = Calendar.getInstance();
-                calendarInicio.setTime(empleado.getFechaInicio());
-                Calendar calendarPago = Calendar.getInstance();
-                calendarPago.setTime(this.fechaIPago);
 
-       
+        //Interval interval = new Interval(empleado.getFechaInicio(), this.fechaIPago);
+        Calendar calendarInicio = Calendar.getInstance();
+        calendarInicio.setTime(empleado.getFechaInicio());
+        Calendar calendarPago = Calendar.getInstance();
+        calendarPago.setTime(this.fechaIPago);
+
         long daysBetween = ChronoUnit.DAYS.between(calendarInicio.toInstant(), calendarPago.toInstant());
-        
 
         cfdi.setFecha(newXMLGregorianCalendar);
 
@@ -233,8 +243,7 @@ public class GeneraCFDI implements Serializable {
         Comprobante.Conceptos.Concepto concepto = new Comprobante.Conceptos.Concepto();
         if (this.activoNomina) {
             cfdi.setFormaPago("PAGO EN UNA SOLA EXHIBICION");
-            
-            
+
             cfdi.setTipoDeComprobante(CTipoDeComprobante.N);
 
             /*Complemento de nomina */
@@ -257,8 +266,8 @@ public class GeneraCFDI implements Serializable {
             empleado.setNumSeguridadSocial(this.empleado.getNumseguroSocial()/*"04078873454"*/);
             empleado.setTipoContrato(this.empleado.getTipoContrato()/*"01"*/);
             empleado.setFechaInicioRelLaboral(fechaInicio);
-            
-            empleado.setAntigüedad("P"+(daysBetween/7)+"W");
+
+            empleado.setAntigüedad("P" + (daysBetween / 7) + "W");
             empleado.setClaveEntFed(CEstado.AGU);
             empleado.setTipoRegimen(this.empleado.getTipoRegimen()/*"02"*/); //02-Sueldos,03 Jubilados, 04 Pensionados, 09 Asimilados Honorarios
             empleado.setNumEmpleado(this.empleado.getNumEmpleado().toString()/*"001"*/);
@@ -291,7 +300,7 @@ public class GeneraCFDI implements Serializable {
                     valDed.setTipoDeduccion(perDed.getDeduccion().getTipoDeduccion());
                     valDed.setClave(perDed.getDeduccion().getTipoClave());
                     valDed.setConcepto(perDed.getDeduccion().getConcepto());
-                    valDed.setImporte(new BigDecimal(perDed.getExento()+perDed.getGravado()).setScale(2, RoundingMode.HALF_UP));
+                    valDed.setImporte(new BigDecimal(perDed.getExento() + perDed.getGravado()).setScale(2, RoundingMode.HALF_UP));
                     deducciones.getDeduccion().add(valDed);
                     dTotalExento = dTotalExento + perDed.getExento();
                     dTotalGravado = dTotalGravado + perDed.getGravado();
@@ -331,12 +340,11 @@ public class GeneraCFDI implements Serializable {
             concepto.setValorUnitario(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
             concepto.setImporte(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
             concepto.setDescuento(new BigDecimal(dTotalT).setScale(2, RoundingMode.HALF_UP));
-            
+
             //subTotal="7500.05" descuento="1234.09" Moneda="MXN" TipoCambio="1" total="6265.96" 
             cfdi.setSubTotal(new BigDecimal(pTotalT).setScale(2, RoundingMode.HALF_UP));
             cfdi.setDescuento(new BigDecimal(dTotalT).setScale(2, RoundingMode.HALF_UP));
-            cfdi.setTotal(new BigDecimal(pTotalT-dTotalT).setScale(2, RoundingMode.HALF_UP));
-
+            cfdi.setTotal(new BigDecimal(pTotalT - dTotalT).setScale(2, RoundingMode.HALF_UP));
 
             cfdi.setFormaPago("99");
         } else {
@@ -397,12 +405,11 @@ public class GeneraCFDI implements Serializable {
         Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
         conceptos.getConcepto().add(concepto);
         cfdi.setConceptos(conceptos);
-        
 
     }
-    
-    public void guardarComprobante(String tipo, int estatus){
-        comprobanteX=new ComprobanteL();
+
+    public void guardarComprobante(String tipo, int estatus) {
+        comprobanteX = new ComprobanteL();
         comprobanteX.setIdComprobante(0);
         comprobanteX.setFolio(folio.getFolio().toString());
         comprobanteX.setSerie(folio.getSerie());
@@ -414,7 +421,6 @@ public class GeneraCFDI implements Serializable {
         comprobanteX.setEstatus(estatus);
         comprobanteX.setImpuesto(deducciones.getTotalImpuestosRetenidos().doubleValue() + deducciones.getTotalOtrasDeducciones().byteValue());
         comprobanteX.setSubtotal(cfdi.getSubTotal().doubleValue());
-        comprobanteX.setUnico(empresa.getIdempresa()+"-"+comprobanteX.getSerie()+"-"+comprobanteX.getFolio());
         comprobanteX.setUuid(cfdi.getNoCertificado());
         comprobanteFacade.create(comprobanteX);
     }

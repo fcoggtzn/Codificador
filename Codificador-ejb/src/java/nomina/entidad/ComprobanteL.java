@@ -46,7 +46,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ComprobanteL.findByEstatus", query = "SELECT c FROM ComprobanteL c WHERE c.estatus = :estatus")
     , @NamedQuery(name = "ComprobanteL.findBySubtotal", query = "SELECT c FROM ComprobanteL c WHERE c.subtotal = :subtotal")
     , @NamedQuery(name = "ComprobanteL.findByImpuesto", query = "SELECT c FROM ComprobanteL c WHERE c.impuesto = :impuesto")
-    , @NamedQuery(name = "ComprobanteL.findByUnico", query = "SELECT c FROM ComprobanteL c WHERE c.unico = :unico")
     , @NamedQuery(name = "ComprobanteL.findByUuid", query = "SELECT c FROM ComprobanteL c WHERE c.uuid = :uuid")})
 public class ComprobanteL implements Serializable {
 
@@ -85,11 +84,6 @@ public class ComprobanteL implements Serializable {
     private Double impuesto;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "unico")
-    private String unico;
-    @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 40)
     @Column(name = "uuid")
     private String uuid;
@@ -111,12 +105,11 @@ public class ComprobanteL implements Serializable {
         this.idComprobante = idComprobante;
     }
 
-    public ComprobanteL(Integer idComprobante, String serie, String folio, String tipo, String unico, String uuid) {
+    public ComprobanteL(Integer idComprobante, String serie, String folio, String tipo, String uuid) {
         this.idComprobante = idComprobante;
         this.serie = serie;
         this.folio = folio;
         this.tipo = tipo;
-        this.unico = unico;
         this.uuid = uuid;
     }
 
@@ -190,14 +183,6 @@ public class ComprobanteL implements Serializable {
 
     public void setImpuesto(Double impuesto) {
         this.impuesto = impuesto;
-    }
-
-    public String getUnico() {
-        return unico;
-    }
-
-    public void setUnico(String unico) {
-        this.unico = unico;
     }
 
     public String getUuid() {

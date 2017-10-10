@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Contribuyente.findAll", query = "SELECT c FROM Contribuyente c")
     , @NamedQuery(name = "Contribuyente.findByIdContribuyente", query = "SELECT c FROM Contribuyente c WHERE c.idContribuyente = :idContribuyente")
-    , @NamedQuery(name = "Contribuyente.findByRfc", query = "SELECT c FROM Contribuyente c WHERE c.rfc = :rfc")})
+    , @NamedQuery(name = "Contribuyente.findByRfc", query = "SELECT c FROM Contribuyente c WHERE c.rfc = :rfc")
+    , @NamedQuery(name = "Contribuyente.findByEmail", query = "SELECT c FROM Contribuyente c WHERE c.email = :email")})
 public class Contribuyente implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,6 +55,10 @@ public class Contribuyente implements Serializable {
     @Size(min = 1, max = 13)
     @Column(name = "rfc")
     private String rfc;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Size(max = 254)
+    @Column(name = "email")
+    private String email;
     @OneToMany(mappedBy = "contribuyente")
     private Collection<Empleado> empleadoCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente")
@@ -100,6 +105,14 @@ public class Contribuyente implements Serializable {
 
     public void setRfc(String rfc) {
         this.rfc = rfc;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @XmlTransient

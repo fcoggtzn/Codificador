@@ -30,6 +30,10 @@
                         <p:inputText value="#{empleadoController.empleado.contribuyente.rfc}" styleClass="it-size" required="true" immediate="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
+                        <h:outputLabel value="E-mail" styleClass="it-align-right"/>
+                        <p:inputText value="#{empleadoController.empleado.contribuyente.email}" styleClass="it-size" required="true" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
                         <h:outputLabel value="CURP" styleClass="it-align-right"/>
                         <p:inputText value="#{empleadoController.empleado.curp}" styleClass="it-size">
                             <p:ajax immediate="true"/> 
@@ -109,6 +113,7 @@
                         <h:outputText value="#{emp.numEmpleado}" style="color: red" />
                         <h:outputLabel value=" - " style="color: red"/>
                         <h:outputText value="#{emp.contribuyente.nombre}" style="color: red"/>
+                        <h:outputText value=", E-mail #{emp.contribuyente.email}" style="color: green"/>
                     </f:facet>
                     <p:column headerText="RFC">
                         <h:outputText value="#{emp.contribuyente.rfc}" />
