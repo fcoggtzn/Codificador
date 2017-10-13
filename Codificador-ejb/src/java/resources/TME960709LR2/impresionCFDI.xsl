@@ -273,7 +273,7 @@ xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" xmlns:xsi="http://www.w3.o
 
       <fo:block-container position="absolute"  left="15.3cm" top="20.6cm" width="5.5cm"  >
       <fo:block >
-        <fo:external-graphic src="url('http://127.0.1.1:8080/Sole/CodigoComprobante?formato=cb&amp;emisor={cfdi:Emisor/@Rfc}&amp;serie={@Serie}&amp;folio={@Folio}')"  content-height="5cm" content-width="5cm" ></fo:external-graphic>
+        <fo:external-graphic src="url('http://localhost:8080/Codificador-war/faces/descargas?serie={@Serie}&amp;folio={@Folio}&amp;rfc={cfdi:Emisor/@Rfc}&amp;tipo=CBB')"  content-height="5cm" content-width="5cm" ></fo:external-graphic>
       </fo:block>
       </fo:block-container>
      

@@ -37,6 +37,7 @@ import nomina.entidad.Folio;
 import nomina.entidad.ComprobanteL;
 import nomina.servicio.ComprobanteLFacadeLocal;
 import nomina.servicio.FolioFacadeLocal;
+import org.primefaces.context.RequestContext;
 
 import sat.CEstado;
 import sat.CMetodoPago;
@@ -131,12 +132,13 @@ public class GeneraCFDI implements Serializable {
                     } catch (DatatypeConfigurationException ex) {
                         Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    addMessage("Generando Nomina");
+                    
                     // String firmar = firma.firmar("VivaMexico","TME960709LR2");
                     try {
                         guardarComprobante("N", 1);
                         this.crearCFDI.crear(cfdi, comprobanteX);
-                        
+                       RequestContext.getCurrentInstance().execute("window.open('"+"/Codificador-war/faces/descargas?serie="+cfdi.getSerie()+"&folio="+cfdi.getFolio()+"&rfc="+cfdi.getEmisor().getRfc()+"&tipo=PDF"+"','_blank')");
+                        addMessage("Generando Nomina");
 
                     } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
                         Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
