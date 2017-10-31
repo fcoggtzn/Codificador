@@ -18,6 +18,7 @@ import catalogo.servicio.TipoRegimenFacadeLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,6 +28,7 @@ import nomina.entidad.Contribuyente;
 import nomina.entidad.Empleado;
 import nomina.servicio.ContribuyenteFacadeLocal;
 import nomina.servicio.EmpleadoFacadeLocal;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -76,10 +78,11 @@ public class EmpleadoController implements Serializable {
         this.empleado.setContribuyente(new Contribuyente());
         this.tipoContrato = new TipoContrato();
         this.tipoRegimen = new TipoRegimen();
-        this.estado=new Estado();
-        this.periodicidadPago= new PeriodicidadPago();
-        this.riesgoPuesto=new RiesgoPuesto();
+        this.estado = new Estado();
+        this.periodicidadPago = new PeriodicidadPago();
+        this.riesgoPuesto = new RiesgoPuesto();
         //this.tiposContrato = tipoContratoFacade.findAll();
+        limpiarEmpleado();
     }
 
     public String getTextoBoton() {
@@ -114,7 +117,12 @@ public class EmpleadoController implements Serializable {
         empleado.setRiesgoPuesto(riesgoPuesto.getRiesgoPuesto());
 
         if (this.textoBoton.equals("Guardar")) {
-            this.empleadoFacade.create(empleado);
+            try {
+                this.contribuyenteFacade.create(empleado.getContribuyente());
+                this.empleadoFacade.create(empleado);
+            } catch (Exception e) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, this.textoBoton, "Posible RFC Duplicado"));
+            }
         }
         if (this.textoBoton.equals("Modificar")) {
             this.contribuyenteFacade.edit(empleado.getContribuyente());
@@ -123,8 +131,12 @@ public class EmpleadoController implements Serializable {
         limpiarEmpleado();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, this.textoBoton, "Guardado Exitosamente"));
     }
-    
-    public void eliminarEmpleado(){
+
+    public void dateSelect(SelectEvent event) {
+        empleado.setFechaInicio((Date) event.getObject());
+    }
+
+    public void eliminarEmpleado() {
         empleadoFacade.remove(empleado);
         limpiarEmpleado();
     }
@@ -219,5 +231,5 @@ public class EmpleadoController implements Serializable {
         riesgoPuesto = riesgoPuestoFacade.RiesgoPuestoByCve(empleado.getRiesgoPuesto());
         tipoRegimen = tipoRegimenFacade.getTipoRegimenByRF(empleado.getTipoRegimen());
     }
-    
+
 }

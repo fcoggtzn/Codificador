@@ -50,7 +50,8 @@ and open the template in the editor.
                         <h:outputLabel value="Fecha de inicio de Pago:" styleClass="it-align-right"/>
                         <p:calendar id="fip" value="#{generaCFDI.fechaIPago}" pattern = "dd-MM-yyyy" mask = "true"  styleClass="it-negrita"/>
                         <h:outputLabel value="Numero de días pagados:" styleClass="it-align-right"/>
-                        <p:inputText value="#{generaCFDI.diasPagados}"  styleClass="it-size" onkeypress="if(event.which &lt; 46 || event.which &gt; 57 ) if(event.which != 10) return false;">
+                        
+                        <p:inputText value="#{generaCFDI.diasPagados}"  styleClass="it-size" onkeypress="if (event.which &lt; 46 || event.which &gt; 57) if (event.which != 10) return false;">
                             <p:ajax immediate="true"/>
                         </p:inputText>
                         <p:separator/> 
@@ -92,7 +93,7 @@ and open the template in the editor.
                         <h:outputLabel value="Antigüedad" styleClass="it-align-right"/>
                         <h:outputLabel value="#{contribuyenteController.empleadoNomina.antiguedad}" styleClass="it-negrita"/>
                         <h:outputLabel value="Tipo de Contrato" styleClass="it-align-right"/>
-                        
+
                         <h:outputLabel value="#{contribuyenteController.tipoContratoByT()}" styleClass="it-negrita"/>
                         <h:outputLabel value="Tipo de Regimen" styleClass="it-align-right"/>
                         <h:outputLabel value="#{contribuyenteController.tipoRegimenByT()}" styleClass="it-negrita"/>
@@ -170,21 +171,21 @@ and open the template in the editor.
                     <p:commandButton value="Generar Nomina" actionListener="#{generaCFDI.generarNomina}" rendered="#{contribuyenteController.empleadoNomina.numEmpleado!=null}" >
                         <p:ajax listener="#{contribuyenteController.subirDatosContext()}"/>
                         <p:ajaxStatus style="display:block;margin-bottom:2em;height:24px;">
-    <f:facet name="default">
-        <h:outputText value="Status: StandBy" />
-    </f:facet>
- 
-    <f:facet name="start">
-        <p:graphicImage name="/demo/images/ajaxloadingbar.gif" />
-    </f:facet>
- 
-    <f:facet name="complete">
-        <h:outputText value="Status: Completed" />
-    </f:facet>
-</p:ajaxStatus>
- 
-<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
- 
+                            <f:facet name="default">
+                                <h:outputText value="Status: StandBy" />
+                            </f:facet>
+
+                            <f:facet name="start">
+                                <p:graphicImage name="/demo/images/ajaxloadingbar.gif" />
+                            </f:facet>
+
+                            <f:facet name="complete">
+                                <h:outputText value="Status: Completed" />
+                            </f:facet>
+                        </p:ajaxStatus>
+
+                        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
 
                     </p:commandButton>
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
@@ -193,7 +194,7 @@ and open the template in the editor.
 
             <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
                 <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
-</p:dialog>
+            </p:dialog>
 
         </h:form>
 

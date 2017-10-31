@@ -45,12 +45,17 @@
                         <h:outputLabel value="Tipo de Contrato" styleClass="it-align-right"/>
                         <p:selectOneMenu id="tc" value="#{empleadoController.tipoContrato}" styleClass="som-size" panelStyleClass="som-size" converter="TipoContratoConverter">
                             <f:selectItems value="#{empleadoController.tiposContrato}" var="tcont" itemValue="#{tcont}" itemLabel="#{tcont.descripcion}"/>
-                            <p:ajax event="change" listener="#{empleadoController.setTipoContrato(tcont)}"/>
+                            <p:ajax listener="#{empleadoController.setTipoContrato(tcont)}"/>
                         </p:selectOneMenu>
                         <h:outputLabel value="Fecha de Inicio" styleClass="it-align-right"/>
-                        <p:calendar id="button" value="#{empleadoController.empleado.fechaInicio}"/>
-                        <h:outputLabel value="Antigüedad" styleClass="it-align-right"/>
-                        <p:inputText value="#{empleadoController.empleado.antiguedad}" styleClass="it-size"/>
+                        <p:calendar id="button" value="#{empleadoController.empleado.fechaInicio}" immediate="true" >
+                            <p:ajax event="dateSelect" listener="#{empleadoController.dateSelect}"/>
+                            <p:ajax immediate="true"/>
+                        </p:calendar>
+                        <h:outputLabel value="Antigüedad" styleClass="it-align-right" />
+                        <p:inputText value="#{empleadoController.empleado.antiguedad}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
                         <h:outputLabel value="Régimen Fiscal" styleClass="it-align-right"/>
                         <p:selectOneMenu value="#{empleadoController.tipoRegimen}" styleClass="som-size" converter="RegimenConverter">
                             <f:selectItems value="#{empleadoController.tiposRegimen}" var="regf" itemValue="#{regf}" itemLabel="#{regf.descripcion}"/>
@@ -72,7 +77,9 @@
                             <p:ajax event="change" listener="#{empleadoController.setRiesgoPuesto(ripe)}"/>
                         </p:selectOneMenu>
                         <h:outputLabel value="Salario Diario Integrado" styleClass="it-align-right"/>
-                        <p:inputText value="#{empleadoController.empleado.salarioDiarioIntegrado}" styleClass="it-size"/>
+                        <p:inputText value="#{empleadoController.empleado.salarioDiarioIntegrado}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
                     </p:panelGrid>
                 </p:panel>
             </center>

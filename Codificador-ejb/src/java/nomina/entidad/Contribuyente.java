@@ -71,6 +71,7 @@ public class Contribuyente implements Serializable {
     private Collection<ComprobanteL> comprobanteLCollection1;
 
     public Contribuyente() {
+        //this.idContribuyente=0;
     }
 
     public Contribuyente(Integer idContribuyente) {

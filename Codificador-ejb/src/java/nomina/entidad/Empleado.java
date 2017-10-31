@@ -105,7 +105,7 @@ public class Empleado implements Serializable {
     @NotNull
     @Column(name = "salario_diario_integrado")
     private double salarioDiarioIntegrado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empleado")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "empleado")
     private Collection<DeduccionPercepcion> deduccionPercepcionCollection;
     @JoinColumn(name = "contribuyente_id_contribuyente", referencedColumnName = "id_contribuyente")
     @ManyToOne

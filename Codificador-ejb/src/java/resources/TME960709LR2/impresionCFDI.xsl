@@ -232,14 +232,7 @@ xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" xmlns:xsi="http://www.w3.o
 			        <fo:block><xsl:value-of select='format-number(@SubTotal, "$###,###.00")'/></fo:block>
 			      </fo:table-cell>
                        </fo:table-row>
-			<fo:table-row>
-  			      <fo:table-cell>
-			        <fo:block>Retención ISR</fo:block>
-			      </fo:table-cell>
-			      <fo:table-cell>
-			        <fo:block>$<xsl:value-of select='format-number(cfdi:Impuestos/@TotalImpuestosRetenidos,"###,###.00")'/> </fo:block>
-			      </fo:table-cell>
-		        </fo:table-row>
+
 			<fo:table-row>	
 			      <fo:table-cell>
 			        <fo:block>Total</fo:block>

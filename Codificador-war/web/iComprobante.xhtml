@@ -46,11 +46,16 @@ and open the template in the editor.
         <br/>
         <h:form id="formGrid">
             <p:dataTable id="out2" var="compr" value="#{contribuyenteController.comprobantesL}">
-                <p:column headerText="Serie">
+                <p:column headerText="Serie" filterBy="#{compr.serie}" filterMatchMode="contains">
                     <h:outputLabel value="#{compr.serie}"/>
                 </p:column>
-                <p:column headerText="Folio">
+                <p:column headerText="Folio" filterBy="#{compr.folio}" filterMatchMode="contains">
                     <h:outputLabel value="#{compr.folio}"/>
+                </p:column>
+                <p:column headerText="Fecha" filterBy="#{compr.fecha}" filterMatchMode="contains" >
+                    <h:outputLabel value="#{compr.fecha}">
+                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                    </h:outputLabel>
                 </p:column>
                 <p:column headerText="">
                     <center>

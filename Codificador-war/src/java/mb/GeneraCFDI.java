@@ -141,6 +141,8 @@ public class GeneraCFDI implements Serializable {
                         addMessage("Generando Nomina");
 
                     } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
+                                                addMessage("Error en generar Nomina");
+
                         Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
