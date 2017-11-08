@@ -20,5 +20,5 @@
         <property name="URL" value="jdbc:mysql://localhost:3306/catalogoSat?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:module/catSatDB" object-type="user" pool-name="mysql_catalogoSat_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="module/catSatDB" object-type="user" pool-name="mysql_catalogoSat_rootPool"/>
 </resources>

@@ -51,9 +51,18 @@ public class Configuracion implements Serializable {
     @Size(max = 45)
     @Column(name = "password")
     private String password;
+    @Size(max = 45)
+    @Column(name = "loginWeb")
+    private String loginWeb;
+    @Size(max = 45)
+    @Column(name = "passWeb")
+    private String passWeb;
     @Column(name = "role")
     private Integer role;
+    @Column(name = "prueba")
+    private boolean prueba;
     @JoinColumn(name = "empresa_idempresa", referencedColumnName = "idempresa")
+    
     @ManyToOne(optional = false)
     private Empresa empresa;
 
@@ -111,6 +120,32 @@ public class Configuracion implements Serializable {
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
     }
+
+    public boolean isPrueba() {
+        return prueba;
+    }
+
+    public void setPrueba(boolean prueba) {
+        this.prueba = prueba;
+    }
+
+    public String getLoginWeb() {
+        return loginWeb;
+    }
+
+    public void setLoginWeb(String loginWeb) {
+        this.loginWeb = loginWeb;
+    }
+
+    public String getPassWeb() {
+        return passWeb;
+    }
+
+    public void setPassWeb(String passWeb) {
+        this.passWeb = passWeb;
+    }
+    
+    
 
     @Override
     public int hashCode() {

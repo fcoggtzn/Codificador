@@ -8,4 +8,6 @@
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/catalogos/catCFDI.xsd" uri="src/conf/xml-resources/jaxb/Nomina/www.sat.gob.mx/sitio_internet/cfd/catalogos/catCFDI.xsd"/>
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI.xsd" uri="src/conf/xml-resources/jaxb/Nomina/www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI.xsd"/>
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/catalogos/Nomina/catNomina.xsd" uri="src/conf/xml-resources/jaxb/Nomina/www.sat.gob.mx/sitio_internet/cfd/catalogos/Nomina/catNomina.xsd"/>
+    <system systemId="https://www.sefactura.com.mx/sefacturapac/TimbradoService?wsdl" uri="src/conf/xml-resources/web-service-references/TimbradoService_1/wsdl/www.sefactura.com.mx/sefacturapac/TimbradoService.wsdl"/>
+    <system systemId="https://www.sefactura.com.mx:443/sefacturapac/TimbradoService?xsd=1" uri="src/conf/xml-resources/web-service-references/TimbradoService_1/wsdl/www.sefactura.com.mx_443/sefacturapac/TimbradoService.xsd_1.xsd"/>
 </catalog>
