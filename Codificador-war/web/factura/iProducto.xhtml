@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Producto</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formemp">
+            <ui:include src="../resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Producto" id="panelprod">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Clave de Identificación: " styleClass="it-align-right"/>
+                        <p:inputText id="li" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Producto: " styleClass="it-align-right"/>
+                        <p:inputText id="psw" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="descripcion: " styleClass="it-align-right"/>
+                        <p:inputText id="nts" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Valor Unitario: " styleClass="it-align-right"/>
+                        <p:inputText id="rol" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Categoria: " styleClass="it-align-right"/>
+                        <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                            <p:inputText id="emp" styleClass="it-size" value="#{facturaController.prodServ.descripcion}" immediate="true" disabled="true">
+                                <p:ajax immediate="true"/>
+                            </p:inputText>
+                            <p:commandButton value="Seleccionar" actionListener="#{accesoController.redireccionar('iCatalogoSAT.xhtml')}" ajax="false" immediate="true"/>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </p:panel>
+                <p:blockUI block="panelprod" trigger="panelprod">
+                    LOADING<br />
+                    <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
+                </p:blockUI>
+            </center>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{empleadoController.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.guardarEmpleado()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.limpiarEmpleado()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+
+        </h:form>
+    </h:body>
+</html>
