@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
@@ -53,9 +54,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.WebServiceRef;
 import nomina.entidad.ComprobanteL;
+import nomina.entidad.Configuracion;
 import nomina.entidad.Empleado;
+import nomina.entidad.Empresa;
 import nomina.servicio.ArchivosFacadeLocal;
 import nomina.servicio.ComprobanteLFacadeLocal;
+import nomina.servicio.EmpresaFacadeLocal;
 import sat.CMetodoPago;
 import sat.CMoneda;
 import sat.CTipoDeComprobante;
@@ -70,7 +74,7 @@ import utilerias.Archivo;
 import utilerias.CertificadoUsuario;
 import utilerias.MyNameSpaceMapper;
 import utilerias.Transformacion;
-import webServiceSatPrueba.Resultado;
+import produccion.Resultado;
 import webServiceSatPrueba.TimbradoServiceService;
 
 /**
@@ -80,8 +84,13 @@ import webServiceSatPrueba.TimbradoServiceService;
 @Stateless
 public class CrearCFDI implements CrearCFDILocal {
 
+    @WebServiceRef(wsdlLocation = "META-INF/wsdl/www.sefactura.com.mx/sefacturapac/TimbradoService.wsdl")
+    private produccion.TimbradoServiceService service_1;
+
     @EJB
     private ComprobanteLFacadeLocal comprobanteLFacade;
+    @EJB
+    private EmpresaFacadeLocal empresaFacade;
 
     @Resource(name = "correo")
     private Session correo;
@@ -96,6 +105,8 @@ public class CrearCFDI implements CrearCFDILocal {
     private Xslt2CadenaLocal xslt2Cadena;
     @EJB
     private FirmaLocal firma;
+    
+    
     
 
     private String cadenaOriginal;
@@ -154,8 +165,24 @@ public class CrearCFDI implements CrearCFDILocal {
         /**
          * *** metodo para mandar timbrar ***
          */
+        Empresa empresa = empresaFacade.getEmpresa(cfdi.getEmisor().getRfc());
+        Object[] vectorConfiguracion = empresa.getConfiguracionCollection().toArray();
+        Configuracion configura;
+        configura = (Configuracion)vectorConfiguracion[0];
+        produccion.Resultado resultadoDeTimbre;
+        if(configura.isPrueba()){
 
-        Resultado resultadoDeTimbre = timbrado(xmlfile.getAbsolutePath());
+             webServiceSatPrueba.Resultado resultPruebas = timbrado(xmlfile.getAbsolutePath());
+            resultadoDeTimbre = new Resultado();
+            resultadoDeTimbre.setCodigo(resultPruebas.getCodigo());
+            resultadoDeTimbre.setStatus(resultPruebas.getStatus());
+            resultadoDeTimbre.setTimbre(resultPruebas.getTimbre());
+        }else
+        {
+             resultadoDeTimbre = timbradoProduccion(xmlfile.getAbsolutePath(),configura.getLoginWeb(),configura.getPassWeb());
+           
+            
+        }
         System.out.println(resultadoDeTimbre.getStatus());
         System.out.println(resultadoDeTimbre.getCodigo());
         System.out.println(resultadoDeTimbre.getTimbre());
@@ -246,7 +273,7 @@ public class CrearCFDI implements CrearCFDILocal {
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-    private Resultado timbrado(java.lang.String cfdi) {
+    private webServiceSatPrueba.Resultado timbrado(java.lang.String cfdi) {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
         // If the calling of port operations may lead to race condition some synchronization is required.
         String usuario = "WEB070411754";
@@ -307,5 +334,12 @@ public class CrearCFDI implements CrearCFDILocal {
         HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
         Object retorno = session.getAttribute(parametro);
         return retorno;
+    }
+
+    private Resultado timbradoProduccion(java.lang.String cfdi, java.lang.String usuario, java.lang.String clave) {
+        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+        // If the calling of port operations may lead to race condition some synchronization is required.
+        produccion.TimbradoService port = service_1.getTimbradoServicePort();
+        return port.timbrado(cfdi, usuario, clave);
     }
 }
