@@ -33,7 +33,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Configuracion.findByNotas", query = "SELECT c FROM Configuracion c WHERE c.notas = :notas")
     , @NamedQuery(name = "Configuracion.findByLogin", query = "SELECT c FROM Configuracion c WHERE c.login = :login")
     , @NamedQuery(name = "Configuracion.findByPassword", query = "SELECT c FROM Configuracion c WHERE c.password = :password")
-    , @NamedQuery(name = "Configuracion.findByRole", query = "SELECT c FROM Configuracion c WHERE c.role = :role")})
+    , @NamedQuery(name = "Configuracion.findByRole", query = "SELECT c FROM Configuracion c WHERE c.role = :role")
+    , @NamedQuery(name = "Configuracion.findByPrueba", query = "SELECT c FROM Configuracion c WHERE c.prueba = :prueba")
+    , @NamedQuery(name = "Configuracion.findByLoginWeb", query = "SELECT c FROM Configuracion c WHERE c.loginWeb = :loginWeb")
+    , @NamedQuery(name = "Configuracion.findByPassWeb", query = "SELECT c FROM Configuracion c WHERE c.passWeb = :passWeb")})
 public class Configuracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,18 +54,17 @@ public class Configuracion implements Serializable {
     @Size(max = 45)
     @Column(name = "password")
     private String password;
-    @Size(max = 45)
-    @Column(name = "loginWeb")
-    private String loginWeb;
-    @Size(max = 45)
-    @Column(name = "passWeb")
-    private String passWeb;
     @Column(name = "role")
     private Integer role;
     @Column(name = "prueba")
-    private boolean prueba;
+    private Short prueba;
+    @Size(max = 45)
+    @Column(name = "login_web")
+    private String loginWeb;
+    @Size(max = 45)
+    @Column(name = "pass_web")
+    private String passWeb;
     @JoinColumn(name = "empresa_idempresa", referencedColumnName = "idempresa")
-    
     @ManyToOne(optional = false)
     private Empresa empresa;
 
@@ -113,20 +115,20 @@ public class Configuracion implements Serializable {
         this.role = role;
     }
 
-    public Empresa getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(Empresa empresa) {
-        this.empresa = empresa;
-    }
-
-    public boolean isPrueba() {
+    public Short getPrueba() {
         return prueba;
     }
 
-    public void setPrueba(boolean prueba) {
+    public void setPrueba(Short prueba) {
         this.prueba = prueba;
+    }
+
+    public boolean isPrueba() {
+        if (getPrueba() == 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public String getLoginWeb() {
@@ -144,8 +146,14 @@ public class Configuracion implements Serializable {
     public void setPassWeb(String passWeb) {
         this.passWeb = passWeb;
     }
-    
-    
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
 
     @Override
     public int hashCode() {
@@ -171,5 +179,5 @@ public class Configuracion implements Serializable {
     public String toString() {
         return "nomina.entidad.Configuracion[ idConfiguracion=" + idConfiguracion + " ]";
     }
-    
+
 }

@@ -31,7 +31,7 @@ public class facturaController implements Serializable {
      
      private ProdServ prodServ;
      private List<ProdServ> allProdServ;
-     private String busquedaProdServ="";
+     private String busquedaProdServ="No existe en el catálogo";
 
     /**
      * Creates a new instance of facturaController
