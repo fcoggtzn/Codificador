@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -33,8 +34,17 @@ public class ProdServFacade extends AbstractFacade<ProdServ> implements ProdServ
     @Override
     public List<ProdServ> findProdServ(String desc){
         List<ProdServ> query;
-        query = em.createQuery("Select p from ProdServ p where p.descripcion LIKE :desc").setParameter("desc", "%" + desc + "%").getResultList();
-        return query;
+        Query setParameter = em.createQuery("Select p from ProdServ p where p.descripcion LIKE :desc ").setParameter("desc", "%" + desc + "%");
+        setParameter.setMaxResults(20);
+        return setParameter.getResultList();
+    }
+    
+     @Override
+    public ProdServ findProdServID(String desc){
+        List<ProdServ> query;
+        Query setParameter = em.createQuery("Select p from ProdServ p where p.claveProdServ = :desc ").setParameter("desc",  desc );
+        setParameter.setMaxResults(1);
+        return (ProdServ) setParameter.getResultList().get(0);
     }
     
 }

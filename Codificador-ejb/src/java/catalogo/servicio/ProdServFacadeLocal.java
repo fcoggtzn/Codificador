@@ -31,5 +31,7 @@ public interface ProdServFacadeLocal {
     int count();
 
     public List<ProdServ> findProdServ(String desc);
+
+    public ProdServ findProdServID(String desc);
     
 }

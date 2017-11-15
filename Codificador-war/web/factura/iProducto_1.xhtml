@@ -13,7 +13,7 @@ and open the template in the editor.
     <h:head>
         <f:facet name="first">
             <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-            <title>Productos</title>
+            <title>Producto</title>
         </f:facet>
         <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
     </h:head>
@@ -26,38 +26,26 @@ and open the template in the editor.
                 <p:panel header="Producto" id="panelprod">
                     <p:panelGrid columns="2" columnClasses="no-border, no-border">
                         <h:outputLabel value="Clave de Identificación: " styleClass="it-align-right"/>
-                        <p:inputText id="li" styleClass="it-size" immediate="true" value="#{iProductosMB.producto.claveIdentificacion}" >
+                        <p:inputText id="li" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
                         <h:outputLabel value="Producto: " styleClass="it-align-right"/>
-                        <p:inputText id="psw" styleClass="it-size" immediate="true" value="#{iProductosMB.producto.nombre}">
+                        <p:inputText id="psw" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
                         <h:outputLabel value="descripcion: " styleClass="it-align-right"/>
-                        <p:inputText id="nts" styleClass="it-size" immediate="true" value="#{iProductosMB.producto.descripcion}">
+                        <p:inputText id="nts" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
-                         
                         <h:outputLabel value="Valor Unitario: " styleClass="it-align-right"/>
-                        <p:inputText id="rol" styleClass="it-size" immediate="true" value="#{iProductosMB.producto.valorUnitario}">
+                        <p:inputText id="rol" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
                         <h:outputLabel value="Categoria: " styleClass="it-align-right"/>
                         <p:panelGrid columns="2" columnClasses="no-border, no-border" style="margin:0 !important;">
-                            <p:selectOneListbox value="#{iProductosMB.producto.categoria}"
-                                                id="categoraProducto"  var="t" filter="true" filterMatchMode="contains">
-                                <f:selectItems value="#{iCategoria.categorias}" var="categoria" itemLabel="#{categoria.nombre}" itemValue="#{categoria}" />
- 
-                                <p:column>
-                                    <h:outputText value="#{t.idcategoria}" />
-                                </p:column>
-
-                                <p:column>
-                                    <h:outputText value="#{t.nombre}" />
-                                </p:column>
-                                
-                            </p:selectOneListbox>
-                            
+                            <p:inputText id="emp" styleClass="it-size" value="#{facturaController.prodServ.}" immediate="true" disabled="true">
+                                <p:ajax immediate="true"/>
+                            </p:inputText>
                             <p:commandButton value="Seleccionar" actionListener="#{accesoController.redireccionar('iCatalogoSAT.xhtml')}" ajax="false" immediate="true"/>
                         </p:panelGrid>
                     </p:panelGrid>

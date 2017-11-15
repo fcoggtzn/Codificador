@@ -16,22 +16,30 @@ and open the template in the editor.
             <p:outputLabel value="Usuario: #{accesoController.nombreUsuario()}, Empresa: #{accesoController.empresaUsuario()}" styleClass="colorRojo"/>
         </f:facet>
         
-        <p:menuitem value="Cerrar" actionListener="#{accesoController.logoutAmbito()}" ajax="false" icon="ico_power" immediate="true"/>
-        <p:submenu label="Nomina" icon="ico_money">
-            <p:submenu label="Configuraciones" icon="ico_settings">
+        <p:submenu label="Configuraciones" icon="ico_settings" >
+            <p:menuitem value="Contribuyente" actionListener="#{accesoController.redireccionar('iContribuyente.xhtml')}" ajax="false" icon="ico_ec" immediate="true"/>
+            <p:submenu label="Nomina" icon="ui-icon-document">
                 <p:menuitem value="Empleado" actionListener="#{accesoController.redireccionar('iEmpleado.xhtml')}" ajax="false" icon="ico_empleado" immediate="true"/>
                 <p:menuitem value="Percepción" actionListener="#{accesoController.redireccionar('iPercepcion.xhtml')}" ajax="false" icon="ico_percepcion" immediate="true"/>
                 <p:menuitem value="Deducción" actionListener="#{accesoController.redireccionar('iDeduccion.xhtml')}" ajax="false" icon="ico_deduccion" immediate="true"/>
             </p:submenu>
             <p:submenu label="Empresa" icon="ico_empresa">
-                <p:menuitem value="Usuario" actionListener="#{accesoController.redireccionar('iConfiguracion.xhtml')}" ajax="false" icon="ico_usuario" immediate="true"/>
-                <p:menuitem value="Empresa" actionListener="#{accesoController.redireccionar('iEmpresa.xhtml')}"
+                    <p:menuitem value="Usuario" actionListener="#{accesoController.redireccionar('iConfiguracion.xhtml')}" ajax="false" icon="ico_usuario" immediate="true"/>
+                    <p:menuitem value="Empresa" actionListener="#{accesoController.redireccionar('iEmpresa.xhtml')}"
                             ajax="false" icon="ico_empresa" immediate="true"/>
-                <p:menuitem value="Empresa-Contribuyente" actionListener="#{accesoController.redireccionar('iEmpresaContribuyente.xhtml')}" ajax="false" icon="ico_econt" immediate="true"/>
+                    <p:menuitem value="Empresa-Contribuyente" actionListener="#{accesoController.redireccionar('iEmpresaContribuyente.xhtml')}" ajax="false" icon="ico_econt" immediate="true"/>
             </p:submenu>
-            <p:menuitem value="Contribuyente" actionListener="#{accesoController.redireccionar('iContribuyente.xhtml')}" ajax="false" icon="ico_ec" immediate="true"/>
+        </p:submenu> 
+        <p:submenu label="Comprobantes" icon="ico_money">            
             <p:menuitem value="Nomina" actionListener="#{accesoController.redireccionar('iNomina.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
             <p:menuitem value="Comprobante" actionListener="#{accesoController.redireccionar('iComprobante.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
         </p:submenu>
+        <p:submenu label="Productos" icon="ico_money">            
+            <p:menuitem value="Productos" actionListener="#{accesoController.redireccionar('factura/iProducto.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
+            <p:menuitem value="Catalogo del SAT" actionListener="#{accesoController.redireccionar('factura/iCatalogoSAT.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
+            <p:menuitem value="Impuestos" actionListener="#{accesoController.redireccionar('factura/impuestos.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
+        </p:submenu>
+        <p:menuitem   value="Cerrar" actionListener="#{accesoController.logoutAmbito()}" ajax="false" icon="ico_power" immediate="true"/>
+
     </p:menubar>
 </ui:composition>

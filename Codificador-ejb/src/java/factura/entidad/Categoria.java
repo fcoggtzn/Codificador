@@ -44,7 +44,10 @@ public class Categoria implements Serializable {
     @Basic(optional = false)
     @Column(name = "idcategoria")
     private Integer idcategoria;
-    @Size(max = 45)
+    @Size(max = 45)    
+    @Column(name = "nombre")
+    private String nombre;
+    @Size(max = 45)    
     @Column(name = "clave_producto_servicio")
     private String claveProductoServicio;
     @Size(max = 45)
@@ -69,6 +72,14 @@ public class Categoria implements Serializable {
 
     public Integer getIdcategoria() {
         return idcategoria;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public void setIdcategoria(Integer idcategoria) {
