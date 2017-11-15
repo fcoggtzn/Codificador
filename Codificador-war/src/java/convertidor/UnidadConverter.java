@@ -5,10 +5,8 @@
  */
 package convertidor;
 
-
-
-import catalogo.entidad.ProdServ;
-import catalogo.servicio.ProdServFacadeLocal;
+import catalogo.entidad.Unidad;
+import catalogo.servicio.UnidadFacadeLocal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -25,19 +23,17 @@ import javax.naming.NamingException;
  *
  * @author ovante
  */
-@FacesConverter("claveProdServConverter")
-public class ClaveProdServConverter implements Converter{
+@FacesConverter("unidadConverter")
+public class UnidadConverter implements Converter{
 
-    ProdServFacadeLocal prodServFacade = lookupProdServFacadeLocal();
-
+    UnidadFacadeLocal unidadFacade = lookupUnidadFacadeLocal();
+    
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        
-         if(value != null && value.trim().length() > 0) {
+        if(value != null && value.trim().length() > 0) {
             try {
-                
-                ProdServ findProdServID = prodServFacade.findProdServ(value).get(0);
-                return findProdServID;
+                Unidad findUnidadID = unidadFacade.findUnidadID(value);
+                return findUnidadID;
             } catch(NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             }
@@ -45,26 +41,22 @@ public class ClaveProdServConverter implements Converter{
         else {
             return null;
         }
-         
-     
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         if(value != null) {
-            return ((ProdServ)value).getClaveProdServ().toString();
+            return ((Unidad)value).getClaveUnidad();
         }
         else {
             return null;
         }
-        
-       
     }
 
-    private ProdServFacadeLocal lookupProdServFacadeLocal() {
+    private UnidadFacadeLocal lookupUnidadFacadeLocal() {
         try {
             Context c = new InitialContext();
-            return (ProdServFacadeLocal) c.lookup("java:global/Codificador/Codificador-ejb/ProdServFacade!catalogo.servicio.ProdServFacadeLocal");
+            return (UnidadFacadeLocal) c.lookup("java:global/Codificador/Codificador-ejb/UnidadFacade!catalogo.servicio.UnidadFacadeLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

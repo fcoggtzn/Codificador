@@ -19,7 +19,7 @@ and open the template in the editor.
     </h:head>
     <h:body>
 
-        <h:form id="formemp">
+        <h:form id="formCategoria">
             <ui:include src="../resources/menu.xhtml"/>
             <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
             <center>
@@ -29,37 +29,40 @@ and open the template in the editor.
                         <p:inputText id="li" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.nombre}" >
                             <p:ajax immediate="true"/>
                         </p:inputText>
-                        <h:outputLabel value="Unidad: " styleClass="it-align-right"/>
-                        <p:inputText id="psw" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.unidad}">
+                        
+                        <h:outputLabel value="Clave de unidad: " styleClass="it-align-right"/>
+                        <p:autoComplete id="unidadSat" value="#{iCategoria.unidad}" completeMethod="#{iCategoria.buscaUnidadEnSat}"
+                                        var="unidadSat" itemLabel="#{unidadSat.claveUnidad}" itemValue="#{unidadSat}"  converter="unidadConverter" immediate="true"  forceSelection="true">
+                            <f:ajax></f:ajax>
+                            <f:facet name="itemtip">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputText value="#{unidadSat.claveUnidad}" />
+                                    <h:outputText value="#{unidadSat.descripcion}" />
+                                </h:panelGrid>
+                            </f:facet>
+                        </p:autoComplete>
+                         <h:outputLabel value="Unidad: " styleClass="it-align-right"/>
+                        <p:inputText id="li" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.unidad}" >
                             <p:ajax immediate="true"/>
                         </p:inputText>
-                        <h:outputLabel value="inventariable: " styleClass="it-align-right"/>
-                        <p:inputText id="nts" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.inventariable}">
-                            <p:ajax immediate="true"/>
-                        </p:inputText>
                         
-                        
-                        
-                         
- 
-                         
                         <h:outputLabel value="Categoria del Sat: " styleClass="it-align-right"/>
                         <p:autoComplete id="categoriaSat" value="#{iCategoria.prodServ}" completeMethod="#{iCategoria.buscaEnSat}"
                                         var="categoriaSat" itemLabel="#{categoriaSat.claveProdServ}" itemValue="#{categoriaSat}"  converter="claveProdServConverter" immediate="true"  forceSelection="true">
                             <f:ajax></f:ajax>
-
                             <f:facet name="itemtip">
                                 <h:panelGrid columns="2" cellpadding="5">
                                    
                                     <h:outputText value="#{categoriaSat.claveProdServ}" />
                                
                                     <h:outputText value="#{categoriaSat.descripcion}" />
-                                
-
-
                                 </h:panelGrid>
                             </f:facet>
                         </p:autoComplete>
+                        <h:outputLabel value="inventariable: " styleClass="it-align-right"/>
+                        <p:selectBooleanCheckbox value="#{iCategoria.categoria.inventariable}" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:selectBooleanCheckbox>
                        
                     </p:panelGrid>
                 </p:panel>
@@ -72,8 +75,8 @@ and open the template in the editor.
         <h:form id="formAct" >
             <center>
                 <p:panel header="Acción">
-                    <p:commandButton value="#{iCategoria.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{iCategoria.guardar()}" />
-                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.limpiarEmpleado()}" />
+                    <p:commandButton value="#{iCategoria.textoBoton}" id="guardar" update=":formCategoria :formGrid :formAct" actionListener="#{iCategoria.guardar()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formCategoria :formGrid :formAct" actionListener="#{empleadoController.limpiarEmpleado()}" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>

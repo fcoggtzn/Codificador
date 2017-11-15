@@ -6,7 +6,9 @@
 package mbCatalogo;
 
 import catalogo.entidad.ProdServ;
+import catalogo.entidad.Unidad;
 import catalogo.servicio.ProdServFacadeLocal;
+import catalogo.servicio.UnidadFacadeLocal;
 import factura.entidad.Categoria;
 import factura.servicio.CategoriaFacadeLocal;
 import javax.inject.Named;
@@ -25,16 +27,24 @@ import javax.ejb.EJB;
 public class ICategoria implements Serializable {
 
     @EJB
+    private UnidadFacadeLocal unidadFacade;
+
+    @EJB
     private CategoriaFacadeLocal categoriaFacade;
 
     @EJB
     private ProdServFacadeLocal prodServFacade;
+    
+    
     
     private Categoria categoria;
     private List<Categoria> categorias;
     private List<ProdServ> productoServicios;
     private ProdServ prodServ;
     private String textoBoton;
+    private List<Unidad> unidades;
+    private Unidad unidad;
+
 
     /**
      * Creates a new instance of ICatalogo
@@ -106,6 +116,29 @@ public class ICategoria implements Serializable {
     public void setProdServ(ProdServ prodServ) {
         this.prodServ = prodServ;
     }
+    
+    public List<Unidad> buscaUnidadEnSat(String query) {
+        this.unidades = this.unidadFacade.findUnidades(query);
+        return unidades;
+    }
+
+    public List<Unidad> getUnidades() {
+        return unidades;
+    }
+
+    public void setUnidades(List<Unidad> unidades) {
+        this.unidades = unidades;
+    }
+
+    public Unidad getUnidad() {
+        return unidad;
+    }
+
+    public void setUnidad(Unidad unidad) {
+        this.unidad = unidad;
+    }
+    
+    
     
     
     
