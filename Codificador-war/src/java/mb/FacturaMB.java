@@ -5,6 +5,8 @@
  */
 package mb;
 
+import catalogo.entidad.UsoCfdi;
+import catalogo.servicio.UsoCfdiFacadeLocal;
 import factura.entidad.Producto;
 import factura.servicio.ProductoFacadeLocal;
 import javax.inject.Named;
@@ -26,12 +28,17 @@ import tools.DetalleFactura;
 public class FacturaMB implements Serializable {
 
     @EJB
+    private UsoCfdiFacadeLocal usoCfdiFacade;
+
+    @EJB
     private ProductoFacadeLocal productoFacade;
     private Contribuyente contribuyente;
     private String usoDeCFDI;
     private String textoBoton;
     private List<DetalleFactura> detallesDeFactura;
     private DetalleFactura detalleFactura;
+    private List<UsoCfdi> usosCFDI;
+    private UsoCfdi usoCfdi;
 
     /**
      * Creates a new instance of FacturaMB
@@ -110,5 +117,28 @@ public class FacturaMB implements Serializable {
         
         return this.productoFacade.getListaProductosCombo(query);
     }
+    
+    
+    public List<UsoCfdi> completaUsos(String query){        
+        return this.usoCfdiFacade.findCombo(query);
+    }
+
+    public List<UsoCfdi> getUsosCFDI() {
+        return usosCFDI;
+    }
+
+    public void setUsosCFDI(List<UsoCfdi> usosCFDI) {
+        this.usosCFDI = usosCFDI;
+        
+    }
+
+    public UsoCfdi getUsoCfdi() {
+        return usoCfdi;
+    }
+
+    public void setUsoCfdi(UsoCfdi usoCfdi) {
+        this.usoCfdi = usoCfdi;
+    }
+    
     
 }
