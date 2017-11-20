@@ -30,24 +30,25 @@ public class UnidadFacade extends AbstractFacade<Unidad> implements UnidadFacade
     public UnidadFacade() {
         super(Unidad.class);
     }
-    
+
     @Override
-    public List<Unidad> findUnidades(String desc){
+    public List<Unidad> findUnidades(String desc) {
         List<Unidad> query;
         Query setParameter = em.createQuery("Select u from Unidad u where u.descripcion LIKE :desc or u.claveUnidad like :desc ").setParameter("desc", "%" + desc + "%");
-        setParameter.setMaxResults(20);
+        setParameter.setMaxResults(10);
         return setParameter.getResultList();
     }
-    
-    public Unidad findUnidadID(String desc){
+
+    @Override
+    public Unidad findUnidadId(String desc) {
         List<Unidad> query;
-        Query setParameter = em.createQuery("Select u from Unidad u where u.claveUnidad = :desc ").setParameter("desc",  desc );
+        Query setParameter = em.createQuery("Select u from Unidad u where u.claveUnidad = :desc ").setParameter("desc", desc);
         setParameter.setMaxResults(1);
         List resultList = setParameter.getResultList();
-        if (resultList.size() ==1 ){
-        return (Unidad) setParameter.getResultList().get(0);
+        if (resultList.size() == 1) {
+            return (Unidad) setParameter.getResultList().get(0);
         }
         return null;
     }
-    
+
 }

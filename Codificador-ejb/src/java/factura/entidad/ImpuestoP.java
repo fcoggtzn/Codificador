@@ -52,6 +52,8 @@ public class ImpuestoP implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "porciento")
     private Double porciento;
+    @Column(name = "cantidad")
+    private Double cantidad;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "impuestoP")
     private Collection<CategoriaImpuesto> categoriaImpuestoCollection;
 
@@ -93,6 +95,15 @@ public class ImpuestoP implements Serializable {
     public void setPorciento(Double porciento) {
         this.porciento = porciento;
     }
+
+    public Double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
+    }
+    
 
     @XmlTransient
     public Collection<CategoriaImpuesto> getCategoriaImpuestoCollection() {

@@ -5,10 +5,12 @@
  */
 package factura.servicio;
 
+import factura.entidad.Categoria;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import factura.entidad.CategoriaImpuesto;
+import javax.persistence.Query;
 import nomina.servicio.AbstractFacade;
 
 /**
@@ -28,6 +30,13 @@ public class CategoriaImpuestoFacade extends AbstractFacade<CategoriaImpuesto> i
 
     public CategoriaImpuestoFacade() {
         super(CategoriaImpuesto.class);
+    }
+
+    @Override
+    public void borrarImpuesto(Categoria categoria) {
+        Query query = em.createQuery("DELETE FROM CategoriaImpuesto c WHERE c.categoria = :categoria ");
+        query.setParameter("categoria", categoria);
+        query.executeUpdate();
     }
     
 }

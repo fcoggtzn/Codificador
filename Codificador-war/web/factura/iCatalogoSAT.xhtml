@@ -19,71 +19,140 @@ and open the template in the editor.
     </h:head>
     <h:body>
 
-        <h:form id="formCategoria">
+        <h:form id="menu" >
             <ui:include src="../resources/menu.xhtml"/>
             <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
-            <center>
-                <p:panel header="Categoria" id="panelprod">
-                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
-                        <h:outputLabel value="Nombre: " styleClass="it-align-right"/>
-                        <p:inputText id="li" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.nombre}" >
-                            <p:ajax immediate="true"/>
-                        </p:inputText>
-                        
-                        <h:outputLabel value="Clave de unidad: " styleClass="it-align-right"/>
-                        <p:autoComplete id="unidadSat" value="#{iCategoria.unidad}" completeMethod="#{iCategoria.buscaUnidadEnSat}"
-                                        var="unidadSat" itemLabel="#{unidadSat.claveUnidad}" itemValue="#{unidadSat}"  converter="unidadConverter" immediate="true"  forceSelection="true">
-                            <f:ajax></f:ajax>
-                            <f:facet name="itemtip">
-                                <h:panelGrid columns="2" cellpadding="5">
-                                    <h:outputText value="#{unidadSat.claveUnidad}" />
-                                    <h:outputText value="#{unidadSat.descripcion}" />
-                                </h:panelGrid>
-                            </f:facet>
-                        </p:autoComplete>
-                         <h:outputLabel value="Unidad: " styleClass="it-align-right"/>
-                        <p:inputText id="li" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.unidad}" >
-                            <p:ajax immediate="true"/>
-                        </p:inputText>
-                        
-                        <h:outputLabel value="Categoria del Sat: " styleClass="it-align-right"/>
-                        <p:autoComplete id="categoriaSat" value="#{iCategoria.prodServ}" completeMethod="#{iCategoria.buscaEnSat}"
-                                        var="categoriaSat" itemLabel="#{categoriaSat.claveProdServ}" itemValue="#{categoriaSat}"  converter="claveProdServConverter" immediate="true"  forceSelection="true">
-                            <f:ajax></f:ajax>
-                            <f:facet name="itemtip">
-                                <h:panelGrid columns="2" cellpadding="5">
-                                   
-                                    <h:outputText value="#{categoriaSat.claveProdServ}" />
-                               
-                                    <h:outputText value="#{categoriaSat.descripcion}" />
-                                </h:panelGrid>
-                            </f:facet>
-                        </p:autoComplete>
-                        <h:outputLabel value="inventariable: " styleClass="it-align-right"/>
-                        <p:selectBooleanCheckbox value="#{iCategoria.categoria.inventariable}" immediate="true">
-                            <p:ajax immediate="true"/>
-                        </p:selectBooleanCheckbox>
-                       
+        </h:form>
+     
+            <h:form id="formGrid">
+                <p:panel header="Categorias" id="panelprod" toggleable="true" >
+                    <p:panelGrid columns="2" >
+
+                        <p:dataTable id="out2" var="categ" value="#{iCategoria.categorias}">
+                            <p:column headerText="Nombre">
+                                <h:outputLabel value="#{categ.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Clave Unidad">
+                                <h:outputLabel value="#{categ.claveUnidad}"/>
+                            </p:column>
+                            <p:column headerText="unidad">
+                                <h:outputLabel value="#{categ.unidad}"/>
+                            </p:column>
+                            <p:column headerText="Categoria">
+                                <h:outputLabel value="#{categ.claveProductoServicio}"/>
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandButton id="editar" update="@all" actionListener="#{iCategoria.editar(categ)}" icon="ui-icon-pencil"/>
+                            <p:commandButton id="borrar" update="@all" actionListener="#{iCategoria.borrar(categ)}" icon="ui-icon-closethick"/>
+
+
+                            </p:column>
+                        </p:dataTable>
                     </p:panelGrid>
+                </p:panel>        
+            </h:form>
+            <h:form id="formCategoria">          
+                <p:panel header="Categoria" id="panelprod">
+                    <p:panelGrid columns="2" columnClasses="no-border, dotted">
+                        <p:panel  header="Generales">
+                            <p:panelGrid columns="2" columnClasses="no-border, dotted">
+                                <h:outputLabel value="Nombre: " styleClass="it-align-right"/>
+                                <p:inputText id="li" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.nombre}" >
+                                    <p:ajax immediate="true"/>
+                                </p:inputText>
+                                <h:outputLabel value="Clave Unidad: " styleClass="it-align-right"/>
+                                <p:panelGrid columns="2">
+                                    <p:autoComplete id="unidadSat" value="#{iCategoria.unidad}" completeMethod="#{iCategoria.buscaUnidadEnSat}"
+                                                    var="unidadSat" itemLabel="#{unidadSat.claveUnidad}" itemValue="#{unidadSat}" converter="unidadConverter" immediate="true" forceSelection="true">
+                                        <p:ajax event="itemSelect" update=":formCategoria:unidadNombre"/>
+                                        <f:facet name="itemtip">
+                                            <h:panelGrid columns="2" cellpadding="5">
+                                                <h:outputText value="#{unidadSat.claveUnidad}" />
+                                                <h:outputText value="#{unidadSat.nombre}" />
+                                            </h:panelGrid>
+                                        </f:facet>
+                                    </p:autoComplete>
+                                    <h:outputLabel id="unidadNombre" value="#{iCategoria.unidad.nombre}"/>
+                                </p:panelGrid>
+                                <h:outputLabel value="Unidad: " styleClass="it-align-right"/>
+                                <p:inputText id="uni" styleClass="it-size" immediate="true" value="#{iCategoria.categoria.unidad}" >
+                                    <p:ajax immediate="true"/>
+                                </p:inputText>
+                                <h:outputLabel value="Categoria del Sat: " styleClass="it-align-right"/>
+                                <p:panelGrid columns="2">
+                                    <p:autoComplete id="categoriaSat" value="#{iCategoria.prodServ}" completeMethod="#{iCategoria.buscaEnSat}"
+                                                    var="categoriaSat" itemLabel="#{categoriaSat.claveProdServ}" itemValue="#{categoriaSat}"  converter="claveProdServConverter" immediate="true"  forceSelection="true">
+                                        <p:ajax event="itemSelect" update=":formCategoria:prodservDes"/>
+                                        <f:facet name="itemtip">
+                                            <h:panelGrid columns="2" cellpadding="5">
+
+                                                <h:outputText value="#{categoriaSat.claveProdServ}" />
+
+                                                <h:outputText value="#{categoriaSat.descripcion}" />
+                                            </h:panelGrid>
+                                        </f:facet>
+                                    </p:autoComplete>
+                                    <h:outputLabel id="prodservDes" value="#{iCategoria.prodServ.descripcion}"/>
+                                </p:panelGrid>
+                                <h:outputLabel value="inventariable: " styleClass="it-align-right"/>
+                                <p:selectBooleanCheckbox value="#{iCategoria.categoria.inventariable}" immediate="true">
+                                    <p:ajax immediate="true"/>
+                                </p:selectBooleanCheckbox>
+                            </p:panelGrid>
+                        </p:panel>
+
+                    <p:panel header="Impuestos" id="impuestoDeCategoria"> 
+                     
+                        <p:dataTable value="#{iCategoria.categoria.categoriaImpuestoCollection}" var="impC">
+                            <p:column headerText="descripcion">
+                                <h:outputLabel value="#{impC.impuestoP.descripcion}"></h:outputLabel>
+                            </p:column>
+                            <p:column headerText="translado/retenido"> 
+                                <p:selectBooleanCheckbox value="#{impC.traslado}" immediate="true">
+                                    <p:ajax immediate="true"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="Borrar" update=":formCategoria:impuestoDeCategoria" actionListener="#{iCategoria.borrarImpuesto(impC)}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:panel header="Impuesto a agregar">
+                            <p:dataTable value="#{impuestoCatalogo.impuestosP}" var="impP">
+                                <p:column headerText="Impuestos">
+                                    <h:outputLabel value="#{impP.descripcion}" title="#{impP.impuesto}"></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Tasa">
+                                    <h:outputLabel value="#{impP.porciento}" title="#{impP.impuesto}"></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Couta">
+                                    <h:outputLabel value="#{impP.cantidad}" title="#{impP.cantidad}"></h:outputLabel>
+                                </p:column>
+                                <p:column headerText="Translado/Retencion">
+                                    <p:commandButton value="T" update=":formCategoria:impuestoDeCategoria" actionListener="#{iCategoria.agregarImpuestoT(impP)}"></p:commandButton>
+                                    <p:commandButton value="R"  update=":formCategoria:impuestoDeCategoria" actionListener="#{iCategoria.agregarImpuestoR(impP)}"></p:commandButton>  
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panel>   
+                    </p:panelGrid>
+
                 </p:panel>
                 <p:blockUI block="panelprod" trigger="panelprod">
                     LOADING<br />
                     <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
                 </p:blockUI>
-            </center>
-        </h:form>
+
+            </h:form>
+     
         <h:form id="formAct" >
             <center>
                 <p:panel header="Acción">
                     <p:commandButton value="#{iCategoria.textoBoton}" id="guardar" update=":formCategoria :formGrid :formAct" actionListener="#{iCategoria.guardar()}" />
-                    <p:commandButton value="Limpiar" id="limpiar" update=":formCategoria :formGrid :formAct" actionListener="#{empleadoController.limpiarEmpleado()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update="@all" actionListener="#{iCategoria.limpiar()}" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>
         </h:form>
-        <br/>
-        <h:form id="formGrid">
-
-        </h:form>
+       
     </h:body>
 </html>

@@ -29,5 +29,9 @@ public interface ProductoFacadeLocal {
     List<Producto> findRange(int[] range);
 
     int count();
+
+    public List<Producto> getListaProductos(String query);
+
+    public List<Producto> getListaProductosCombo(String busqueda);
     
 }

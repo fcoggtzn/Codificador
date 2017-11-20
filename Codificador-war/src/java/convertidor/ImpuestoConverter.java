@@ -5,8 +5,9 @@
  */
 package convertidor;
 
+import catalogo.entidad.Impuesto;
 import catalogo.entidad.Unidad;
-import catalogo.servicio.UnidadFacadeLocal;
+import catalogo.servicio.ImpuestoFacadeLocal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -23,17 +24,20 @@ import javax.naming.NamingException;
  *
  * @author ovante
  */
-@FacesConverter("unidadConverter")
-public class UnidadConverter implements Converter{
+@FacesConverter("impuestoConverter")
+public class ImpuestoConverter implements Converter{
 
-    UnidadFacadeLocal unidadFacade = lookupUnidadFacadeLocal();
+    ImpuestoFacadeLocal impuestoFacade = lookupImpuestoFacadeLocal();
+
+    
     
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if(value != null && value.trim().length() > 0) {
             try {
-                Unidad findUnidadID = unidadFacade.findUnidadId(value);
-                return findUnidadID;
+                
+                Impuesto impuesto = impuestoFacade.findImpuesto(value);
+                return impuesto;
             } catch(NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             }
@@ -46,17 +50,17 @@ public class UnidadConverter implements Converter{
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         if(value != null) {
-            return ((Unidad)value).getClaveUnidad();
+            return ((Impuesto)value).getCodigo();
         }
         else {
             return null;
         }
     }
 
-    private UnidadFacadeLocal lookupUnidadFacadeLocal() {
+    private ImpuestoFacadeLocal lookupImpuestoFacadeLocal() {
         try {
             Context c = new InitialContext();
-            return (UnidadFacadeLocal) c.lookup("java:global/Codificador/Codificador-ejb/UnidadFacade!catalogo.servicio.UnidadFacadeLocal");
+            return (ImpuestoFacadeLocal) c.lookup("java:global/Codificador/Codificador-ejb/ImpuestoFacade!catalogo.servicio.ImpuestoFacadeLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

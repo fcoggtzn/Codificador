@@ -29,5 +29,11 @@ public interface ImpuestoFacadeLocal {
     List<Impuesto> findRange(int[] range);
 
     int count();
+
+    public List<Impuesto> findImpuestos(String desc);
+
+    public Impuesto findImpuesto(String desc);
+
+    
     
 }

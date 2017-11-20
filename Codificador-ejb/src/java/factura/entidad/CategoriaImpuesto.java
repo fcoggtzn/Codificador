@@ -39,7 +39,7 @@ public class CategoriaImpuesto implements Serializable {
     @Column(name = "idcategoria_impuesto")
     private Integer idcategoriaImpuesto;
     @Column(name = "traslado")
-    private Short traslado;
+    private boolean traslado;
     @JoinColumn(name = "categoria_idcategoria", referencedColumnName = "idcategoria")
     @ManyToOne(optional = false)
     private Categoria categoria;
@@ -62,11 +62,11 @@ public class CategoriaImpuesto implements Serializable {
         this.idcategoriaImpuesto = idcategoriaImpuesto;
     }
 
-    public Short getTraslado() {
+    public boolean getTraslado() {
         return traslado;
     }
 
-    public void setTraslado(Short traslado) {
+    public void setTraslado(boolean traslado) {
         this.traslado = traslado;
     }
 

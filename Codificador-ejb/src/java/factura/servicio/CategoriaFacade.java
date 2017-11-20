@@ -9,6 +9,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import factura.entidad.Categoria;
+import java.util.List;
+import javax.persistence.Query;
 import nomina.servicio.AbstractFacade;
 
 /**
@@ -28,6 +30,14 @@ public class CategoriaFacade extends AbstractFacade<Categoria> implements Catego
 
     public CategoriaFacade() {
         super(Categoria.class);
+    }
+
+    @Override
+    public Categoria findID(String value) {
+        Query query;
+        query = em.createQuery("Select c from Categoria c where c.idcategoria = :desc"); 
+        query.setParameter("desc", new Integer(value));
+        return (Categoria) query.getSingleResult();
     }
     
 }

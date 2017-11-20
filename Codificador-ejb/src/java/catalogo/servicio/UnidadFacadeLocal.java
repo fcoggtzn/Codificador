@@ -32,6 +32,6 @@ public interface UnidadFacadeLocal {
 
     public List<Unidad> findUnidades(String desc);
 
-    public Unidad findUnidadID(String desc);
+    public Unidad findUnidadId(String desc);
     
 }

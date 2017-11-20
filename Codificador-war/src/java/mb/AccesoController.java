@@ -41,6 +41,7 @@ public class AccesoController extends BaseController implements Serializable  {
     }
     
     public void redireccionar(String page) throws IOException{
+        page="/Codificador-war/faces/"+page;
         FacesContext.getCurrentInstance().getExternalContext().redirect(page);
     }
     

@@ -9,6 +9,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import factura.entidad.Producto;
+import java.util.List;
+import javax.persistence.Query;
 import nomina.servicio.AbstractFacade;
 
 /**
@@ -30,4 +32,24 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
         super(Producto.class);
     }
     
+    @Override
+    public List<Producto> getListaProductos(String busqueda){
+        List<Producto> productos = null;
+        Query query;
+        query = em.createQuery("Select p from Producto p where p.nombre like :desc or p.descripcion like :desc");
+        query.setParameter("desc", busqueda+"%");
+        productos = query.getResultList();
+        return productos;
+    }
+    
+     @Override
+    public List<Producto> getListaProductosCombo(String busqueda){
+        List<Producto> productos = null;
+        Query query;
+        query = em.createQuery("Select p from Producto p where p.nombre like :desc or p.descripcion like :desc");
+        query.setParameter("desc", "%"+busqueda+"%");
+        query.setMaxResults(10);
+         productos = query.getResultList();
+        return productos;
+    }
 }

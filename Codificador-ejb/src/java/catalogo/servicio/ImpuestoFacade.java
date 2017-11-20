@@ -6,9 +6,11 @@
 package catalogo.servicio;
 
 import catalogo.entidad.Impuesto;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -29,4 +31,21 @@ public class ImpuestoFacade extends AbstractFacade<Impuesto> implements Impuesto
         super(Impuesto.class);
     }
     
+    @Override
+     public List<Impuesto> findImpuestos(String desc){
+        List<Impuesto> query;
+        Query setParameter = em.createQuery("Select i from Impuesto i where i.codigo LIKE :desc or i.descripcion like :desc ").setParameter("desc", "%" + desc + "%");
+        setParameter.setMaxResults(20);
+        return setParameter.getResultList();
+    }
+     @Override
+     public Impuesto findImpuesto(String desc){
+        List<Impuesto> findImpuestos = findImpuestos(desc);
+        
+        if (findImpuestos.size() == 1 ){
+            return findImpuestos.get(0);
+        }
+        return null;
+    }
+     
 }

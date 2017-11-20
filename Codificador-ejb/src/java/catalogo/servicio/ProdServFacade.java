@@ -35,7 +35,7 @@ public class ProdServFacade extends AbstractFacade<ProdServ> implements ProdServ
     public List<ProdServ> findProdServ(String desc){
         List<ProdServ> query;
         Query setParameter = em.createQuery("Select p from ProdServ p where p.descripcion LIKE :desc or p.claveProdServ like :desc ").setParameter("desc", "%" + desc + "%");
-        setParameter.setMaxResults(20);
+        setParameter.setMaxResults(10);
         return setParameter.getResultList();
     }
     

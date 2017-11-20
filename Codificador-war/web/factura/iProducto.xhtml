@@ -19,10 +19,41 @@ and open the template in the editor.
     </h:head>
     <h:body>
 
-        <h:form id="formemp">
+<h:form id="tabChangeHelperForm">
+    <p:remoteCommand name="tabChangeHelper" actionListener="#{iProductosMB.onChageBusqueda()}" update=":formprds"  />
+</h:form>    
+        <h:form id="formprds">
             <ui:include src="../resources/menu.xhtml"/>
             <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
-            <center>
+            <p:panel header="Productos">
+                <p:tabView value="#{iProductosMB.tabs}" var="tab"   onTabChange="tabChangeHelper([{name: 'activeIndex', value: index}])">  
+                    
+                    
+                    <p:tab title="#{tab.title}" >
+                       
+                        
+                    </p:tab>
+                </p:tabView>  
+                <p:dataTable  value="#{iProductosMB.productos}" var="prd">
+                            <p:column>
+                                <h:outputText value="#{prd.nombre}"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{prd.descripcion}"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{prd.valorUnitario}"></h:outputText>
+                            </p:column>
+                    <p:column>
+                        <p:commandButton value="Editar" update="@all" actionListener="#{iProductosMB.edit(prd)}"></p:commandButton>
+                        <p:commandButton value="Borrar"  update="@all" actionListener="#{iProductosMB.borrar(prd)}"></p:commandButton>  
+                    </p:column>
+                    
+                        </p:dataTable>
+
+            </p:panel>
+        </h:form>
+           <h:form id="formprd">       
                 <p:panel header="Producto" id="panelprod">
                     <p:panelGrid columns="2" columnClasses="no-border, no-border">
                         <h:outputLabel value="Clave de Identificación: " styleClass="it-align-right"/>
@@ -44,8 +75,9 @@ and open the template in the editor.
                         </p:inputText>
                         <h:outputLabel value="Categoria: " styleClass="it-align-right"/>
                         <p:panelGrid columns="2" columnClasses="no-border, no-border" style="margin:0 !important;">
-                            <p:selectOneListbox value="#{iProductosMB.producto.categoria}"
-                                                id="categoraProducto"  var="t" filter="true" filterMatchMode="contains">
+                            <p:selectOneListbox value="#{iProductosMB.producto.categoria}" required="true" requiredMessage="Falata Categoria"
+                                                id="categoraProducto"  var="t" filter="true" filterMatchMode="contains" converter="categoriaConverter">
+                                <f:ajax event="valueChange"></f:ajax>
                                 <f:selectItems value="#{iCategoria.categorias}" var="categoria" itemLabel="#{categoria.nombre}" itemValue="#{categoria}" />
  
                                 <p:column>
@@ -66,13 +98,13 @@ and open the template in the editor.
                     LOADING<br />
                     <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
                 </p:blockUI>
-            </center>
+        
         </h:form>
         <h:form id="formAct" >
             <center>
                 <p:panel header="Acción">
-                    <p:commandButton value="#{empleadoController.textoBoton}" id="guardar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.guardarEmpleado()}" />
-                    <p:commandButton value="Limpiar" id="limpiar" update=":formemp :formGrid :formAct" actionListener="#{empleadoController.limpiarEmpleado()}" />
+                    <p:commandButton value="#{iProductosMB.textoBoton}" id="guardar" update="@all" actionListener="#{iProductosMB.grabar()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update="@all" actionListener="#{iProductosMB.initState()}" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>

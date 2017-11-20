@@ -5,6 +5,7 @@
  */
 package factura.servicio;
 
+import factura.entidad.Categoria;
 import java.util.List;
 import javax.ejb.Local;
 import factura.entidad.CategoriaImpuesto;
@@ -29,5 +30,7 @@ public interface CategoriaImpuestoFacadeLocal {
     List<CategoriaImpuesto> findRange(int[] range);
 
     int count();
+
+    public void borrarImpuesto(Categoria categoria);
     
 }

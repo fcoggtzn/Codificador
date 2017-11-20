@@ -9,8 +9,7 @@ and open the template in the editor.
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <f:facet name="first">
             <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
@@ -19,38 +18,79 @@ and open the template in the editor.
         <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
     </h:head>
     <h:body>
-        <h:form id="formGrid">
-            <p:growl id="msgs" showDetail="true" />
-            <p:panel id="panelprodserv" header="Productos-Servicios">
-                <p:panelGrid columns="3">
-                    <h:outputLabel value="Descripcion: "/>
-                    <p:inputText value="#{facturaController.prodServ.descripcion}" disabled="true"/>
-                    <p:commandButton value="Regresar" onclick="window.history.back();"/>
-                </p:panelGrid>
-                <p:toolbar>
-                    <f:facet name="right">
-                        <p:outputPanel>
-                            <h:outputText value="Buscar:" />
-                            <p:inputText value="#{facturaController.busquedaProdServ}" style="width:150px" placeholder="Buscar" immediate="true">
-                                <p:ajax event="keyup" update=":formGrid:out" />
-                            </p:inputText>
-                        </p:outputPanel>
-                    </f:facet>
-                </p:toolbar>
 
-                <p:dataTable id="out" var="prodserv" value="#{facturaController.allProdServ}" selectionMode="single" selection="#{facturaController.prodServ}" rowKey="#{prodserv.id}" widgetVar="prodServTable" paginator="true" rows="50">
-                    <p:ajax event="rowSelect" listener="#{facturaController.onRowSelect}" update=":formGrid" />
-                    <p:column headerText="Clave">
-                        <h:outputLabel value="#{prodserv.claveProdServ}"/>
-                    </p:column>
-                    <p:column headerText="Descripcion">
-                        <h:outputLabel value="#{prodserv.descripcion}"/>
-                    </p:column>
-                </p:dataTable>
-            </p:panel>
-            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-                <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
-            </p:dialog>
+        <h:form id="formImpuestoSelection">
+            <ui:include src="../resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Impuestos para productos">
+                    <p:dataTable value="#{impuestoCatalogo.impuestosP}" var="impuestoPrd">
+                        <p:column headerText="Codigo">
+                            
+                            <p:outputLabel value="#{impuestoPrd.impuesto}" />
+
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <p:outputLabel value="#{impuestoPrd.descripcion}" />
+
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton id="editar" update=":formImpuesto  :formAct" actionListener="#{impuestoCatalogo.editar(impuestoPrd)}" icon="ui-icon-pencil"/>
+                            <p:commandButton id="borrar" update="@all" actionListener="#{impuestoCatalogo.borrar(impuestoPrd)}" icon="ui-icon-closethick"/>
+
+
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </center>  
         </h:form>
+        <h:form id="formImpuesto"> 
+            <center>
+                <p:panel header="Impuesto" id="panelprod">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Clave: " styleClass="it-align-right"/>
+                        <p:autoComplete id="impSat" value="#{impuestoCatalogo.impuesto}" completeMethod="#{impuestoCatalogo.buscaEnSat}"
+                                            var="impuestoSat" itemLabel="#{impuestoSat.codigo}" itemValue="#{impuestoSat}" converter="impuestoConverter" immediate="true" forceSelection="true">
+                            <p:ajax event="itemSelect"  update=":formImpuesto:descricionImp" /> 
+                                <f:facet name="itemtip">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="#{impuestoSat.codigo}" />
+                                        <h:outputText value="#{impuestoSat.descripcion}" />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:autoComplete>
+                       <h:outputLabel value="Descripción: " styleClass="it-align-right"/>
+                       <p:inputText id="descricionImp" value="#{impuestoCatalogo.impuestoP.descripcion}" >
+                           <f:ajax></f:ajax>
+                       </p:inputText>
+                       <h:outputLabel value="Cantidad: " styleClass="it-align-right"/>
+                       <p:inputText value="#{impuestoCatalogo.impuestoP.cantidad}" >
+                           <f:ajax></f:ajax>
+                       </p:inputText>
+                       <h:outputLabel value="Tasa: " styleClass="it-align-right"/>
+                       <p:inputText value="#{impuestoCatalogo.impuestoP.porciento}">
+                           <f:ajax></f:ajax>
+                       </p:inputText>
+                    </p:panelGrid>
+
+                </p:panel>
+             
+                <p:blockUI block="panelprod" trigger="panelprod">
+                    LOADING<br />
+                    <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
+                </p:blockUI>
+            </center>
+        </h:form>
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{iCategoria.textoBoton}" id="guardar" update="@all" actionListener="#{impuestoCatalogo.guardar()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formImpuesto  :formAct" actionListener="#{impuestoCatalogo.initState()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+        <br/>
+       
     </h:body>
 </html>

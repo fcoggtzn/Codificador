@@ -5,8 +5,8 @@
  */
 package convertidor;
 
-import catalogo.entidad.Unidad;
-import catalogo.servicio.UnidadFacadeLocal;
+import factura.entidad.Categoria;
+import factura.servicio.CategoriaFacadeLocal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -23,40 +23,38 @@ import javax.naming.NamingException;
  *
  * @author ovante
  */
-@FacesConverter("unidadConverter")
-public class UnidadConverter implements Converter{
+@FacesConverter("categoriaConverter")
+public class CategoriaConverter implements Converter{
 
-    UnidadFacadeLocal unidadFacade = lookupUnidadFacadeLocal();
-    
+    CategoriaFacadeLocal categoriaFacade = lookupCategoriaFacadeLocal();
+
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if(value != null && value.trim().length() > 0) {
+        if (value != null && value.trim().length() > 0) {
             try {
-                Unidad findUnidadID = unidadFacade.findUnidadId(value);
+                Categoria findUnidadID = categoriaFacade.findID(value);
                 return findUnidadID;
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if(value != null) {
-            return ((Unidad)value).getClaveUnidad();
-        }
-        else {
+        if (value != null) {
+            return ((Categoria) value).getIdcategoria().toString();
+        } else {
             return null;
         }
     }
 
-    private UnidadFacadeLocal lookupUnidadFacadeLocal() {
+    private CategoriaFacadeLocal lookupCategoriaFacadeLocal() {
         try {
             Context c = new InitialContext();
-            return (UnidadFacadeLocal) c.lookup("java:global/Codificador/Codificador-ejb/UnidadFacade!catalogo.servicio.UnidadFacadeLocal");
+            return (CategoriaFacadeLocal) c.lookup("java:global/Codificador/Codificador-ejb/CategoriaFacade!factura.servicio.CategoriaFacadeLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

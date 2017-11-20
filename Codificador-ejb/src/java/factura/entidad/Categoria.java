@@ -57,7 +57,7 @@ public class Categoria implements Serializable {
     @Column(name = "unidad")
     private String unidad;
     @Column(name = "inventariable")
-    private Short inventariable;
+    private boolean inventariable;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
     private Collection<Producto> productoCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
@@ -110,11 +110,11 @@ public class Categoria implements Serializable {
         this.unidad = unidad;
     }
 
-    public Short getInventariable() {
+    public boolean isInventariable() {
         return inventariable;
     }
 
-    public void setInventariable(Short inventariable) {
+    public void setInventariable(boolean inventariable) {
         this.inventariable = inventariable;
     }
 
