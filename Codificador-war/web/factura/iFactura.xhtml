@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Factura</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="menu" >
+            <ui:include src="../resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+        </h:form>
+
+        <h:form id="formGrid">
+            <p:panel header="Factura" id="panelprod" toggleable="true" >
+                <p:panelGrid columns="7" >
+                    <h:outputLabel value="Contribuyente" ></h:outputLabel>
+                    <p:autoComplete id="acSimple" value="#{facturaMB.contribuyente}"
+                                    completeMethod="#{contribuyenteController.completeTextRFC}"
+                                    var="valor" itemLabel="#{valor.rfc}" itemValue="#{valor}"
+                                    immediate="true" converter="contribuyenteConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{valor.rfc}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{valor.nombre}"/>
+                        </p:column>
+                    </p:autoComplete>
+
+                    <h:outputLabel value="#{facturaMB.contribuyente.nombre}"></h:outputLabel>  
+                      <h:outputLabel value="     "></h:outputLabel> 
+                       <h:outputLabel value="     "></h:outputLabel> 
+                       <h:outputLabel value=" Uso CFDI     "></h:outputLabel>  
+                       <p:autoComplete id="usoCFDI" value="#{facturaMB.usoDeCFDI}"
+                                       completeMethod="#{facturaMB.completaUsos}"
+                                    var="usoCfdi" itemLabel="#{usoCfdi.rfc}" itemValue="#{usoCfdi}"
+                                    immediate="true" converter="usoCfdiConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{valor.rfc}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{valor.nombre}"/>
+                        </p:column>
+                    </p:autoComplete>
+                </p:panelGrid>
+
+            </p:panel>        
+        </h:form>
+        <h:form id="formDetalleFactura">          
+
+
+            <p:panel header="DetalleFactura" id="detalle"> 
+                <p:dataTable value="#{facturaMB.detallesDeFactura}" var="detalle">
+                    <p:column headerText="Cantidad">
+                        <h:outputLabel value="#{detalle.cantidad}"></h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Clave">
+                        
+                          <h:outputLabel value="#{detalle.producto.claveIdentificacion}"></h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Producto">
+                          <h:outputLabel value="#{detalle.producto.nombre}"></h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Valor">
+                        <h:outputLabel value="#{detalle.producto.valorUnitario}"></h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Descuento">
+                        <h:outputLabel value="#{detalle.cantidadDescuento}"></h:outputLabel>
+                    </p:column>
+                    <p:column headerText="Importe">
+                        <h:outputLabel value="#{detalle.importe}"></h:outputLabel>
+                    </p:column>
+                      <p:column headerText="">
+                          <p:commandButton value="X" actionListener="#{facturaMB.quitarDetalle(detalle)}" update="@form"/>
+                    </p:column>
+                    <f:facet id="footerProductos" name="footer">
+                    <p:column headerText="">
+                        <h:inputText value="#{facturaMB.detalleFactura.cantidad}"  >
+                            <f:ajax render="@form" ></f:ajax>
+                        </h:inputText>
+                    </p:column>
+                    <p:column headerText="">
+                        <p:autoComplete value="#{facturaMB.detalleFactura.producto}" converter="productoConverter"
+                                        completeMethod="#{facturaMB.completaProductos}" 
+                                        itemLabel="#{prd.claveIdentificacion}" 
+                                        itemValue="#{prd}" var="prd" >
+                             <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                         <p:column>
+                            <h:outputLabel value="#{prd.claveIdentificacion}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{prd.nombre}"/>
+                        </p:column>
+                         <p:column>
+                            <h:outputLabel value="#{prd.descripcion}"/>
+                        </p:column>
+                        </p:autoComplete> 
+                        
+                    </p:column>
+                    <p:column headerText="">
+                          <h:outputText value="#{facturaMB.detalleFactura.producto.nombre}"/>
+                    </p:column>
+                    <p:column headerText="">
+                        <h:inputText value="#{facturaMB.detalleFactura.valorUnitario}"></h:inputText>
+                    </p:column>
+                    <p:column headerText="">
+                        <h:inputText value="#{facturaMB.detalleFactura.cantidadDescuento}"></h:inputText>
+                    </p:column>
+                    <p:column headerText="">
+                        <h:inputText value="#{facturaMB.detalleFactura.importe}"></h:inputText>
+                    </p:column>
+                      <p:column headerText="">
+                          <p:commandButton value="+" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
+                          </p:commandButton>
+                      </p:column>
+                        </f:facet>
+                </p:dataTable>
+
+
+
+            </p:panel>   
+
+
+        </h:form>
+
+        <h:form id="formAct" >
+            <center>
+                <p:panel header="Acción">
+                    <p:commandButton value="#{facturaMB.textoBoton}" id="guardar" update="@all" actionListener="#{facturaMB.guardar()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update="@all" actionListener="#{facturaMB.limpiar()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+            </center>
+        </h:form>
+
+    </h:body>
+</html>

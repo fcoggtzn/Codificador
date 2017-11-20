@@ -33,7 +33,7 @@ public class ContribuyenteFacade extends AbstractFacade<Contribuyente> implement
     @Override
     public List<Contribuyente> findcontribuyentesByRFC(String rfc){
         List<Contribuyente> query;
-        query = em.createQuery("Select c from Contribuyente c where c.rfc LIKE :rfc").setParameter("rfc", "%" + rfc + "%").getResultList();
+        query = em.createQuery("Select c from Contribuyente c where c.rfc LIKE :rfc or c.nombre like :rfc").setParameter("rfc", "%" + rfc + "%").getResultList();
         return query;
     }
     

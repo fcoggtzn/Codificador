@@ -80,12 +80,16 @@ public class IProductosMB implements Serializable {
     
     public void grabar(){
         try{
-            this.productoFacade.create(producto);
-        }
-        catch(Exception e){
+            if (producto.getIdproducto() != 0) {
+                this.productoFacade.create(producto);
+            } else {
+                this.productoFacade.edit(producto);
+
+            }
+        } catch (Exception e) {
             this.productoFacade.edit(producto);
         }
-         String busqueda= this.busqueda;
+        String busqueda = this.busqueda;
         this.initState();
         this.busqueda= busqueda;
         productos=this.productoFacade.getListaProductos(busqueda);

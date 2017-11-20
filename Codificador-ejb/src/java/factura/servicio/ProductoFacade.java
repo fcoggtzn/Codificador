@@ -52,4 +52,19 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
          productos = query.getResultList();
         return productos;
     }
+    
+      @Override
+    public Producto getProducto(String busqueda){
+        List<Producto> productos = null;
+        Query query;
+        query = em.createQuery("Select p from Producto p where p.claveIdentificacion = :desc");
+        query.setParameter("desc", busqueda);
+        query.setMaxResults(10);
+         productos = query.getResultList();
+         try{
+        return productos.get(0);}
+         catch (Exception e ){
+             return null;
+         }
+    }
 }

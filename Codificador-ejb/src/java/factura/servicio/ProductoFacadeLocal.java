@@ -33,5 +33,8 @@ public interface ProductoFacadeLocal {
     public List<Producto> getListaProductos(String query);
 
     public List<Producto> getListaProductosCombo(String busqueda);
+
+
+    public Producto getProducto(String busqueda);
     
 }

@@ -74,7 +74,6 @@ and open the template in the editor.
                             <p:ajax immediate="true"/>
                         </p:inputText>
                         <h:outputLabel value="Categoria: " styleClass="it-align-right"/>
-                        <p:panelGrid columns="2" columnClasses="no-border, no-border" style="margin:0 !important;">
                             <p:selectOneListbox value="#{iProductosMB.producto.categoria}" required="true" requiredMessage="Falata Categoria"
                                                 id="categoraProducto"  var="t" filter="true" filterMatchMode="contains" converter="categoriaConverter">
                                 <f:ajax event="valueChange"></f:ajax>
@@ -90,8 +89,6 @@ and open the template in the editor.
                                 
                             </p:selectOneListbox>
                             
-                            <p:commandButton value="Seleccionar" actionListener="#{accesoController.redireccionar('iCatalogoSAT.xhtml')}" ajax="false" immediate="true"/>
-                        </p:panelGrid>
                     </p:panelGrid>
                 </p:panel>
                 <p:blockUI block="panelprod" trigger="panelprod">
