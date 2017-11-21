@@ -107,9 +107,12 @@ and open the template in the editor.
                             <p:column headerText="descripcion">
                                 <h:outputLabel value="#{impC.impuestoP.descripcion}"></h:outputLabel>
                             </p:column>
-                            <p:column headerText="translado/retenido"> 
-                                <p:selectBooleanCheckbox value="#{impC.traslado}" immediate="true">
-                                    <p:ajax immediate="true"/>
+                            <p:column headerText="traslado"> 
+                                <p:selectBooleanCheckbox value="#{impC.traslado}" disabled="true">
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                            <p:column headerText="retención"> 
+                                <p:selectBooleanCheckbox value="#{!impC.traslado}"  disabled="true">
                                 </p:selectBooleanCheckbox>
                             </p:column>
                             <p:column>
@@ -124,7 +127,7 @@ and open the template in the editor.
                                 <p:column headerText="Tasa">
                                     <h:outputLabel value="#{impP.porciento}" title="#{impP.impuesto}"></h:outputLabel>
                                 </p:column>
-                                <p:column headerText="Couta">
+                                <p:column headerText="Cantidad">
                                     <h:outputLabel value="#{impP.cantidad}" title="#{impP.cantidad}"></h:outputLabel>
                                 </p:column>
                                 <p:column headerText="Translado/Retencion">

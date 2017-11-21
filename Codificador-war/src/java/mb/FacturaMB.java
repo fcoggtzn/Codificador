@@ -5,7 +5,9 @@
  */
 package mb;
 
+import catalogo.entidad.FormaPago;
 import catalogo.entidad.UsoCfdi;
+import catalogo.servicio.FormaPagoFacadeLocal;
 import catalogo.servicio.UsoCfdiFacadeLocal;
 import factura.entidad.Producto;
 import factura.servicio.ProductoFacadeLocal;
@@ -28,6 +30,9 @@ import tools.DetalleFactura;
 public class FacturaMB implements Serializable {
 
     @EJB
+    private FormaPagoFacadeLocal formaPagoFacade;
+
+    @EJB
     private UsoCfdiFacadeLocal usoCfdiFacade;
 
     @EJB
@@ -39,6 +44,8 @@ public class FacturaMB implements Serializable {
     private DetalleFactura detalleFactura;
     private List<UsoCfdi> usosCFDI;
     private UsoCfdi usoCfdi;
+    private FormaPago formaPago;
+    private List<FormaPago> formasPago;
 
     /**
      * Creates a new instance of FacturaMB
@@ -126,6 +133,11 @@ public class FacturaMB implements Serializable {
     public List<UsoCfdi> getUsosCFDI() {
         return usosCFDI;
     }
+    
+    
+    public List<FormaPago> completaFormaPago(String query){        
+        return this.formaPagoFacade.findCombo(query);
+    }
 
     public void setUsosCFDI(List<UsoCfdi> usosCFDI) {
         this.usosCFDI = usosCFDI;
@@ -138,6 +150,22 @@ public class FacturaMB implements Serializable {
 
     public void setUsoCfdi(UsoCfdi usoCfdi) {
         this.usoCfdi = usoCfdi;
+    }
+
+    public FormaPago getFormaPago() {
+        return formaPago;
+    }
+
+    public void setFormaPago(FormaPago formaPago) {
+        this.formaPago = formaPago;
+    }
+
+    public List<FormaPago> getFormasPago() {
+        return formasPago;
+    }
+
+    public void setFormasPago(List<FormaPago> formasPago) {
+        this.formasPago = formasPago;
     }
     
     

@@ -69,6 +69,7 @@ and open the template in the editor.
                     </p:autoComplete>
                        <h:outputLabel value="#{facturaMB.usoCfdi.descripcion}" ></h:outputLabel>
                 </p:panelGrid>
+                
 
             </p:panel>        
         </h:form>
@@ -142,6 +143,28 @@ and open the template in the editor.
                       </p:column>
                         </f:facet>
                 </p:dataTable>
+                <p:panelGrid columns="3">
+                     <h:outputLabel value=" Forma de Pago  "></h:outputLabel>  
+                     <p:autoComplete id="formaPagoV" value="#{facturaMB.formaPago}"
+                                     completeMethod="#{facturaMB.completaFormaPago}"
+                                       var="formaPago" itemLabel="#{formaPago.formaPago}" itemValue="#{formaPago}"
+                                    immediate="true" converter="formaPagoConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{formaPago.formaPago}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{formaPago.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Banco">
+                            <h:outputLabel value="#{formaPago.bancarizado}"/>
+                        </p:column>
+                        
+                    </p:autoComplete>
+                       <h:outputLabel value="#{facturaMB.formaPago.descripcion}" ></h:outputLabel>
+                </p:panelGrid>
 
 
 
