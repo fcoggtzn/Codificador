@@ -38,6 +38,14 @@ and open the template in the editor.
                         <p:inputText id="mail" value="#{contribuyenteController.contribuyente.email}" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
                         </p:inputText>
+                         <h:outputLabel value="Impresión: " styleClass="it-align-right"/>
+                         <p:inputTextarea id="impresion" value="#{contribuyenteController.contribuyente.impresion}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                         </p:inputTextarea>
+                         <h:outputLabel value="Notas: " styleClass="it-align-right"/>
+                         <p:inputTextarea id="notas" value="#{contribuyenteController.contribuyente.notas}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                         </p:inputTextarea>
                     </p:panelGrid>
                 </p:panel>
             </center>

@@ -26,7 +26,7 @@ and open the template in the editor.
 
         <h:form id="formGrid">
             <p:panel header="Factura" id="panelprod" toggleable="true" >
-                <p:panelGrid columns="8" >
+                <p:panelGrid columns="3" >
                     <h:outputLabel value="Contribuyente" ></h:outputLabel>
                     <p:autoComplete id="acSimple" value="#{facturaMB.contribuyente}"
                                     completeMethod="#{contribuyenteController.completeTextRFC}"
@@ -44,8 +44,7 @@ and open the template in the editor.
                     </p:autoComplete>
 
                     <h:outputLabel value="#{facturaMB.contribuyente.nombre}"></h:outputLabel>  
-                      <h:outputLabel value="     "></h:outputLabel> 
-                       <h:outputLabel value="     "></h:outputLabel> 
+                     
                        <h:outputLabel value=" Uso CFDI     "></h:outputLabel>  
                        <p:autoComplete id="usoCFDI" value="#{facturaMB.usoCfdi}"
                                        completeMethod="#{facturaMB.completaUsos}"
@@ -164,6 +163,37 @@ and open the template in the editor.
                         
                     </p:autoComplete>
                        <h:outputLabel value="#{facturaMB.formaPago.descripcion}" ></h:outputLabel>
+                       
+                       
+                       
+                      <h:outputLabel value=" Refencia  "></h:outputLabel> 
+                      
+                      <p:inputText value="#{facturaMB.referencia}"  id="Referencia" style="width: 98%"  >
+                          <f:ajax render="@this" ></f:ajax>
+                          <f:validateRegex pattern="#{facturaMB.patron}" />
+                          
+                      </p:inputText>
+                      
+                      <h:outputLabel></h:outputLabel>
+
+                     <h:outputLabel value=" Metodo de Pago  "></h:outputLabel>  
+                     <p:autoComplete id="metodoPagoV" value="#{facturaMB.metodoPago}"
+                                     completeMethod="#{facturaMB.completaMetodoPago}"
+                                       var="metodoPago" itemLabel="#{metodoPago.metodoPago}" itemValue="#{metodoPago}"
+                                    immediate="true" converter="metodoPagoConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{metodoPago.metodoPago}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{metodoPago.descripcion}"/>
+                        </p:column>
+                       
+                        
+                    </p:autoComplete>
+                     <h:outputLabel value="#{facturaMB.metodoPago.descripcion}" ></h:outputLabel>
                 </p:panelGrid>
 
 

@@ -6,8 +6,10 @@
 package mb;
 
 import catalogo.entidad.FormaPago;
+import catalogo.entidad.MetodoPago;
 import catalogo.entidad.UsoCfdi;
 import catalogo.servicio.FormaPagoFacadeLocal;
+import catalogo.servicio.MetodoPagoFacadeLocal;
 import catalogo.servicio.UsoCfdiFacadeLocal;
 import factura.entidad.Producto;
 import factura.servicio.ProductoFacadeLocal;
@@ -30,6 +32,9 @@ import tools.DetalleFactura;
 public class FacturaMB implements Serializable {
 
     @EJB
+    private MetodoPagoFacadeLocal metodoPagoFacade;
+
+    @EJB
     private FormaPagoFacadeLocal formaPagoFacade;
 
     @EJB
@@ -46,6 +51,8 @@ public class FacturaMB implements Serializable {
     private UsoCfdi usoCfdi;
     private FormaPago formaPago;
     private List<FormaPago> formasPago;
+    private MetodoPago metodoPago;
+    private String referencia;
 
     /**
      * Creates a new instance of FacturaMB
@@ -138,7 +145,9 @@ public class FacturaMB implements Serializable {
     public List<FormaPago> completaFormaPago(String query){        
         return this.formaPagoFacade.findCombo(query);
     }
-
+ public List<MetodoPago> completaMetodoPago(String query){        
+        return this.metodoPagoFacade.findCombo(query);
+    }
     public void setUsosCFDI(List<UsoCfdi> usosCFDI) {
         this.usosCFDI = usosCFDI;
         
@@ -167,6 +176,39 @@ public class FacturaMB implements Serializable {
     public void setFormasPago(List<FormaPago> formasPago) {
         this.formasPago = formasPago;
     }
+
+    public MetodoPago getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+    public String getReferencia() {
+        return referencia;
+    }
+
+    public void setReferencia(String referencia) {
+        this.referencia = referencia;
+    }
+    
+    
+    public String getPatron(){
+        String patron = "^[a-zA-Z0-9[:space:]]*$" ;
+        try{
+        patron = formaPago.getPatronCuentaOrdenante();
+        if (formaPago.getPatronCuentaOrdenante().toUpperCase().equals("OPCIONAL") || 
+                formaPago.getPatronCuentaOrdenante().toUpperCase().equals("NO")){
+            patron = "^[a-zA-Z0-9[:space:]]*$";
+        }
+        }catch(Exception e){
+            System.out.println("Sin forma de pago");
+        }
+        return patron;
+    }
+    
+    
     
     
 }

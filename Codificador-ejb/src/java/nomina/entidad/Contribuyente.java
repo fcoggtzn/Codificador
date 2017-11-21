@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,6 +60,15 @@ public class Contribuyente implements Serializable {
     @Size(max = 254)
     @Column(name = "email")
     private String email;
+    @Basic(fetch=FetchType.LAZY)
+    @Size(max = 500)
+    @Column(name = "impresion")
+    private String impresion;
+    @Basic(fetch=FetchType.LAZY)
+    @Size(max = 254)
+    @Column(name = "notas")
+    private String notas;
+    
     @OneToMany(mappedBy = "contribuyente")
     private Collection<Empleado> empleadoCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contribuyente")
@@ -114,6 +124,22 @@ public class Contribuyente implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImpresion() {
+        return impresion;
+    }
+
+    public void setImpresion(String impresion) {
+        this.impresion = impresion;
+    }
+
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
     }
 
     @XmlTransient

@@ -129,4 +129,10 @@
         <local>catalogo.servicio.FormaPagoFacadeLocal</local>
         <ejb-link>Codificador-ejb.jar#FormaPagoFacade</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>MetodoPagoFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>catalogo.servicio.MetodoPagoFacadeLocal</local>
+        <ejb-link>Codificador-ejb.jar#MetodoPagoFacade</ejb-link>
+    </ejb-local-ref>
 </web-app>
