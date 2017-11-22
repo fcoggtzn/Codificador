@@ -18,10 +18,14 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.xml.datatype.DatatypeConfigurationException;
 import nomina.entidad.Contribuyente;
 import tools.DetalleFactura;
+import tools.FacturaXML;
 
 /**
  *
@@ -47,12 +51,11 @@ public class FacturaMB implements Serializable {
     private String textoBoton;
     private List<DetalleFactura> detallesDeFactura;
     private DetalleFactura detalleFactura;
-    private List<UsoCfdi> usosCFDI;
     private UsoCfdi usoCfdi;
     private FormaPago formaPago;
-    private List<FormaPago> formasPago;
     private MetodoPago metodoPago;
     private String referencia;
+    private boolean esPagado;
 
     /**
      * Creates a new instance of FacturaMB
@@ -62,6 +65,7 @@ public class FacturaMB implements Serializable {
                 textoBoton="Generar CFDI";
                 detallesDeFactura= new ArrayList<DetalleFactura>();
                 detalleFactura = new DetalleFactura();
+                esPagado=true;
 
     }
     
@@ -95,10 +99,18 @@ public class FacturaMB implements Serializable {
     }
     
     public void guardar(){
-        System.out.println("Guardar");
+        FacturaXML factuarXML;
+        factuarXML = new FacturaXML(contribuyente,usoCfdi,detallesDeFactura
+                ,formaPago,referencia,metodoPago,esPagado);
+        
+        try {
+            factuarXML.llenarCFDI();
+        } catch (DatatypeConfigurationException ex) {
+            Logger.getLogger(FacturaMB.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     public void limpiar(){
-        System.out.println("Limpiar");
+         this.initState();
     }
 
     public List<DetalleFactura> getDetallesDeFactura() {
@@ -137,9 +149,7 @@ public class FacturaMB implements Serializable {
         return this.usoCfdiFacade.findCombo(query);
     }
 
-    public List<UsoCfdi> getUsosCFDI() {
-        return usosCFDI;
-    }
+    
     
     
     public List<FormaPago> completaFormaPago(String query){        
@@ -148,11 +158,7 @@ public class FacturaMB implements Serializable {
  public List<MetodoPago> completaMetodoPago(String query){        
         return this.metodoPagoFacade.findCombo(query);
     }
-    public void setUsosCFDI(List<UsoCfdi> usosCFDI) {
-        this.usosCFDI = usosCFDI;
-        
-    }
-
+  
     public UsoCfdi getUsoCfdi() {
         return usoCfdi;
     }
@@ -166,16 +172,18 @@ public class FacturaMB implements Serializable {
     }
 
     public void setFormaPago(FormaPago formaPago) {
+        
         this.formaPago = formaPago;
+        if(formaPago != null && formaPago.getBancarizado().toUpperCase().equals("OPCIONAL")){
+            this.esPagado= false;
+        } else
+        {
+             this.esPagado= false;
+
+        }
     }
 
-    public List<FormaPago> getFormasPago() {
-        return formasPago;
-    }
-
-    public void setFormasPago(List<FormaPago> formasPago) {
-        this.formasPago = formasPago;
-    }
+ 
 
     public MetodoPago getMetodoPago() {
         return metodoPago;
@@ -207,6 +215,16 @@ public class FacturaMB implements Serializable {
         }
         return patron;
     }
+
+    public boolean isEsPagado() {
+        return esPagado;
+    }
+
+    public void setEsPagado(boolean esPagado) {
+        this.esPagado = esPagado;
+    }
+    
+    
     
     
     

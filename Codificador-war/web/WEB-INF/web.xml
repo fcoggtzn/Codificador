@@ -135,4 +135,34 @@
         <local>catalogo.servicio.MetodoPagoFacadeLocal</local>
         <ejb-link>Codificador-ejb.jar#MetodoPagoFacade</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>FolioFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>nomina.servicio.FolioFacadeLocal</local>
+        <ejb-link>Codificador-ejb.jar#FolioFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>FolioFacade1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>nomina.servicio.FolioFacadeLocal</local>
+        <ejb-link>Codificador-ejb.jar#FolioFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>FolioFacade2</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>nomina.servicio.FolioFacadeLocal</local>
+        <ejb-link>Codificador-ejb.jar#FolioFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ComprobanteLFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>nomina.servicio.ComprobanteLFacadeLocal</local>
+        <ejb-link>Codificador-ejb.jar#ComprobanteLFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>CrearCFDI</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>ejb.CrearCFDILocal</local>
+        <ejb-link>Codificador-ejb.jar#CrearCFDI</ejb-link>
+    </ejb-local-ref>
 </web-app>
