@@ -222,7 +222,7 @@ public class FacturaXML implements Serializable {
                     } else {
                         translado.setTipoFactor(CTipoFactor.CUOTA);
                         translado.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getCantidad()).setScale(2, RoundingMode.HALF_UP));
-                          importeTraslado=detalle.getImporte() * impuestoPrd.getImpuestoP().getCantidad();
+                          importeTraslado=detalle.getCantidad() * impuestoPrd.getImpuestoP().getCantidad();
                          translado.setImporte(new BigDecimal(importeTraslado).setScale(2, RoundingMode.HALF_UP));
                     }
                     translado.setBase(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
@@ -237,7 +237,7 @@ public class FacturaXML implements Serializable {
                     trasladoCuenta += importeTraslado;
                     trasladoMapa.put(impuestoPrd.getImpuestoP(), trasladoCuenta);
                     trasladoT += importeTraslado;
-
+                    
 
                 }else
                 {
@@ -247,14 +247,15 @@ public class FacturaXML implements Serializable {
                     if (!impuestoPrd.getImpuestoP().getPorciento().equals(0.0)) {
                         retencion.setTipoFactor(CTipoFactor.TASA);
                         importeRetencion=detalle.getImporte() * impuestoPrd.getImpuestoP().getPorciento();
-                        retencion.setTasaOCuota(new BigDecimal(importeRetencion).setScale(2, RoundingMode.HALF_UP));
-                        retencion.setImporte(new BigDecimal(detalle.getImporte() * impuestoPrd.getImpuestoP().getPorciento()).setScale(2, RoundingMode.HALF_UP));
+                        retencion.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getPorciento()).setScale(2, RoundingMode.HALF_UP));
+                      
+                        retencion.setImporte(new BigDecimal(importeRetencion).setScale(2, RoundingMode.HALF_UP));
 
                     } else {
                         retencion.setTipoFactor(CTipoFactor.CUOTA);
-                        importeRetencion=impuestoPrd.getImpuestoP().getCantidad();
-                        retencion.setTasaOCuota(new BigDecimal(importeRetencion).setScale(2, RoundingMode.HALF_UP));
-                         retencion.setImporte(new BigDecimal(detalle.getImporte() * impuestoPrd.getImpuestoP().getCantidad()).setScale(2, RoundingMode.HALF_UP));
+                        retencion.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getCantidad()).setScale(2, RoundingMode.HALF_UP));
+                        importeRetencion = detalle.getCantidad()* impuestoPrd.getImpuestoP().getCantidad();
+                         retencion.setImporte(new BigDecimal(importeRetencion ).setScale(2, RoundingMode.HALF_UP));
                     }
                     retencion.setBase(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
                     retencionesConcepto.getRetencion().add(retencion);
@@ -268,6 +269,7 @@ public class FacturaXML implements Serializable {
                     retencionCuenta += importeRetencion;
                     retencionMapa.put(impuestoPrd.getImpuestoP(), retencionCuenta);
                     retencionT  += importeRetencion;
+                    
 
                 }
 
@@ -331,8 +333,8 @@ public class FacturaXML implements Serializable {
         impuestos.setTotalImpuestosRetenidos(new BigDecimal(retencionT).setScale(2, RoundingMode.HALF_UP));
 
         
-       
-       
+       impuestos.setTraslados(traslados);
+        impuestos.setRetenciones(retenciones);
         cfdi.setImpuestos(impuestos);
 
         cfdi.setTotal(new BigDecimal(importes - descuentos - retencionT + trasladoT).setScale(2, RoundingMode.HALF_UP));
@@ -389,9 +391,12 @@ public class FacturaXML implements Serializable {
     }
     
     public void generaCFDI(){
+        
          try {
-                        guardarComprobante("I", 1);
+                        llenarCFDI();
+                        
                         this.crearCFDI.crear(cfdi, comprobanteX);
+                        guardarComprobante("I", 1);
                        RequestContext.getCurrentInstance().execute("window.open('"+"/Codificador-war/faces/descargas?serie="+cfdi.getSerie()+"&folio="+cfdi.getFolio()+"&rfc="+cfdi.getEmisor().getRfc()+"&tipo=PDF"+"','_blank')");
                         addMessage("Generando Factura");
 

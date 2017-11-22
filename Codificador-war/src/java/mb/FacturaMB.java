@@ -99,15 +99,17 @@ public class FacturaMB implements Serializable {
     }
     
     public void guardar(){
-        FacturaXML factuarXML;
-        factuarXML = new FacturaXML(contribuyente,usoCfdi,detallesDeFactura
+        FacturaXML facturarXML;
+        facturarXML = new FacturaXML(contribuyente,usoCfdi,detallesDeFactura
                 ,formaPago,referencia,metodoPago,esPagado);
-        
+        /*
         try {
-            factuarXML.llenarCFDI();
+            facturarXML.llenarCFDI();
         } catch (DatatypeConfigurationException ex) {
             Logger.getLogger(FacturaMB.class.getName()).log(Level.SEVERE, null, ex);
         }
+*/
+         facturarXML.generaCFDI();
     }
     public void limpiar(){
          this.initState();
