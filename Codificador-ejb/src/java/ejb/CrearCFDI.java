@@ -75,6 +75,7 @@ import utilerias.CertificadoUsuario;
 import utilerias.MyNameSpaceMapper;
 import utilerias.Transformacion;
 import produccion.Resultado;
+import utilerias.MyNameSpaceMapperComprobante;
 import webServiceSatPrueba.TimbradoServiceService;
 
 /**
@@ -129,14 +130,22 @@ public class CrearCFDI implements CrearCFDILocal {
 
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
+            if (cfdi.getTipoDeComprobante().value().equals("N")) {
+                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper()); 
+            }
+            else {
+                                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante()); 
 
+            }
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
-            m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+            
             m.marshal(cfdi, result);
         } catch (Exception e) {
             System.out.println(e.getCause());
         }
-
+        
         /**
          * * metodo para obtener la cadena original ******
          */
@@ -153,9 +162,14 @@ public class CrearCFDI implements CrearCFDILocal {
             m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
             if (cfdi.getTipoDeComprobante().value().equals("N")) {
                 m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper()); 
+            }
+            else {
+                                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante()); 
+
             }
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
-            m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+            
             m.marshal(cfdi, result);
 
         } catch (JAXBException e) {
