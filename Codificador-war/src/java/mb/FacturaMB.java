@@ -22,6 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nomina.entidad.Contribuyente;
 import tools.DetalleFactura;
@@ -33,7 +35,7 @@ import tools.FacturaXML;
  */
 @Named(value = "facturaMB")
 @SessionScoped
-public class FacturaMB implements Serializable {
+public class FacturaMB extends BaseController implements Serializable {
 
     @EJB
     private MetodoPagoFacadeLocal metodoPagoFacade;
@@ -56,22 +58,31 @@ public class FacturaMB implements Serializable {
     private MetodoPago metodoPago;
     private String referencia;
     private boolean esPagado;
+    private String message;
 
     /**
      * Creates a new instance of FacturaMB
      */
     @PostConstruct
-    public void initState(){
-                textoBoton="Generar CFDI";
-                detallesDeFactura= new ArrayList<DetalleFactura>();
-                detalleFactura = new DetalleFactura();
-                esPagado=true;
+    public void initState() {
+        clean();
+    }
+
+    private void clean() {
+        textoBoton = "Generar CFDI";
+        detallesDeFactura = new ArrayList<DetalleFactura>();
+        detalleFactura = new DetalleFactura();
+        esPagado = true;
+        this.metodoPago = null;
+        this.formaPago = null;
+        this.referencia = "";
+        this.contribuyente = null;
+        this.usoCfdi = null;
 
     }
-    
-    
+
     public FacturaMB() {
-        textoBoton="Generar CFDI";
+        textoBoton = "Generar CFDI";
     }
 
     public Contribuyente getContribuyente() {
@@ -97,22 +108,47 @@ public class FacturaMB implements Serializable {
     public void setTextoBoton(String textoBoton) {
         this.textoBoton = textoBoton;
     }
-    
-    public void guardar(){
-        FacturaXML facturarXML;
-        facturarXML = new FacturaXML(contribuyente,usoCfdi,detallesDeFactura
-                ,formaPago,referencia,metodoPago,esPagado);
-        /*
+
+    public void guardar() {
+
+        if (contribuyente == null) {
+            this.msgError("Timbrando sin contriuyente");
+
+        } else if (detallesDeFactura.size() <= 0) {
+            this.msgError("No tiene detalle de facturación");
+
+        } else if (usoCfdi == null) {
+            this.msgError("Error en uso de CFDI");
+        } else if (formaPago == null) {
+            this.msgError("No tiene Forma de Pago");
+        } else if (referencia.isEmpty()) {
+            this.msgError("S/N");
+        } else if (metodoPago == null) {
+            this.msgError("No tiene Metodo de Pago");
+        } else {
+            try {
+                FacturaXML facturarXML;
+                facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
+                        formaPago, referencia, metodoPago, esPagado);
+                /*
         try {
             facturarXML.llenarCFDI();
         } catch (DatatypeConfigurationException ex) {
             Logger.getLogger(FacturaMB.class.getName()).log(Level.SEVERE, null, ex);
         }
-*/
-         facturarXML.generaCFDI();
+                 */
+                facturarXML.generaCFDI();
+                this.msgOk("Comprobante grabado", "Comprobante grabado");
+                clean();
+            } catch (Exception ex) {
+                this.msgError(ex.getMessage());
+            }
+        }
+
     }
-    public void limpiar(){
-         this.initState();
+
+    public void limpiar() {
+        this.clean();
     }
 
     public List<DetalleFactura> getDetallesDeFactura() {
@@ -130,37 +166,33 @@ public class FacturaMB implements Serializable {
     public void setDetalleFactura(DetalleFactura detalleFactura) {
         this.detalleFactura = detalleFactura;
     }
-    
-    public void quitarDetalle(DetalleFactura detalleFactura){
+
+    public void quitarDetalle(DetalleFactura detalleFactura) {
         this.detallesDeFactura.remove(detalleFactura);
     }
-    
-    public void agregarDetalle(){
+
+    public void agregarDetalle() {
         this.detallesDeFactura.add(detalleFactura);
         detalleFactura = new DetalleFactura();
     }
-     
-    
-    public List<Producto> completaProductos(String query){
-        
+
+    public List<Producto> completaProductos(String query) {
+
         return this.productoFacade.getListaProductosCombo(query);
     }
-    
-    
-    public List<UsoCfdi> completaUsos(String query){        
+
+    public List<UsoCfdi> completaUsos(String query) {
         return this.usoCfdiFacade.findCombo(query);
     }
 
-    
-    
-    
-    public List<FormaPago> completaFormaPago(String query){        
+    public List<FormaPago> completaFormaPago(String query) {
         return this.formaPagoFacade.findCombo(query);
     }
- public List<MetodoPago> completaMetodoPago(String query){        
+
+    public List<MetodoPago> completaMetodoPago(String query) {
         return this.metodoPagoFacade.findCombo(query);
     }
-  
+
     public UsoCfdi getUsoCfdi() {
         return usoCfdi;
     }
@@ -174,18 +206,15 @@ public class FacturaMB implements Serializable {
     }
 
     public void setFormaPago(FormaPago formaPago) {
-        
+
         this.formaPago = formaPago;
-        if(formaPago != null && formaPago.getBancarizado().toUpperCase().equals("OPCIONAL")){
-            this.esPagado= false;
-        } else
-        {
-             this.esPagado= false;
+        if (formaPago != null && formaPago.getBancarizado().toUpperCase().equals("OPCIONAL")) {
+            this.esPagado = false;
+        } else {
+            this.esPagado = false;
 
         }
     }
-
- 
 
     public MetodoPago getMetodoPago() {
         return metodoPago;
@@ -202,18 +231,17 @@ public class FacturaMB implements Serializable {
     public void setReferencia(String referencia) {
         this.referencia = referencia;
     }
-    
-    
-    public String getPatron(){
-        String patron = "^[a-zA-Z0-9[:space:]]*$" ;
-        try{
-        patron = formaPago.getPatronCuentaOrdenante();
-        if (formaPago.getPatronCuentaOrdenante().toUpperCase().equals("OPCIONAL") || 
-                formaPago.getPatronCuentaOrdenante().toUpperCase().equals("NO")){
-            patron = "^[a-zA-Z0-9[:space:]]*$";
-        }
-        }catch(Exception e){
-            System.out.println("Sin forma de pago");
+
+    public String getPatron() {
+        String patron = "^[a-zA-Z0-9[:space:]]*$";
+        try {
+            patron = formaPago.getPatronCuentaOrdenante();
+            if (formaPago.getPatronCuentaOrdenante().toUpperCase().equals("OPCIONAL")
+                    || formaPago.getPatronCuentaOrdenante().toUpperCase().equals("NO")) {
+                patron = "^[a-zA-Z0-9[:space:]]*$";
+            }
+        } catch (Exception e) {
+            //   System.out.println("Sin forma de pago");
         }
         return patron;
     }
@@ -225,10 +253,17 @@ public class FacturaMB implements Serializable {
     public void setEsPagado(boolean esPagado) {
         this.esPagado = esPagado;
     }
-    
-    
-    
-    
-    
-    
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        context.addMessage(null, new FacesMessage("Successful", "Your message: " + message));
+        context.addMessage(null, new FacesMessage("Second Message", "Additional Message Detail"));
+    }
+
 }

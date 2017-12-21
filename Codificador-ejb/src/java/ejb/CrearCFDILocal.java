@@ -7,21 +7,27 @@ package ejb;
 
 import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
+import javax.ejb.EJBException;
 import javax.ejb.Local;
+import javax.mail.MessagingException;
+import javax.naming.NamingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import nomina.entidad.ComprobanteL;
+
 import sat.Comprobante;
 
-/**
+/**throw new EJBException("Finder Exception occurred");
  *
  * @author franciscogutierrez
  */
 @Local
 public interface CrearCFDILocal {
 
-    public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException;
+    public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws EJBException, FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException;
+
+    public void generaPDF() throws NamingException, MessagingException;
 
   
 }

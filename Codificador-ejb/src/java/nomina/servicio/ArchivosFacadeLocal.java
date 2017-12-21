@@ -33,5 +33,7 @@ public interface ArchivosFacadeLocal {
     int count();
 
     public List<Archivos> findArchivoEmpleadoEmpresa(Empleado empleado, Empresa empresa);
+
+    public void commit();
     
 }

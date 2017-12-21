@@ -37,6 +37,7 @@ public class DetalleFactura implements Serializable  {
         this.producto = producto;
         if (producto != null){
         this.valorUnitario=producto.getValorUnitario();
+        this.descripcion = producto.getDescripcion();
         }
         else 
         {
@@ -131,6 +132,7 @@ public class DetalleFactura implements Serializable  {
 
     public void setValorUnitario(Double valorUnitario) {
         this.valorUnitario = valorUnitario;
+          calculos();
     }
 
     public String getDescripcion() {

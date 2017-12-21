@@ -52,29 +52,40 @@ public class descargas extends HttpServlet {
         String tipo = request.getParameter("tipo");
 
         ComprobanteL comprobanteBySFE = comprobanteLFacade.comprobanteBySFE(serie, folio, rfc);
-        
-        if (comprobanteBySFE.getArchivosCollection() != null){
-        Archivos archivoX = new Archivos();
-        
-        for (Archivos archivo : comprobanteBySFE.getArchivosCollection()) {
-            if (archivo.getTipo().equals(tipo)) {
-                archivoX = archivo;
-            }
-        }
-        response.setContentType("application/force-download");
-        response.setContentLength((int) archivoX.getContenido().length);
-        response.setHeader("Content-Transfer-Encoding", "binary");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + archivoX.getNombre() + "\"");//fileName);
-        OutputStream os = response.getOutputStream();
-        try {
-            os.write(archivoX.getContenido());
-            os.flush();
 
-        } catch (Exception excp) {
-            excp.printStackTrace();
-        } finally {
-            os.close();
-        }
+        if (comprobanteBySFE.getArchivosCollection() != null) {
+            Archivos archivoX = new Archivos();
+
+            for (Archivos archivo : comprobanteBySFE.getArchivosCollection()) {
+                if (archivo.getTipo().equals(tipo)) {
+                    archivoX = archivo;
+                }
+            }
+            
+            
+             response.setContentLength((int) archivoX.getContenido().length);
+            if (tipo.equals("PDF")) {
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "inline; filename=\"" + archivoX.getNombre() + "\"");//fileName);
+                System.out.println("es un pdf");
+            } else {
+                response.setContentType("application/force-download");
+                response.setHeader("Content-Transfer-Encoding", "binary");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + archivoX.getNombre() + "\"");//fileName);
+
+            }
+           
+         
+            OutputStream os = response.getOutputStream();
+            try {
+                os.write(archivoX.getContenido());
+                os.flush();
+
+            } catch (Exception excp) {
+                excp.printStackTrace();
+            } finally {
+                os.close();
+            }
         }
 
         /*

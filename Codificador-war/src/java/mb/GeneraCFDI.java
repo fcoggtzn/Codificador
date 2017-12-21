@@ -12,6 +12,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.time.temporal.ChronoUnit;
 
@@ -24,11 +25,14 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.mail.MessagingException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import nomina.entidad.DeduccionPercepcion;
 import nomina.entidad.Empleado;
@@ -123,7 +127,7 @@ public class GeneraCFDI implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public void generarNomina(ActionEvent event) {
+    public void generarNomina(ActionEvent event) throws NamingException, MessagingException, TransformerConfigurationException, RemoteException {
         try {
             if (this.fechaIPago != null) {
                 if ((this.diasPagados > 0) || (this.diasPagados != null)) {
@@ -132,27 +136,29 @@ public class GeneraCFDI implements Serializable {
                     } catch (DatatypeConfigurationException ex) {
                         Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                     // String firmar = firma.firmar("VivaMexico","TME960709LR2");
-                    try {
-                        guardarComprobante("N", 1);
-                        this.crearCFDI.crear(cfdi, comprobanteX);
-                       RequestContext.getCurrentInstance().execute("window.open('"+"/Codificador-war/faces/descargas?serie="+cfdi.getSerie()+"&folio="+cfdi.getFolio()+"&rfc="+cfdi.getEmisor().getRfc()+"&tipo=PDF"+"','_blank')");
-                        addMessage("Generando Nomina");
-
-                    } catch (FileNotFoundException | DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException ex) {
-                                                addMessage("Error en generar Nomina");
-
-                        Logger.getLogger(PruebaFirma.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    addMessage("Generando Nomina");
+                    guardarComprobante("N", 1);
+                    this.crearCFDI.crear(cfdi, comprobanteX);
+                    this.crearCFDI.generaPDF();
+                    RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");
                 } else {
                     addMessageError("Días a pagar debe ser mayor a cero");
                 }
-            }else{
+            } else {
                 addMessageError("El valor de la fecha no debe ser nulo");
             }
         } catch (NullPointerException e) {
             addMessageError("No debe haber valores nulos");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DatatypeConfigurationException ex) {
+            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformerException ex) {
+            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -166,7 +172,7 @@ public class GeneraCFDI implements Serializable {
         folio = folioFacade.getFolioEmpresa(empresa);
         cfdi.setSerie(folio.getSerie());
         cfdi.setFolio(folio.getFolio().toString());
-        folioFacade.folioInc(folio);
+  //      folioFacade.folioInc(folio);
         emisor = new Comprobante.Emisor();
         emisor.setNombre(empresa.getContribuyente().getNombre());
         emisor.setRfc(empresa.getContribuyente().getRfc());

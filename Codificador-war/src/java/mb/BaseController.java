@@ -7,6 +7,8 @@ package mb;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -61,6 +63,8 @@ public class BaseController {
     public void msgError(String mensaje) {
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: " + mensaje, mensaje));
+                    Logger.getLogger(FacturaMB.class.getName()).log(Level.WARNING, null, mensaje);
+
     }
 
     /**
@@ -72,6 +76,8 @@ public class BaseController {
     public void msgOk(String titulo, String mensaje) {
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage(titulo, mensaje));
+                            Logger.getLogger(FacturaMB.class.getName()).log(Level.INFO, null, mensaje);
+
     }
 
     /**

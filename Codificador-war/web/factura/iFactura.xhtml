@@ -18,10 +18,9 @@ and open the template in the editor.
         <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
     </h:head>
     <h:body>
-
         <h:form id="menu" >
             <ui:include src="../resources/menu.xhtml"/>
-            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="15000"/>
         </h:form>
 
         <h:form id="formGrid">
@@ -44,11 +43,11 @@ and open the template in the editor.
                     </p:autoComplete>
 
                     <h:outputLabel value="#{facturaMB.contribuyente.nombre}"></h:outputLabel>  
-                     
-                       <h:outputLabel value=" Uso CFDI     "></h:outputLabel>  
-                       <p:autoComplete id="usoCFDI" value="#{facturaMB.usoCfdi}"
-                                       completeMethod="#{facturaMB.completaUsos}"
-                                       var="usoCfdi" itemLabel="#{usoCfdi.usoCfdi}" itemValue="#{usoCfdi}"
+
+                    <h:outputLabel value=" Uso CFDI     "></h:outputLabel>  
+                    <p:autoComplete id="usoCFDI" value="#{facturaMB.usoCfdi}"
+                                    completeMethod="#{facturaMB.completaUsos}"
+                                    var="usoCfdi" itemLabel="#{usoCfdi.usoCfdi}" itemValue="#{usoCfdi}"
                                     immediate="true" converter="usoCfdiConverter"
                                     size="55">
                         <p:ajax immediate="true"/>
@@ -66,176 +65,254 @@ and open the template in the editor.
                             <h:outputLabel value="#{usoCfdi.moral}"/>
                         </p:column>
                     </p:autoComplete>
-                       <h:outputLabel value="#{facturaMB.usoCfdi.descripcion}" ></h:outputLabel>
+                    <h:outputLabel value="#{facturaMB.usoCfdi.descripcion}" ></h:outputLabel>
                 </p:panelGrid>
-                
+
 
             </p:panel>        
         </h:form>
-               
+
         <h:form id="formDetalleFactura">
             <p:panel header="DetalleFactura" id="detalle"> 
 
-                <p:dataTable value="#{facturaMB.detallesDeFactura}" var="detalle">
+                <p:dataTable value="#{facturaMB.detallesDeFactura}" var="detalle" editable="true" editMode="cell" >
                     <p:column headerText="Cantidad">
-                        <h:outputLabel value="#{detalle.cantidad}"></h:outputLabel>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.cantidad}" /></f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalle.cantidad}" >
+                                    <p:ajax update="@form" ></p:ajax>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
+
                     </p:column>
                     <p:column headerText="Clave">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.producto.claveIdentificacion}" /></f:facet>
+                            <f:facet name="input">
+                                <!-- p:inputText value="#{detalle.producto.claveIdentificacion}" /!-->
+                                <p:autoComplete value="#{detalle.producto}" converter="productoConverter"
+                                                completeMethod="#{facturaMB.completaProductos}" 
+                                                itemLabel="#{prd.claveIdentificacion}" 
+                                                itemValue="#{prd}" var="prd" >
+                                    <p:ajax immediate="true"/>
+                                    <p:ajax event="itemSelect" update="@form"/>
+                                    <p:column>
+                                        <h:outputLabel value="#{prd.claveIdentificacion}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{prd.nombre}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{prd.descripcion}"/>
+                                    </p:column>
+                                </p:autoComplete> 
 
-                        <h:outputLabel value="#{detalle.producto.claveIdentificacion}"></h:outputLabel>
+
+                            </f:facet>
+                        </p:cellEditor>
+
+
                     </p:column>
                     <p:column headerText="Producto">
-                        <h:outputLabel value="#{detalle.producto.nombre}"></h:outputLabel>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.producto.nombre}" /></f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalle.producto.nombre}" />
+                            </f:facet>
+                        </p:cellEditor>
+
+
                     </p:column>
-                      <p:column headerText="Producto">
-                        <h:outputLabel value="#{detalle.descripcion}"></h:outputLabel>
+                    <p:column headerText="Descripción">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.descripcion}" /></f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalle.descripcion}" />
+                            </f:facet>
+                        </p:cellEditor>
+
+
                     </p:column>
                     <p:column headerText="Valor">
-                        <h:outputLabel value="#{detalle.producto.valorUnitario}"></h:outputLabel>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.valorUnitario}" /></f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalle.valorUnitario}" >
+                                    <p:ajax update="@form" ></p:ajax>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
+
                     </p:column>
                     <p:column headerText="Descuento">
-                        <h:outputLabel value="#{detalle.cantidadDescuento}">
-                        </h:outputLabel>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.cantidadDescuento}" /></f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalle.cantidadDescuento}" >
+                                    <p:ajax update="@form" ></p:ajax>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
+
                     </p:column>
                     <p:column headerText="Importe">
-                        <h:outputLabel value="#{detalle.importe}"></h:outputLabel>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.importe}" /></f:facet>
+                            <f:facet name="input">
+                                <h:outputText value="#{detalle.importe}" />
+                            </f:facet>
+                        </p:cellEditor>
                     </p:column>
-                    <p:column headerText="">
+
+                    <p:column headerText=""> 
                         <p:commandButton value="X" actionListener="#{facturaMB.quitarDetalle(detalle)}" update="@form"/>
                     </p:column>
                     <f:facet id="footerProductos" name="footer">
-                        <p:column headerText="">
-                            <p:inputText value="#{facturaMB.detalleFactura.cantidad}"  >
-                                <p:ajax  update="@form" ></p:ajax >
-                            </p:inputText>
-                        </p:column>
-                        <p:column headerText="">
-                            <p:autoComplete value="#{facturaMB.detalleFactura.producto}" converter="productoConverter"
-                                            completeMethod="#{facturaMB.completaProductos}" 
-                                            itemLabel="#{prd.claveIdentificacion}" 
-                                            itemValue="#{prd}" var="prd" >
-                                <p:ajax immediate="true"/>
-                                <p:ajax event="itemSelect" update="@form"/>
-                                <p:column>
-                                    <h:outputLabel value="#{prd.claveIdentificacion}"/>
-                                </p:column>
-                                <p:column>
-                                    <h:outputLabel value="#{prd.nombre}"/>
-                                </p:column>
-                                <p:column>
-                                    <h:outputLabel value="#{prd.descripcion}"/>
-                                </p:column>
-                            </p:autoComplete> 
-
-                        </p:column>
-
-                        <p:column headerText="">
-                            <p:inputText  value="#{facturaMB.detalleFactura.producto.nombre}" disabled="true"/>
-                        </p:column>
-                        <p:column headerText="">
-                            <p:inputTextarea  value="#{facturaMB.detalleFactura.descripcion}" autoResize="true" required="true"  minQueryLength="10">
-                                <p:ajax  update="@form"></p:ajax >
-                            </p:inputTextarea>
-                        </p:column>
-                        <p:column headerText="">
-                            <p:inputText value="#{facturaMB.detalleFactura.valorUnitario}" >
-                                <p:ajax  update="@form"></p:ajax >
-                            </p:inputText>
-                        </p:column>
-                        <p:column headerText="">
-                            <p:inputText value="#{facturaMB.detalleFactura.cantidadDescuento}">
-                                <p:ajax  update="@form"></p:ajax >
-                            </p:inputText>
-                        </p:column>
-                        <p:column headerText="">
-                            <p:inputText value="#{facturaMB.detalleFactura.importe}"  disabled="true"></p:inputText>
-                        </p:column>
-                        <p:column headerText="">
-                            <p:commandButton value="+" immediate="true" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
-                            </p:commandButton>
-                        </p:column>
+                        <p:commandButton value="+" immediate="true" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
+                        </p:commandButton>
                     </f:facet>
+
+                    <!--  <f:facet id="footerProductos" name="footer">
+                          <p:column headerText="">
+                              <p:inputText value="#{facturaMB.detalleFactura.cantidad}"  >
+                                  <p:ajax  update="@form" ></p:ajax >
+                              </p:inputText>
+                          </p:column>
+                          <p:column headerText="">
+                              <p:autoComplete value="#{facturaMB.detalleFactura.producto}" converter="productoConverter"
+                                              completeMethod="#{facturaMB.completaProductos}" 
+                                              itemLabel="#{prd.claveIdentificacion}" 
+                                              itemValue="#{prd}" var="prd" >
+                                  <p:ajax immediate="true"/>
+                                  <p:ajax event="itemSelect" update="@form"/>
+                                  <p:column>
+                                      <h:outputLabel value="#{prd.claveIdentificacion}"/>
+                                  </p:column>
+                                  <p:column>
+                                      <h:outputLabel value="#{prd.nombre}"/>
+                                  </p:column>
+                                  <p:column>
+                                      <h:outputLabel value="#{prd.descripcion}"/>
+                                  </p:column>
+                              </p:autoComplete> 
+  
+                          </p:column>
+  
+                          <p:column headerText="">
+                              <p:inputText  value="#{facturaMB.detalleFactura.producto.nombre}" disabled="true"/>
+                          </p:column>
+                          <p:column headerText="">
+                              <p:inputTextarea  value="#{facturaMB.detalleFactura.descripcion}" autoResize="true" required="true"  minQueryLength="10">
+                                  <p:ajax  update="@form"></p:ajax >
+                              </p:inputTextarea>
+                          </p:column>
+                          <p:column headerText="">
+                              <p:inputText value="#{facturaMB.detalleFactura.valorUnitario}" >
+                                  <p:ajax  update="@form"></p:ajax >
+                              </p:inputText>
+                          </p:column>
+                          <p:column headerText="">
+                              <p:inputText value="#{facturaMB.detalleFactura.cantidadDescuento}">
+                                  <p:ajax  update="@form"></p:ajax >
+                              </p:inputText>
+                          </p:column>
+                          <p:column headerText="">
+                              <p:inputText value="#{facturaMB.detalleFactura.importe}"  disabled="true"></p:inputText>
+                          </p:column>
+                          <p:column headerText="">
+                              <p:commandButton value="+" immediate="true" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
+                              </p:commandButton>
+                          </p:column>
+                      </f:facet> !-->
                 </p:dataTable>
             </p:panel>
         </h:form>
-    
+
         <h:form id="formFactura"> 
-             <p:panel>
-            <p:panelGrid columns="3">
-                <h:outputLabel value=" Forma de Pago  "></h:outputLabel>  
-                <p:autoComplete id="formaPagoV" value="#{facturaMB.formaPago}"
-                                completeMethod="#{facturaMB.completaFormaPago}"
-                                var="formaPago" itemLabel="#{formaPago.formaPago}" itemValue="#{formaPago}"
-                                immediate="true" converter="formaPagoConverter"
-                                size="55">
-                    <p:ajax immediate="true"/>
-                    <p:ajax event="itemSelect" update="@form"/>
-                    <p:column>
-                        <h:outputLabel value="#{formaPago.formaPago}"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputLabel value="#{formaPago.descripcion}"/>
-                    </p:column>
-                    <p:column headerText="Banco">
-                        <h:outputLabel value="#{formaPago.bancarizado}"/>
-                    </p:column>
+            <p:panel>
+                <p:panelGrid columns="3">
+                    <h:outputLabel value=" Forma de Pago  "></h:outputLabel>  
+                    <p:autoComplete id="formaPagoV" value="#{facturaMB.formaPago}"
+                                    completeMethod="#{facturaMB.completaFormaPago}"
+                                    var="formaPago" itemLabel="#{formaPago.formaPago}" itemValue="#{formaPago}"
+                                    immediate="true" converter="formaPagoConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{formaPago.formaPago}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{formaPago.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Banco">
+                            <h:outputLabel value="#{formaPago.bancarizado}"/>
+                        </p:column>
 
-                </p:autoComplete>
-                <h:outputLabel value="#{facturaMB.formaPago.descripcion}" ></h:outputLabel>
-
-
-
-                <h:outputLabel value=" Refencia  "></h:outputLabel> 
-
-                <p:inputText value="#{facturaMB.referencia}"  id="Referencia" style="width: 98%"  >
-                    <p:ajax  update="@this" ></p:ajax >
-                    <f:validateRegex pattern="#{facturaMB.patron}" />
-
-                </p:inputText>
-
-                <h:outputLabel></h:outputLabel>
-
-                <h:outputLabel value=" Metodo de Pago  "></h:outputLabel>  
-                <p:autoComplete id="metodoPagoV" value="#{facturaMB.metodoPago}"
-                                completeMethod="#{facturaMB.completaMetodoPago}"
-                                var="metodoPago" itemLabel="#{metodoPago.metodoPago}" itemValue="#{metodoPago}"
-                                immediate="true" converter="metodoPagoConverter"
-                                size="55">
-                    <p:ajax immediate="true"/>
-                    <p:ajax event="itemSelect" update="@form"/>
-                    <p:column>
-                        <h:outputLabel value="#{metodoPago.metodoPago}"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputLabel value="#{metodoPago.descripcion}"/>
-                    </p:column>
-
-
-                </p:autoComplete>
-                <h:outputLabel value="#{facturaMB.metodoPago.descripcion}" ></h:outputLabel>
-                <h:outputLabel value=" Pagado  "></h:outputLabel>  
-                <p:selectBooleanCheckbox  value="#{facturaMB.esPagado}">
-                </p:selectBooleanCheckbox>
-                <h:outputLabel value="   "></h:outputLabel>  
-
-            </p:panelGrid>
+                    </p:autoComplete>
+                    <h:outputLabel value="#{facturaMB.formaPago.descripcion}" ></h:outputLabel>
 
 
 
-             
+                    <h:outputLabel value=" Refencia  "></h:outputLabel> 
 
-</p:panel>  
+                    <p:inputText value="#{facturaMB.referencia}"  id="Referencia" style="width: 98%"  >
+                        <p:ajax  update="@this" ></p:ajax >
+                        <f:validateRegex pattern="#{facturaMB.patron}" />
+
+                    </p:inputText>
+
+                    <h:outputLabel></h:outputLabel>
+
+                    <h:outputLabel value=" Metodo de Pago  "></h:outputLabel>  
+                    <p:autoComplete id="metodoPagoV" value="#{facturaMB.metodoPago}"
+                                    completeMethod="#{facturaMB.completaMetodoPago}"
+                                    var="metodoPago" itemLabel="#{metodoPago.metodoPago}" itemValue="#{metodoPago}"
+                                    immediate="true" converter="metodoPagoConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{metodoPago.metodoPago}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{metodoPago.descripcion}"/>
+                        </p:column>
+
+
+                    </p:autoComplete>
+                    <h:outputLabel value="#{facturaMB.metodoPago.descripcion}" ></h:outputLabel>
+                    <h:outputLabel value=" Pagado  "></h:outputLabel>  
+                    <p:selectBooleanCheckbox  value="#{facturaMB.esPagado}">
+                    </p:selectBooleanCheckbox>
+                    <h:outputLabel value="   "></h:outputLabel>  
+
+                </p:panelGrid>
+
+
+
+
+
+            </p:panel>  
         </h:form>
 
         <h:form id="formAct" >
+            <p:growl id="growl1" showDetail="true" autoUpdate="true" life="15000" for="guardar"/>
             <center>
                 <p:panel header="Acción">
-                    <p:commandButton value="#{facturaMB.textoBoton}" id="guardar" update="@all" actionListener="#{facturaMB.guardar()}" />
-                    <p:commandButton value="Limpiar" id="limpiar" update="@all" actionListener="#{facturaMB.limpiar()}" />
+                    <p:commandButton value="#{facturaMB.textoBoton}" id="guardar" update=":formAct" actionListener="#{facturaMB.guardar()}" >
+                        <p:ajax update=":formAct:growl1"/>
+                     <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+                    </p:commandButton>
+                    <p:commandButton value="Limpiar" id="limpiar" update=":formAct" actionListener="#{facturaMB.limpiar()}" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" hideEffect="fade">
+                <img src="../Style/icon/ajaxloadingbar.gif" alt=""/>
+            </p:dialog>
         </h:form>
-
     </h:body>
 </html>

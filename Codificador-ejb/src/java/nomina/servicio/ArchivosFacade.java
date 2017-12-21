@@ -39,4 +39,7 @@ public class ArchivosFacade extends AbstractFacade<Archivos> implements Archivos
         return query;
     }
     
+    public void commit(){
+        em.getTransaction().commit();
+    }
 }

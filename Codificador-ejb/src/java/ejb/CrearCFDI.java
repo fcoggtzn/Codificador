@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,7 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.mail.BodyPart;
@@ -55,11 +57,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.WebServiceRef;
 import nomina.entidad.ComprobanteL;
 import nomina.entidad.Configuracion;
+import nomina.entidad.Contribuyente;
 import nomina.entidad.Empleado;
 import nomina.entidad.Empresa;
+import nomina.entidad.Folio;
 import nomina.servicio.ArchivosFacadeLocal;
 import nomina.servicio.ComprobanteLFacadeLocal;
+import nomina.servicio.ContribuyenteFacadeLocal;
 import nomina.servicio.EmpresaFacadeLocal;
+import nomina.servicio.FolioFacadeLocal;
 import sat.CMetodoPago;
 import sat.CMoneda;
 import sat.CTipoDeComprobante;
@@ -106,17 +112,29 @@ public class CrearCFDI implements CrearCFDILocal {
     private Xslt2CadenaLocal xslt2Cadena;
     @EJB
     private FirmaLocal firma;
-    
-    
-    
+    @EJB
+    private ContribuyenteFacadeLocal contribuyenteFacade;
+    @EJB
+    private FolioFacadeLocal folioFacade;
 
     private String cadenaOriginal;
+    private Comprobante cfdi;
+    private ComprobanteL comprobanteX;
+    private produccion.Resultado resultadoDeTimbre;
 
     /**
      * @param args the command line arguments
      */
-    public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException {
-
+    public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws EJBException, FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException {
+        Empresa empresaTemp = (Empresa) this.recuperarParametroObject("empresaActual");
+        Folio folioEmpresa = folioFacade.getFolioEmpresa(empresaTemp);
+        folioFacade.folioInc(folioEmpresa);
+        cfdi.setFolio(folioEmpresa.getFolio().toString());
+        comprobanteX.setFolio(folioEmpresa.getFolio().toString());
+        
+        this.cfdi = cfdi;
+        this.comprobanteX = comprobanteX;
+       
         /**
          * ***** metodo de serializar ****
          */
@@ -127,25 +145,22 @@ public class CrearCFDI implements CrearCFDILocal {
         StreamResult result = new StreamResult(xmlfile);
         try {
             JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class);
-
             Marshaller m = jc.createMarshaller();
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
             if (cfdi.getTipoDeComprobante().value().equals("N")) {
                 m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
-                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper()); 
-            }
-            else {
-                                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante()); 
-
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+            } else {
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante());
             }
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
-            
             m.marshal(cfdi, result);
         } catch (Exception e) {
             System.out.println(e.getCause());
         }
-        
+
         /**
          * * metodo para obtener la cadena original ******
          */
@@ -156,23 +171,22 @@ public class CrearCFDI implements CrearCFDILocal {
         cfdi.setSello(firmar);
 
         try {
-            JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class, sat.Nomina.class);
+            JAXBContext jc = JAXBContext.newInstance(sat.Comprobante.class);
+
             Marshaller m = jc.createMarshaller();
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
             if (cfdi.getTipoDeComprobante().value().equals("N")) {
                 m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
-                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper()); 
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+            } else {
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante());
             }
-            else {
-                                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante()); 
-
-            }
+            m.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
-            
             m.marshal(cfdi, result);
-
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             System.out.println(e.getCause());
         }
 
@@ -182,28 +196,30 @@ public class CrearCFDI implements CrearCFDILocal {
         Empresa empresa = empresaFacade.getEmpresa(cfdi.getEmisor().getRfc());
         Object[] vectorConfiguracion = empresa.getConfiguracionCollection().toArray();
         Configuracion configura;
-        configura = (Configuracion)vectorConfiguracion[0];
-        produccion.Resultado resultadoDeTimbre;
-        if(configura.isPrueba()){
-
-             webServiceSatPrueba.Resultado resultPruebas = timbrado(xmlfile.getAbsolutePath());
+        configura = (Configuracion) vectorConfiguracion[0];
+        if (configura.isPrueba()) {
+            webServiceSatPrueba.Resultado resultPruebas = timbrado(xmlfile.getAbsolutePath());
             resultadoDeTimbre = new Resultado();
             resultadoDeTimbre.setCodigo(resultPruebas.getCodigo());
             resultadoDeTimbre.setStatus(resultPruebas.getStatus());
             resultadoDeTimbre.setTimbre(resultPruebas.getTimbre());
-        }else
-        {
-             resultadoDeTimbre = timbradoProduccion(xmlfile.getAbsolutePath(),configura.getLoginWeb(),configura.getPassWeb());
-           
-            
+        } else {
+            resultadoDeTimbre = timbradoProduccion(xmlfile.getAbsolutePath(), configura.getLoginWeb(), configura.getPassWeb());
+
         }
+        
+        
+        /*mandar excepcion que no lo timbro  */
         System.out.println(resultadoDeTimbre.getStatus());
+        if (!resultadoDeTimbre.getStatus().isEmpty()){
+           throw new EJBException("Error: "+resultadoDeTimbre.getStatus());           
+        }
         System.out.println(resultadoDeTimbre.getCodigo());
         System.out.println(resultadoDeTimbre.getTimbre());
-        int val1=resultadoDeTimbre.getTimbre().indexOf("UUID=\"") + 6;
-        int val2=resultadoDeTimbre.getTimbre().indexOf("\" Version=\"1.1\"");
+        int val1 = resultadoDeTimbre.getTimbre().indexOf("UUID=\"") + 6;
+        int val2 = resultadoDeTimbre.getTimbre().indexOf("\" Version=\"1.1\"");
         String uuidT = resultadoDeTimbre.getTimbre().substring(val1, val2);
-        System.out.println("UUID:"+uuidT);
+        System.out.println("UUID:" + uuidT);
 
         nomina.entidad.Archivos archivo_XML = new nomina.entidad.Archivos();
         archivo_XML.setComprobanteL(comprobanteX);
@@ -221,6 +237,31 @@ public class CrearCFDI implements CrearCFDILocal {
         archivo_CBB.setIdarchivos(0);
         this.archivosFacade.create(archivo_CBB);
 
+        /*
+        //crear archivo pdf
+        try {
+        Transformacion transforma = new Transformacion();
+        byte datos[] = transforma.generaPDF(getXML(comprobanteX.getContribuyente().getRfc()), resultadoDeTimbre.getTimbre().getBytes(), cfdi);
+        nomina.entidad.Archivos archivo_PDF = new nomina.entidad.Archivos();
+        archivo_PDF.setComprobanteL(comprobanteX);
+        archivo_PDF.setContenido(datos);
+        archivo_PDF.setTipo("PDF");
+        archivo_PDF.setNombre(comprobanteX.getSerie() + comprobanteX.getFolio() + ".pdf");
+        archivo_PDF.setIdarchivos(0);
+        this.archivosFacade.create(archivo_PDF);
+        } catch (Exception e) {
+        System.out.println("Error: " + e);
+        }
+         */
+        comprobanteX.setUuid(uuidT);
+        /*  Integer valorTempo = Integer.parseInt(comprobanteX.getFolio()) - 1;
+comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -- */
+        comprobanteLFacade.edit(comprobanteX);
+
+    }
+
+    public void generaPDF() throws NamingException, MessagingException {
+
         //crear archivo pdf
         try {
             Transformacion transforma = new Transformacion();
@@ -235,24 +276,14 @@ public class CrearCFDI implements CrearCFDILocal {
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
-
         try {
-            comprobanteX.setUuid(uuidT);
-            Integer valorTempo=Integer.parseInt(comprobanteX.getFolio())-1;
-            comprobanteX.setFolio(valorTempo.toString());
-            comprobanteLFacade.edit(comprobanteX);
-            Empleado empleadoN = (Empleado) this.recuperarParametroObject("empleadoN");
-            this.sendMail(empleadoN.getContribuyente().getEmail()/*"fco@ovante.com.mx"*/, "Correo", "Documentos Nomina", cfdi);
+            //Empleado empleadoN = (Empleado) this.recuperarParametroObject("empleadoN");
+            List<Contribuyente> findcontribuyentesByRFC = contribuyenteFacade.findcontribuyentesByRFC(cfdi.getReceptor().getRfc());
+            Contribuyente contrib = findcontribuyentesByRFC.get(0);
+            this.sendMail(contrib.getEmail()/*"fco@ovante.com.mx"*/, "Correo", "Documentos Nomina", cfdi);
+        } catch (Exception e) {
 
-            /**
-             * *** metodo para generar PDF ***
-             */
-        } catch (NamingException ex) {
-            Logger.getLogger(CrearCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MessagingException ex) {
-            Logger.getLogger(CrearCFDI.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     private byte[] getXML(String rfc) {
@@ -260,7 +291,7 @@ public class CrearCFDI implements CrearCFDILocal {
         try {
 
             BufferedInputStream bis;
-            InputStream keyResource = CertificadoUsuario.class.getResourceAsStream("../resources/" + rfc + "/impresionCFDI.xsl");
+            InputStream keyResource = CertificadoUsuario.class.getResourceAsStream("../resources/" + rfc + "/impresionCFDI_"+comprobanteX.getTipo()+".xsl");
             bis = new BufferedInputStream(keyResource);
             llave = new byte[keyResource.available()];
             bis.read(llave);
@@ -342,7 +373,7 @@ public class CrearCFDI implements CrearCFDILocal {
         // Send message
         Transport.send(message);
     }
-    
+
     protected Object recuperarParametroObject(String parametro) {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
@@ -353,7 +384,11 @@ public class CrearCFDI implements CrearCFDILocal {
     private Resultado timbradoProduccion(java.lang.String cfdi, java.lang.String usuario, java.lang.String clave) {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
         // If the calling of port operations may lead to race condition some synchronization is required.
+
+        String cfdiString;
+        Archivo archivo = new Archivo();
+        cfdiString = archivo.LeerString(cfdi);
         produccion.TimbradoService port = service_1.getTimbradoServicePort();
-        return port.timbrado(cfdi, usuario, clave);
+        return port.timbrado(cfdiString, usuario, clave);
     }
 }

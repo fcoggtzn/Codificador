@@ -15,17 +15,13 @@ public  class MyNameSpaceMapperComprobante extends NamespacePrefixMapper {
 
     private static final String FOO_PREFIX = "cfdi"; // DEFAULT NAMESPACE
     private static final String FOO_URI = "http://www.sat.gob.mx/cfd/3";
-
-    private static final String BAR_PREFIX = "nomina12";
-    private static final String BAR_URI = "http://www.sat.gob.mx/nomina12";
+   
 
     @Override
     public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
         if(FOO_URI.equals(namespaceUri)) {
             return FOO_PREFIX;
-        } else if(BAR_URI.equals(namespaceUri)) {
-            return BAR_PREFIX;
-        }
+        } 
         return suggestion;
     }
 
