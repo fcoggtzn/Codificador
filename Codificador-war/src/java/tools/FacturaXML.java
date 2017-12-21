@@ -87,6 +87,7 @@ public class FacturaXML implements Serializable {
     private ComprobanteL comprobanteX;
     private Comprobante cfdi;
     private Folio folio;
+    private String facturaRuta;
 
     public FacturaXML(Contribuyente receptorCFDI, UsoCfdi uso, List<DetalleFactura> detalles, FormaPago formaPago, String referencia, MetodoPago metodoPago, boolean estaPagado) {
         this.detalles = detalles;
@@ -395,7 +396,7 @@ public class FacturaXML implements Serializable {
         comprobanteLFacade.create(comprobanteX);
     }
 
-    public void generaCFDI() throws Exception{
+    public String  generaCFDI() throws Exception{
 
        
             llenarCFDI();
@@ -404,8 +405,8 @@ public class FacturaXML implements Serializable {
 
             this.crearCFDI.crear(cfdi, comprobanteX);
             this.crearCFDI.generaPDF();
-            
-            RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");
+            return  "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF";
+        //    RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");
          
     }
 

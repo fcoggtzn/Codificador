@@ -11,6 +11,7 @@ import catalogo.entidad.UsoCfdi;
 import catalogo.servicio.FormaPagoFacadeLocal;
 import catalogo.servicio.MetodoPagoFacadeLocal;
 import catalogo.servicio.UsoCfdiFacadeLocal;
+import factura.entidad.CategoriaImpuesto;
 import factura.entidad.Producto;
 import factura.servicio.ProductoFacadeLocal;
 import javax.inject.Named;
@@ -59,6 +60,12 @@ public class FacturaMB extends BaseController implements Serializable {
     private String referencia;
     private boolean esPagado;
     private String message;
+    private String facturaRuta;
+    private Double subTotalFactura;
+    private Double totalFactura;
+    private Double totalFacturaImpuestosTrasladado;
+    private Double totalFacturaImpuestosRetenido;
+    private boolean errorProducto;
 
     /**
      * Creates a new instance of FacturaMB
@@ -78,8 +85,55 @@ public class FacturaMB extends BaseController implements Serializable {
         this.referencia = "";
         this.contribuyente = null;
         this.usoCfdi = null;
-
+        subTotalFactura = 0.0;
+        totalFactura = 0.0;
+        totalFacturaImpuestosTrasladado = 0.0;
+        totalFacturaImpuestosRetenido = 0.0;
     }
+    
+    
+    public Double getSubTotalFactura(){
+        errorProducto=false;
+        subTotalFactura = 0.0;
+        totalFactura = 0.0;
+        totalFacturaImpuestosTrasladado = 0.0;
+        totalFacturaImpuestosRetenido = 0.0;
+        
+        for(DetalleFactura df:detallesDeFactura){
+            
+            subTotalFactura += df.getImporte();
+            if (df.getProducto() != null ){
+            for(CategoriaImpuesto impPrd:  df.getProducto().getCategoria().getCategoriaImpuestoCollection()){
+                if (impPrd.getTraslado()){
+                    totalFacturaImpuestosTrasladado += impPrd.getImpuestoP().getPorciento()*df.getImporte();
+                         totalFacturaImpuestosTrasladado += impPrd.getImpuestoP().getCantidad()*df.getCantidad();
+                }else{ 
+                    totalFacturaImpuestosRetenido += impPrd.getImpuestoP().getPorciento()*df.getImporte();
+                    totalFacturaImpuestosRetenido += impPrd.getImpuestoP().getCantidad()*df.getCantidad();
+                }
+                    
+            }}
+            else {
+                errorProducto=true;
+            }
+           totalFactura = subTotalFactura + totalFacturaImpuestosTrasladado - totalFacturaImpuestosRetenido;
+        }
+        return subTotalFactura;
+    }
+
+    public Double getTotalFactura() {
+        return totalFactura;
+    }
+
+    public Double getTotalFacturaImpuestosTrasladado() {
+        return totalFacturaImpuestosTrasladado;
+    }
+
+    public Double getTotalFacturaImpuestosRetenido() {
+        return totalFacturaImpuestosRetenido;
+    }
+    
+    
 
     public FacturaMB() {
         textoBoton = "Generar CFDI";
@@ -114,11 +168,14 @@ public class FacturaMB extends BaseController implements Serializable {
         if (contribuyente == null) {
             this.msgError("Timbrando sin contriuyente");
 
+        } else if (usoCfdi == null) {
+            this.msgError("Error en uso de CFDI");
         } else if (detallesDeFactura.size() <= 0) {
             this.msgError("No tiene detalle de facturación");
 
-        } else if (usoCfdi == null) {
-            this.msgError("Error en uso de CFDI");
+        } else if (errorProducto) {
+            this.msgError("Detalle de producto sin producto");
+
         } else if (formaPago == null) {
             this.msgError("No tiene Forma de Pago");
         } else if (referencia.isEmpty()) {
@@ -130,16 +187,12 @@ public class FacturaMB extends BaseController implements Serializable {
                 FacturaXML facturarXML;
                 facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
                         formaPago, referencia, metodoPago, esPagado);
-                /*
-        try {
-            facturarXML.llenarCFDI();
-        } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(FacturaMB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                 */
-                facturarXML.generaCFDI();
+          
+                 facturaRuta = facturarXML.generaCFDI();
+                 
                 this.msgOk("Comprobante grabado", "Comprobante grabado");
                 clean();
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");
             } catch (Exception ex) {
                 this.msgError(ex.getMessage());
             }
@@ -265,5 +318,16 @@ public class FacturaMB extends BaseController implements Serializable {
         context.addMessage(null, new FacesMessage("Successful", "Your message: " + message));
         context.addMessage(null, new FacesMessage("Second Message", "Additional Message Detail"));
     }
+
+    public String getFacturaRuta() {
+        return facturaRuta;
+    }
+
+    public void setFacturaRuta(String facturaRuta) {
+        this.facturaRuta = facturaRuta;
+    }
+    
+    
+    
 
 }

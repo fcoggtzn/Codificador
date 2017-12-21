@@ -170,6 +170,32 @@ and open the template in the editor.
                         <p:commandButton value="X" actionListener="#{facturaMB.quitarDetalle(detalle)}" update="@form"/>
                     </p:column>
                     <f:facet id="footerProductos" name="footer">
+                        
+                        <p:panelGrid columns="2"   >
+                        <h:outputLabel value="Subtotal : ">
+                            
+                        </h:outputLabel>
+                        <h:outputText value="#{facturaMB.subTotalFactura}">
+                        </h:outputText>
+                        <h:outputLabel value="Translado : ">
+                            
+                        </h:outputLabel>
+                        <h:outputText value="#{facturaMB.totalFacturaImpuestosTrasladado}">
+                           
+                        </h:outputText>
+                        <h:outputLabel value="Retencion : ">
+                            
+                        </h:outputLabel>
+                        <h:outputText value="#{facturaMB.totalFacturaImpuestosRetenido}">
+                           
+                        </h:outputText>
+                        <h:outputLabel value="Total : ">
+                            
+                        </h:outputLabel>
+                        <h:outputText value="#{facturaMB.totalFactura}">
+                           
+                        </h:outputText>
+                        </p:panelGrid>
                         <p:commandButton value="+" immediate="true" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
                         </p:commandButton>
                     </f:facet>
@@ -250,22 +276,14 @@ and open the template in the editor.
                         <p:column headerText="Banco">
                             <h:outputLabel value="#{formaPago.bancarizado}"/>
                         </p:column>
-
                     </p:autoComplete>
                     <h:outputLabel value="#{facturaMB.formaPago.descripcion}" ></h:outputLabel>
-
-
-
                     <h:outputLabel value=" Refencia  "></h:outputLabel> 
-
                     <p:inputText value="#{facturaMB.referencia}"  id="Referencia" style="width: 98%"  >
                         <p:ajax  update="@this" ></p:ajax >
                         <f:validateRegex pattern="#{facturaMB.patron}" />
-
                     </p:inputText>
-
                     <h:outputLabel></h:outputLabel>
-
                     <h:outputLabel value=" Metodo de Pago  "></h:outputLabel>  
                     <p:autoComplete id="metodoPagoV" value="#{facturaMB.metodoPago}"
                                     completeMethod="#{facturaMB.completaMetodoPago}"
@@ -280,21 +298,13 @@ and open the template in the editor.
                         <p:column>
                             <h:outputLabel value="#{metodoPago.descripcion}"/>
                         </p:column>
-
-
                     </p:autoComplete>
                     <h:outputLabel value="#{facturaMB.metodoPago.descripcion}" ></h:outputLabel>
                     <h:outputLabel value=" Pagado  "></h:outputLabel>  
                     <p:selectBooleanCheckbox  value="#{facturaMB.esPagado}">
                     </p:selectBooleanCheckbox>
                     <h:outputLabel value="   "></h:outputLabel>  
-
                 </p:panelGrid>
-
-
-
-
-
             </p:panel>  
         </h:form>
 
@@ -302,9 +312,9 @@ and open the template in the editor.
             <p:growl id="growl1" showDetail="true" autoUpdate="true" life="15000" for="guardar"/>
             <center>
                 <p:panel header="Acción">
-                    <p:commandButton value="#{facturaMB.textoBoton}" id="guardar" update=":formAct" actionListener="#{facturaMB.guardar()}" >
-                        <p:ajax update=":formAct:growl1"/>
-                     <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+                    <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar" update=":formAct" actionListener="#{facturaMB.guardar()}" >
+                        <p:ajax update=":formAct:growl1"
+                         onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
                     </p:commandButton>
                     <p:commandButton value="Limpiar" id="limpiar" update=":formAct" actionListener="#{facturaMB.limpiar()}" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
