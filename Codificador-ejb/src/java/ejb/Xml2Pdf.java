@@ -35,13 +35,14 @@ public class Xml2Pdf implements Xml2PdfLocal {
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
      @Override
-      public byte[] generatePDF(byte[] archivoXslt,byte[] archivoXml){
+      public byte[] generatePDF(String ruta,byte[] archivoXslt,byte[] archivoXml){
      try {
 	            System.out.println("FOP ExampleXML2PDF\n");
 	            System.out.println("Preparing...");
 	
 	            // Setup directories
-	            File baseDir = new File(".");
+	        //    File baseDir = new File(".");
+                    File baseDir = new File(ruta);
 	            File outDir = new File(baseDir, "out");
 	            outDir.mkdirs();
                     

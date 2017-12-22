@@ -14,6 +14,6 @@ import javax.ejb.Local;
 @Local
 public interface Xml2PdfLocal {
 
-    public byte[] generatePDF(byte[] archivoXslt, byte[] archivoXml);
+    public byte[] generatePDF(String ruta,byte[] archivoXslt, byte[] archivoXml);
     
 }

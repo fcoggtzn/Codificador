@@ -32,6 +32,8 @@ import org.apache.xmlgraphics.util.MimeConstants;
 import sat.Comprobante;
 
 public class Transformacion {
+        private static final String ruta = System.getProperty("user.dir");
+
     
       public byte[] generaPDF(byte[] archivoXslt,byte[] archivoXml, Comprobante cfdi){
      try {
@@ -39,7 +41,8 @@ public class Transformacion {
 	            System.out.println("Preparing...");
 	
 	            // Setup directories
-	            File baseDir = new File(".");
+	           // File baseDir = new File(".");
+                    File baseDir = new File(ruta+"/empresas/"+cfdi.getEmisor().getRfc());
 	            File outDir = new File(baseDir, "out");
 	            outDir.mkdirs();
                     

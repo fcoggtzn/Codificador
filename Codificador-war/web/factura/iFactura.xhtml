@@ -170,30 +170,22 @@ and open the template in the editor.
                         <p:commandButton value="X" actionListener="#{facturaMB.quitarDetalle(detalle)}" update="@form"/>
                     </p:column>
                     <f:facet id="footerProductos" name="footer">
-                        
                         <p:panelGrid columns="2"   >
                         <h:outputLabel value="Subtotal : ">
-                            
                         </h:outputLabel>
                         <h:outputText value="#{facturaMB.subTotalFactura}">
                         </h:outputText>
                         <h:outputLabel value="Translado : ">
-                            
                         </h:outputLabel>
                         <h:outputText value="#{facturaMB.totalFacturaImpuestosTrasladado}">
-                           
                         </h:outputText>
                         <h:outputLabel value="Retencion : ">
-                            
                         </h:outputLabel>
                         <h:outputText value="#{facturaMB.totalFacturaImpuestosRetenido}">
-                           
                         </h:outputText>
                         <h:outputLabel value="Total : ">
-                            
                         </h:outputLabel>
                         <h:outputText value="#{facturaMB.totalFactura}">
-                           
                         </h:outputText>
                         </p:panelGrid>
                         <p:commandButton value="+" immediate="true" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
@@ -313,10 +305,9 @@ and open the template in the editor.
             <center>
                 <p:panel header="Acción">
                     <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar" update=":formAct" actionListener="#{facturaMB.guardar()}" >
-                        <p:ajax update=":formAct:growl1"
-                         onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
+                        <p:ajax update=":formAct:growl1" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
                     </p:commandButton>
-                    <p:commandButton value="Limpiar" id="limpiar" update=":formAct" actionListener="#{facturaMB.limpiar()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" actionListener="#{facturaMB.limpiar()}" ajax="false" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>

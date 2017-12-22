@@ -121,6 +121,8 @@ public class CrearCFDI implements CrearCFDILocal {
     private Comprobante cfdi;
     private ComprobanteL comprobanteX;
     private produccion.Resultado resultadoDeTimbre;
+    private static final String ruta = System.getProperty("user.dir")+"/";
+
 
     /**
      * @param args the command line arguments
@@ -138,7 +140,7 @@ public class CrearCFDI implements CrearCFDILocal {
         /**
          * ***** metodo de serializar ****
          */
-        File baseDir = new File(".");
+        File baseDir = new File(ruta+"empresas/"+cfdi.getEmisor().getRfc());
         File outDir = new File(baseDir, "out");
         File xmlfile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
 
@@ -265,7 +267,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         //crear archivo pdf
         try {
             Transformacion transforma = new Transformacion();
-            byte datos[] = transforma.generaPDF(getXML(comprobanteX.getContribuyente().getRfc()), resultadoDeTimbre.getTimbre().getBytes(), cfdi);
+            byte datos[] = transforma.generaPDF(CertificadoUsuario.getXSL(comprobanteX.getContribuyente().getRfc(),comprobanteX.getTipo()), resultadoDeTimbre.getTimbre().getBytes(), cfdi);
             nomina.entidad.Archivos archivo_PDF = new nomina.entidad.Archivos();
             archivo_PDF.setComprobanteL(comprobanteX);
             archivo_PDF.setContenido(datos);
@@ -286,22 +288,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         }
     }
 
-    private byte[] getXML(String rfc) {
-        byte[] llave = new byte[0];
-        try {
-
-            BufferedInputStream bis;
-            InputStream keyResource = CertificadoUsuario.class.getResourceAsStream("../resources/" + rfc + "/impresionCFDI_"+comprobanteX.getTipo()+".xsl");
-            bis = new BufferedInputStream(keyResource);
-            llave = new byte[keyResource.available()];
-            bis.read(llave);
-            bis.close();
-            return llave;
-        } catch (IOException ex) {
-            Logger.getLogger(CrearCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return llave;
-    }
+  
 
     private static byte[] getBytes(InputStream is) {
         int totalBytes = 714;
@@ -349,7 +336,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
 
         // Part two is attachment
         messageBodyPart = new MimeBodyPart();
-        File baseDir = new File(".");
+        File baseDir = new File(ruta+"empresas/"+cfdi.getEmisor().getRfc());
         File outDir = new File(baseDir, "out");
         File pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".pdf");
         DataSource source = new FileDataSource(pdffile);
@@ -359,8 +346,8 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
 
         // Part two is attachment
         messageBodyPart = new MimeBodyPart();
-        baseDir = new File(".");
-        outDir = new File(baseDir, "out");
+//        baseDir = new File(".");
+  //      outDir = new File(baseDir, "out");
         pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
         source = new FileDataSource(pdffile);
         messageBodyPart.setDataHandler(new DataHandler(source));
