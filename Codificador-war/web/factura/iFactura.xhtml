@@ -305,7 +305,7 @@ and open the template in the editor.
             <center>
                 <p:panel header="Acción">
                     <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar" update=":formAct" actionListener="#{facturaMB.guardar()}" >
-                        <p:ajax update=":formAct:growl1" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
+                        <p:ajax update=":formAct:growl1" onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"  />
                     </p:commandButton>
                     <p:commandButton value="Limpiar" id="limpiar" actionListener="#{facturaMB.limpiar()}" ajax="false" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>

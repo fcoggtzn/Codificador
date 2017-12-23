@@ -43,9 +43,10 @@ and open the template in the editor.
                             <p:ajax immediate="true"/>
                         </p:inputText>
                             <h:outputLabel value="Pruebas : " styleClass="it-align-right"/>
-                            <p:selectOneRadio value="#{contribuyenteController.configuracion.prueba}" styleClass="it-size" immediate="true">
+                            <p:selectBooleanCheckbox value="#{contribuyenteController.configuracion.prueba}" styleClass="it-size" immediate="true">
                             <p:ajax immediate="true"/>
-                        </p:inputText>
+                            </p:selectBooleanCheckbox>
+
                         <h:outputLabel value="Empresa: " styleClass="it-align-right"/>
                         <p:selectOneMenu  value="#{contribuyenteController.configuracion.empresa}" styleClass="som-size" converter="empresaConverter" immediate="true">
                             <f:selectItem itemLabel="Seleccionar Empresa" itemValue="" noSelectionOption="true"/>

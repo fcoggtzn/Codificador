@@ -122,6 +122,7 @@ public class ContribuyenteController extends BaseController implements Serializa
         empresaContribuyente.setContribuyente(new Contribuyente());
         empresaContribuyente.setEmpresa(new Empresa());
         configuracion = new Configuracion();
+        configuracion.setPrueba((short)1);
         configuracion.setEmpresa(new Empresa());
         percepcion = new Percepcion();
         deduccion = new Deduccion();

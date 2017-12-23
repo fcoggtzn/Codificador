@@ -5,6 +5,15 @@
  */
 package ejb;
 
+import catalogo.entidad.FormaPago;
+import catalogo.entidad.MetodoPago;
+import catalogo.entidad.RegimenFiscal;
+import catalogo.entidad.UsoCfdi;
+import catalogo.servicio.FormaPagoFacadeLocal;
+import catalogo.servicio.MetodoPagoFacadeLocal;
+import catalogo.servicio.RegimenFiscalFacadeLocal;
+import catalogo.servicio.TipoRegimenFacadeLocal;
+import catalogo.servicio.UsoCfdiFacadeLocal;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +23,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
@@ -82,6 +92,7 @@ import utilerias.MyNameSpaceMapper;
 import utilerias.Transformacion;
 import produccion.Resultado;
 import utilerias.MyNameSpaceMapperComprobante;
+import utilerias.NumeroALetras;
 import webServiceSatPrueba.TimbradoServiceService;
 
 /**
@@ -116,6 +127,17 @@ public class CrearCFDI implements CrearCFDILocal {
     private ContribuyenteFacadeLocal contribuyenteFacade;
     @EJB
     private FolioFacadeLocal folioFacade;
+    
+    /*paga gener el formato de impresion */ 
+    @EJB
+    FormaPagoFacadeLocal formaPagoFacade;
+    @EJB
+    MetodoPagoFacadeLocal metodoPagoFacade;
+    @EJB
+    RegimenFiscalFacadeLocal regimenFiscalFacade;
+    @EJB
+    UsoCfdiFacadeLocal usoCfdiFacade;
+    
 
     private String cadenaOriginal;
     private Comprobante cfdi;
@@ -225,7 +247,11 @@ public class CrearCFDI implements CrearCFDILocal {
 
         nomina.entidad.Archivos archivo_XML = new nomina.entidad.Archivos();
         archivo_XML.setComprobanteL(comprobanteX);
-        archivo_XML.setContenido(resultadoDeTimbre.getTimbre().getBytes());
+        try {
+            archivo_XML.setContenido(resultadoDeTimbre.getTimbre().getBytes("UTF8"));
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(CrearCFDI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         archivo_XML.setTipo("XML");
         archivo_XML.setNombre(comprobanteX.getSerie() + comprobanteX.getFolio() + ".xml");
         archivo_XML.setIdarchivos(0);
@@ -238,6 +264,81 @@ public class CrearCFDI implements CrearCFDILocal {
         archivo_CBB.setNombre(comprobanteX.getSerie() + comprobanteX.getFolio() + ".png");
         archivo_CBB.setIdarchivos(0);
         this.archivosFacade.create(archivo_CBB);
+        
+        
+        /*crear formato xml de impresion */
+         
+        String addenda = " <cfdi:Addenda>"
+                + "        <clienteDatos  condicionesDePago=\"CONTADO\" "
+                + " consignado=\"MISMO\""
+                + " numcliente=\"05740\""
+                + " numpedido=\"\" "
+                + " totalenletra=\""+new NumeroALetras(comprobanteX.getTotal())+"\""
+                + " vencimiento=\"06/12/17\" vendedor=\"FZH\">"
+                + "            <cfdi:DomicilioCliente"
+                + " direccion=\""+comprobanteX.getContribuyente().getImpresion() +"\" />"
+                + "</clienteDatos>"
+                + "</cfdi:Addenda>"
+                + "</cfdi:Comprobante>";
+
+        String replace = resultadoDeTimbre.getTimbre().replace("</cfdi:Comprobante>", addenda);
+        replace = replace.replace("Impuesto=\"001\"", "Impuesto=\"001 ISR\"");
+        replace = replace.replace("Impuesto=\"002\"", "Impuesto=\"002 IVA\"");
+        replace = replace.replace("Impuesto=\"003\"", "Impuesto=\"003 IEPS\"");
+        
+        replace = replace.replace("TipoDeComprobante=\"I\"", "TipoDeComprobante=\"I Ingreso\"");
+        replace = replace.replace("TipoDeComprobante=\"E\"", "TipoDeComprobante=\"E Egreso\"");
+        replace = replace.replace("TipoDeComprobante=\"N\"", "TipoDeComprobante=\"N Nomina\"");
+        replace = replace.replace("TipoDeComprobante=\"P\"", "TipoDeComprobante=\"P Pago\"");
+
+        //remplaza forma de pago
+        String formaPago = "FormaPago=\""+cfdi.getFormaPago() +"\"";
+        //Busca la forma de pago
+        FormaPago formaFind = this.formaPagoFacade.findbyID(cfdi.getFormaPago() );
+        String formaPagoR = "FormaPago=\""+cfdi.getFormaPago()+" " +formaFind.getDescripcion()+ "\"";
+        replace = replace.replace(formaPago, formaPagoR);
+      
+        //replaza metododePago
+        String metodoPago = "MetodoPago=\""+cfdi.getMetodoPago()+"\"";
+        //Busca  metodo de pago
+        MetodoPago findMetodo = this.metodoPagoFacade.findbyID(cfdi.getMetodoPago().value());
+        String metodoPagoR = "MetodoPago=\""+cfdi.getMetodoPago()+" "+findMetodo.getDescripcion()+"\"";
+        replace = replace.replace(metodoPago, metodoPagoR);
+        
+         //replaza Regimen
+        String regimen = "RegimenFiscal=\""+cfdi.getEmisor().getRegimenFiscal()+"\"";
+        
+        //Busca  metodo de pago
+        RegimenFiscal findRegimen = this.regimenFiscalFacade.findbyID(cfdi.getEmisor().getRegimenFiscal());
+        String regimenR = "RegimenFiscal=\""+cfdi.getEmisor().getRegimenFiscal()+" "+findRegimen.getDescripcion()+"\"";
+        replace = replace.replace(regimen, regimenR);
+        
+    
+    
+       //replaza metododePago
+        String usoCfdi = "UsoCFDI=\""+cfdi.getReceptor().getUsoCFDI().value()+"\"";
+        //Busca  metodo de pago
+        UsoCfdi findUso = this.usoCfdiFacade.findId(cfdi.getReceptor().getUsoCFDI().value());
+        String usoCfdiR = "UsoCFDI=\""+cfdi.getReceptor().getUsoCFDI().value()+" "+findUso.getDescripcion()+"\"";
+        replace = replace.replace(usoCfdi, usoCfdiR);
+     
+  
+        
+        
+        nomina.entidad.Archivos archivo_IMP = new nomina.entidad.Archivos();
+
+        archivo_IMP.setComprobanteL(comprobanteX);
+        try {
+            archivo_IMP.setContenido(replace.getBytes("UTF8"));
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(CrearCFDI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        archivo_IMP.setTipo("IMP");
+        archivo_IMP.setNombre(comprobanteX.getSerie() + comprobanteX.getFolio() + "_imp.xml");
+        archivo_IMP.setIdarchivos(0);
+        this.archivosFacade.create(archivo_IMP);
+        this.resultadoDeTimbre.setTimbre(replace);
+        
 
         /*
         //crear archivo pdf
@@ -267,7 +368,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         //crear archivo pdf
         try {
             Transformacion transforma = new Transformacion();
-            byte datos[] = transforma.generaPDF(CertificadoUsuario.getXSL(comprobanteX.getContribuyente().getRfc(),comprobanteX.getTipo()), resultadoDeTimbre.getTimbre().getBytes(), cfdi);
+            byte datos[] = transforma.generaPDF(CertificadoUsuario.getXSL(comprobanteX.getContribuyente().getRfc(),comprobanteX.getTipo()), resultadoDeTimbre.getTimbre().getBytes("UTF8"), cfdi);
             nomina.entidad.Archivos archivo_PDF = new nomina.entidad.Archivos();
             archivo_PDF.setComprobanteL(comprobanteX);
             archivo_PDF.setContenido(datos);
