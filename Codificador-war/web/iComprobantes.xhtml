@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Comprobantes</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formemp">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Comprobantes" id="panelemp">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Cliente: " styleClass="it-align-right"/>
+                        <p:autoComplete id="acSimple" value="#{comprobanteController.contribuyente}"
+                                        completeMethod="#{comprobanteController.completeTextEmpleado}"
+                                        var="valor" itemLabel="#{valor.nombre}" itemValue="#{valor}"
+                                        immediate="true" converter="contribuyenteConverter"
+                                        size="55">
+                            <p:ajax event="itemSelect" update=":formemp "/>
+                            <p:column>
+                                <h:outputLabel value="#{valor.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{valor.rfc}"/>
+                            </p:column>
+                        </p:autoComplete>
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+            <p:panelGrid columns="4">
+                <h:outputText value="Fecha inicio"></h:outputText>
+                <p:calendar  value="#{comprobanteController.fechaInicio}" showOn="button" >
+                    <p:ajax event="dateSelect"  update=":formemp "/>       
+                    <p:ajax  event="change"  update=":formemp "/>       
+                </p:calendar>
+                <h:outputText value="Fecha fin"></h:outputText>
+                <p:calendar value="#{comprobanteController.fechaFin}"  showOn="button" >
+                    <p:ajax event="dateSelect" update=":formemp "/>
+                    <p:ajax  event="change"  update=":formemp "/>       
+
+                </p:calendar>
+            </p:panelGrid>
+
+            <p:commandButton  type="submit" value="Buscar" actionListener="#{comprobanteController.buscarComprobantes}" ajax="false">
+
+
+            </p:commandButton>
+
+        </h:form>
+        <br/>
+        <h:form id="formGrid">
+
+
+            <h3>Export Page Data Only</h3>
+            <h:commandLink>
+                <p:graphicImage name="excel.png" />
+                <p:dataExporter type="xls" target="out2" fileName="comprobantes" pageOnly="false"/>
+            </h:commandLink>
+
+
+            <h:commandLink>
+                <p:graphicImage name="csv.png" />
+                <p:dataExporter type="csv" target="out2" fileName="comprobantes" pageOnly="false" />
+            </h:commandLink>
+
+            <h:commandLink>
+                <p:graphicImage name="xml.png" />
+                <p:dataExporter type="xml" target="out2" fileName="comprobantes" pageOnly="false" />
+            </h:commandLink>
+
+
+            <p:dataTable id="out2" var="compr" value="#{comprobanteController.comprobantes}"
+                         rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,20,50,100" resizableColumns="true">
+                <p:column headerText="Receptor" sortBy="#{compr.contribuyente1.rfc}"  style="width: 300px;"  >
+                    <p:panelGrid columns="1">
+                    <h:outputLabel value="#{compr.contribuyente1.rfc}  "/>
+                    <h:outputLabel value="#{compr.contribuyente1.nombre}  "/>
+                    </p:panelGrid>
+                </p:column>
+                <p:column headerText="Serie" sortBy="#{compr.serie}"  style="width: 50px;">
+                    <h:outputLabel value="#{compr.serie}"/>
+                </p:column>
+                <p:column headerText="Folio" sortBy="#{compr.folio}" style="width: 50px;">
+                    <h:outputLabel value="#{compr.folio}"/>
+                </p:column>
+                <p:column headerText="Fecha" sortBy="#{compr.fecha}" style="width: 90px;">
+                    <h:outputLabel value="#{compr.fecha}">
+                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="Est" sortBy="#{compr.estatus}" style="width: 50px;">
+                    <h:outputLabel value="#{comprobanteController.valorEstatus(compr.estatus)}" />
+                 
+                </p:column>
+                <p:column headerText="Tipo" sortBy="#{compr.tipo}" style="width: 50px;">
+                    <h:outputLabel value="#{compr.tipo}">                      
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="Subtotal" sortBy="#{compr.subtotal}"  style="width: 80px;">
+                    <h:outputLabel value="#{compr.subtotal}"> 
+                        <f:convertNumber  locale="US"   type="currency" currencySymbol="$" /> 
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="Impuestos" sortBy="#{compr.impuesto}"  style="width: 80px;">
+                    <h:outputLabel value="#{compr.impuesto}"> 
+                        <f:convertNumber  locale="US"   type="currency"  currencySymbol="$" /> 
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="Total" sortBy="#{compr.total}">
+                    <h:outputLabel value="#{compr.total}"> 
+                        <f:convertNumber  locale="US"   type="currency"  currencySymbol="$" /> 
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="" exportable="false">
+                    <center>
+                        <p:commandButton id="xml" icon="ui-icon-comment" action="#{contribuyenteController.redirect(compr, 'XML')}">
+                            <p:tooltip for="xml" value="XML"/>
+                        </p:commandButton>
+                        <p:commandButton id="pdf" icon="ui-icon-document" action="#{contribuyenteController.redirect(compr, 'PDF')}">
+                            <p:tooltip for="pdf" value="PDF"/>
+                        </p:commandButton>    
+                        <p:commandButton id="cbb" icon="ui-icon-image" action="#{contribuyenteController.redirect(compr, 'CBB')}">
+                            <p:tooltip for="cbb" value="CBB"/>
+                        </p:commandButton>
+                        <p:commandButton id="cancelCFDI" icon="ui-icon-trash" action="#{contribuyenteController.cancelarCFDI(compr)}">
+                            <p:tooltip for="cancelCFDI" value="Cancelar Comprobante"/>
+                        </p:commandButton>
+                    </center>
+                </p:column>
+            </p:dataTable>
+
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

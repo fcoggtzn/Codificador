@@ -5,12 +5,14 @@
  */
 package nomina.servicio;
 
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import nomina.entidad.ComprobanteL;
+import nomina.entidad.Contribuyente;
 import nomina.entidad.Empleado;
 import nomina.entidad.Empresa;
 
@@ -53,6 +55,27 @@ public class ComprobanteLFacade extends AbstractFacade<ComprobanteL> implements 
         List<ComprobanteL> query;
         query = em.createQuery("Select c from ComprobanteL c where c.contribuyente.idContribuyente=:idEmpresa and c.contribuyente1.idContribuyente=:idEmpleado").setParameter("idEmpresa", empresa.getContribuyente().getIdContribuyente()).setParameter("idEmpleado", empleado.getContribuyente().getIdContribuyente()).getResultList();
         return query;
+    }
+
+    @Override
+    public List<ComprobanteL> findComprobanteEmpresaContribuyente(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente) {
+        Query query = null;
+        if (contribuyente != null) {
+            query = em.createQuery("Select c from ComprobanteL c where c.contribuyente=:empresa and c.contribuyente1=:contribuyente and  c.fecha >= :fechaInicio and c.fecha <= :fechaFin");
+            query.setParameter("empresa", empresa.getContribuyente());
+            query.setParameter("contribuyente", contribuyente);
+            query.setParameter("fechaInicio", fechaInicio);
+            query.setParameter("fechaFin", fechaFin);
+        } else {
+            query = em.createQuery("Select c from ComprobanteL c where c.contribuyente=:empresa and c.fecha >= :fechaInicio and c.fecha <= :fechaFin");
+            query.setParameter("empresa", empresa.getContribuyente());
+
+            query.setParameter("fechaInicio", fechaInicio);
+            query.setParameter("fechaFin", fechaFin);
+        }
+
+        //.setParameter("idEmpresa", empresa.getContribuyente().getIdContribuyente()).setParameter("idEmpleado", empleado.getContribuyente().getIdContribuyente()).getResultList();
+        return query.getResultList();
     }
     
 }

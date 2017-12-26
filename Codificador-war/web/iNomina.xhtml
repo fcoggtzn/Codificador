@@ -170,11 +170,12 @@ and open the template in the editor.
                 <p:panel header="Acciones">
                     <p:commandButton value="Generar Nomina" actionListener="#{generaCFDI.generarNomina}" rendered="#{contribuyenteController.empleadoNomina.numEmpleado!=null}" >
                         <p:ajax listener="#{contribuyenteController.subirDatosContext()}"/>
-                        <p:ajax update=":formemp:growl" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
+                        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
                     </p:commandButton>
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>
+
             <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
                 <img src="Style/icon/ajaxloadingbar.gif" alt=""/>
             </p:dialog>

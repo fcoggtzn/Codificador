@@ -9,12 +9,15 @@ import catalogo.servicio.PeriodicidadPagoFacadeLocal;
 import catalogo.servicio.RiesgoPuestoFacadeLocal;
 import catalogo.servicio.TipoContratoFacadeLocal;
 import catalogo.servicio.TipoRegimenFacadeLocal;
+import ejb.CancelaCfdiEjbLocal;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -51,6 +54,9 @@ import org.primefaces.event.RowEditEvent;
 @Named(value = "contribuyenteController")
 @SessionScoped
 public class ContribuyenteController extends BaseController implements Serializable {
+
+    @EJB
+    private CancelaCfdiEjbLocal cancelaCfdiEjb;
 
     @EJB
     ContribuyenteFacadeLocal contribuyenteFacade;
@@ -103,6 +109,8 @@ public class ContribuyenteController extends BaseController implements Serializa
     List<DeduccionPercepcion> deduccionesPercepcionesD;
     List<DeduccionPercepcion> percepcionesEmpleadoNomina;
     List<DeduccionPercepcion> deduccionesEmpleadoNomina;
+    
+    
 
     /**
      * Creates a new instance of ContribuyenteController
@@ -648,5 +656,19 @@ public class ContribuyenteController extends BaseController implements Serializa
     ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
     externalContext.redirect("descargas?serie="+compr.getSerie()+"&folio="+compr.getFolio()+"&rfc="+compr.getContribuyente().getRfc()+"&tipo="+tipo);
 }
+    
+    public void cancelarCFDI(ComprobanteL comprobante){
+        try {
+            this.cancelaCfdiEjb.cancela(comprobante.getUuid());
+            comprobante.setEstatus(-1); /// para decir que se cancelo el comprobante
+            this.comprobanteLFacade.edit(comprobante);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ContribuyenteController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    
 
 }

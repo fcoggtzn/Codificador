@@ -28,8 +28,11 @@ and open the template in the editor.
         <p:submenu label="Comprobantes" icon="ico_money">            
             <p:menuitem value="Nomina" actionListener="#{accesoController.redireccionar('iNomina.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
             <p:menuitem value="Comprobante" actionListener="#{accesoController.redireccionar('factura/iFactura.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
-            <p:menuitem value="Reporte" actionListener="#{accesoController.redireccionar('iComprobante.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
-            
+            <p:submenu label="Reporte" icon="ico_cfdi" >
+                    <p:menuitem value="Nonima" actionListener="#{accesoController.redireccionar('iComprobante.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
+                    <p:menuitem value="Comprobantes" actionListener="#{accesoController.redireccionar('iComprobantes.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
+
+            </p:submenu>
             <p:submenu label="Configuraciones" icon="ico_settings" >
                 <p:menuitem value="Contribuyente" actionListener="#{accesoController.redireccionar('iContribuyente.xhtml')}" ajax="false" icon="ico_ec" immediate="true"/>
                 <p:submenu label="Nomina" icon="ui-icon-document">

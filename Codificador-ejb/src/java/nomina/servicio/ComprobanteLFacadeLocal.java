@@ -5,9 +5,11 @@
  */
 package nomina.servicio;
 
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import nomina.entidad.ComprobanteL;
+import nomina.entidad.Contribuyente;
 import nomina.entidad.Empleado;
 import nomina.entidad.Empresa;
 
@@ -35,5 +37,7 @@ public interface ComprobanteLFacadeLocal {
     public ComprobanteL comprobanteBySFE(String serie, String folio, String rfc);
 
     public List<ComprobanteL> findComprobanteEmpleadoEmpresa(Empleado empleado, Empresa empresa);
+
+    public List<ComprobanteL> findComprobanteEmpresaContribuyente(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente);
     
 }

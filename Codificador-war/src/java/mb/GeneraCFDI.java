@@ -7,6 +7,7 @@ package mb;
 
 import ejb.CrearCFDILocal;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -74,6 +75,7 @@ public class GeneraCFDI implements Serializable {
     private Date fechaIPago;
     private Double diasPagados = 0.0;
     private ComprobanteL comprobanteX;
+    private   String facturaRuta ;
 
     Empleado empleado;
     Empresa empresa;
@@ -128,6 +130,7 @@ public class GeneraCFDI implements Serializable {
     }
 
     public void generarNomina(ActionEvent event) throws NamingException, MessagingException, TransformerConfigurationException, RemoteException {
+      
         try {
             if (this.fechaIPago != null) {
                 if ((this.diasPagados > 0) || (this.diasPagados != null)) {
@@ -142,7 +145,9 @@ public class GeneraCFDI implements Serializable {
                     guardarComprobante("N", 1);
                     this.crearCFDI.crear(cfdi, comprobanteX);
                     this.crearCFDI.generaPDF();
-                    RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");
+                    //RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");
+                     facturaRuta = "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc()+"&tipo=PDF";
+                    
                 } else {
                     addMessageError("Días a pagar debe ser mayor a cero");
                 }
@@ -153,14 +158,15 @@ public class GeneraCFDI implements Serializable {
             addMessageError("No debe haber valores nulos");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException ex) {
-            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException | IOException ex) {
             Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iNominaView.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void llenarCFDI() throws DatatypeConfigurationException {
@@ -181,6 +187,7 @@ public class GeneraCFDI implements Serializable {
         //603 
         receptor = new Comprobante.Receptor();
         //  receptor.setNombre("Pruebas y Mas S de RL MI de CV");
+        receptor.setNombre(empleado.getContribuyente().getNombre());
         receptor.setRfc(empleado.getContribuyente().getRfc());
 
         // uso del cfdi
@@ -435,4 +442,14 @@ public class GeneraCFDI implements Serializable {
         comprobanteFacade.create(comprobanteX);
     }
 
+    public String getFacturaRuta() {
+        return facturaRuta;
+    }
+
+    public void setFacturaRuta(String facturaRuta) {
+        this.facturaRuta = facturaRuta;
+    }
+    
+    
+ 
 }
