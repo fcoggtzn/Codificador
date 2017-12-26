@@ -82,6 +82,11 @@ public class ComprobanteL implements Serializable {
     private Double subtotal;
     @Column(name = "impuesto")
     private Double impuesto;
+    @Column(name = "impuestoRetenido")
+    private Double impuestoRetenido;
+     @Size(min = 1, max = 40)
+    @Column(name = "Pago")
+    private String pago;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 40)
@@ -183,6 +188,22 @@ public class ComprobanteL implements Serializable {
 
     public void setImpuesto(Double impuesto) {
         this.impuesto = impuesto;
+    }
+
+    public Double getImpuestoRetenido() {
+        return impuestoRetenido;
+    }
+
+    public void setImpuestoRetenido(Double impuestoRetenido) {
+        this.impuestoRetenido = impuestoRetenido;
+    }
+
+    public String getPago() {
+        return pago;
+    }
+
+    public void setPago(String pago) {
+        this.pago = pago;
     }
 
     public String getUuid() {

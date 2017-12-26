@@ -47,9 +47,9 @@ public class ComprobanteController implements Serializable {
     public ComprobanteController() {
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
         Calendar calendar = Calendar.getInstance();                
-        fechaInicio= calendar.getTime();
+        fechaFin= calendar.getTime();
         calendar.add(Calendar.HOUR, -24);
-        fechaFin = calendar.getTime();
+        fechaInicio = calendar.getTime();
         
 
     }

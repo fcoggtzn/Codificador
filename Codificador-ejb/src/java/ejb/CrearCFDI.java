@@ -359,6 +359,7 @@ public class CrearCFDI implements CrearCFDILocal {
         comprobanteX.setUuid(uuidT);
         /*  Integer valorTempo = Integer.parseInt(comprobanteX.getFolio()) - 1;
 comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -- */
+     //   comprobanteX.setPago(cfdi.getFormaPago());
         comprobanteLFacade.edit(comprobanteX);
 
     }

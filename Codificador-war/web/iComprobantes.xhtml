@@ -23,9 +23,9 @@ and open the template in the editor.
         <h:form id="formemp">
             <ui:include src="resources/menu.xhtml"/>
             <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
-            <center>
-                <p:panel header="Comprobantes" id="panelemp">
-                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+            
+                <p:panel header="Filtro" id="panelemp">
+                    <p:panelGrid columns="4" style="border-style: hidden"  >
                         <h:outputLabel value="Cliente: " styleClass="it-align-right"/>
                         <p:autoComplete id="acSimple" value="#{comprobanteController.contribuyente}"
                                         completeMethod="#{comprobanteController.completeTextEmpleado}"
@@ -40,10 +40,9 @@ and open the template in the editor.
                                 <h:outputLabel value="#{valor.rfc}"/>
                             </p:column>
                         </p:autoComplete>
-                    </p:panelGrid>
-                </p:panel>
-            </center>
-            <p:panelGrid columns="4">
+                    
+            
+                <p:panelGrid columns="4" style="border-style: hidden"  >
                 <h:outputText value="Fecha inicio"></h:outputText>
                 <p:calendar  value="#{comprobanteController.fechaInicio}" showOn="button" >
                     <p:ajax event="dateSelect"  update=":formemp "/>       
@@ -56,7 +55,8 @@ and open the template in the editor.
 
                 </p:calendar>
             </p:panelGrid>
-
+                        </p:panelGrid>
+    </p:panel>
             <p:commandButton  type="submit" value="Buscar" actionListener="#{comprobanteController.buscarComprobantes}" ajax="false">
 
 
@@ -67,33 +67,45 @@ and open the template in the editor.
         <h:form id="formGrid">
 
 
-            <h3>Export Page Data Only</h3>
-            <h:commandLink>
-                <p:graphicImage name="excel.png" />
-                <p:dataExporter type="xls" target="out2" fileName="comprobantes" pageOnly="false"/>
-            </h:commandLink>
+           
+       
+             
+                    <h:commandLink>
+                        <p:graphicImage name="excel.png" />
+                        <p:dataExporter type="xls" target="out2" fileName="comprobantes" pageOnly="false"/>
+                    </h:commandLink>
 
 
-            <h:commandLink>
-                <p:graphicImage name="csv.png" />
-                <p:dataExporter type="csv" target="out2" fileName="comprobantes" pageOnly="false" />
-            </h:commandLink>
+                    <h:commandLink>
+                        <p:graphicImage name="csv.png" />
+                        <p:dataExporter type="csv" target="out2" fileName="comprobantes" pageOnly="false" />
+                    </h:commandLink>
 
-            <h:commandLink>
-                <p:graphicImage name="xml.png" />
-                <p:dataExporter type="xml" target="out2" fileName="comprobantes" pageOnly="false" />
-            </h:commandLink>
+                    <h:commandLink>
+                        <p:graphicImage name="xml.png" />
+                        <p:dataExporter type="xml" target="out2" fileName="comprobantes" pageOnly="false" />
+                    </h:commandLink>
+                        
 
+             
 
             <p:dataTable id="out2" var="compr" value="#{comprobanteController.comprobantes}"
                          rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="10,20,50,100" resizableColumns="true">
-                <p:column headerText="Receptor" sortBy="#{compr.contribuyente1.rfc}"  style="width: 300px;"  >
-                    <p:panelGrid columns="1">
-                    <h:outputLabel value="#{compr.contribuyente1.rfc}  "/>
-                    <h:outputLabel value="#{compr.contribuyente1.nombre}  "/>
-                    </p:panelGrid>
+         
+                <p:column headerText="Receptor" sortBy="#{compr.contribuyente1.rfc}"   style="white-space: pre-line; width: 300px;"  >
+                    
+                     
+                        
+                        <h:outputLabel value="#{compr.contribuyente1.nombre}  "/>
+                  
+                   
+                        
+                       <h:outputLabel value="#{compr.contribuyente1.rfc}  "/>  
+                    
+                   
                 </p:column>
+                
                 <p:column headerText="Serie" sortBy="#{compr.serie}"  style="width: 50px;">
                     <h:outputLabel value="#{compr.serie}"/>
                 </p:column>
@@ -113,17 +125,27 @@ and open the template in the editor.
                     <h:outputLabel value="#{compr.tipo}">                      
                     </h:outputLabel>
                 </p:column>
+                <p:column headerText="Pago" sortBy="#{compr.pago}" style="width: 50px;">
+                    <h:outputLabel value="#{compr.pago}">                      
+                    </h:outputLabel>
+                </p:column>
+                
                 <p:column headerText="Subtotal" sortBy="#{compr.subtotal}"  style="width: 80px;">
                     <h:outputLabel value="#{compr.subtotal}"> 
                         <f:convertNumber  locale="US"   type="currency" currencySymbol="$" /> 
                     </h:outputLabel>
                 </p:column>
-                <p:column headerText="Impuestos" sortBy="#{compr.impuesto}"  style="width: 80px;">
+                <p:column headerText="Traslado"  style="width: 80px;">
                     <h:outputLabel value="#{compr.impuesto}"> 
                         <f:convertNumber  locale="US"   type="currency"  currencySymbol="$" /> 
                     </h:outputLabel>
                 </p:column>
-                <p:column headerText="Total" sortBy="#{compr.total}">
+                 <p:column headerText="Retencion" sortBy="#{compr.impuesto}"  style="width: 80px;">
+                     <h:outputLabel value="#{compr.impuestoRetenido}"> 
+                        <f:convertNumber  locale="US"   type="currency"  currencySymbol="$" /> 
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="Total" sortBy="#{compr.total}"  style="width: 100px;">
                     <h:outputLabel value="#{compr.total}"> 
                         <f:convertNumber  locale="US"   type="currency"  currencySymbol="$" /> 
                     </h:outputLabel>
@@ -141,6 +163,7 @@ and open the template in the editor.
                         </p:commandButton>
                         <p:commandButton id="cancelCFDI" icon="ui-icon-trash" action="#{contribuyenteController.cancelarCFDI(compr)}">
                             <p:tooltip for="cancelCFDI" value="Cancelar Comprobante"/>
+                            <p:ajax update="@form"></p:ajax>
                         </p:commandButton>
                     </center>
                 </p:column>

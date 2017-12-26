@@ -390,8 +390,10 @@ public class FacturaXML implements Serializable {
         comprobanteX.setFecha(cfdi.getFecha().toGregorianCalendar().getTime());
         comprobanteX.setEstatus(estatus);
         comprobanteX.setImpuesto(cfdi.getImpuestos().getTotalImpuestosTrasladados().doubleValue());
+        comprobanteX.setImpuestoRetenido(cfdi.getImpuestos().getTotalImpuestosRetenidos().doubleValue());
         comprobanteX.setSubtotal(cfdi.getSubTotal().doubleValue());
         comprobanteX.setUuid(cfdi.getNoCertificado());
+        comprobanteX.setPago(formaPago.getDescripcion());
         this.comprobanteX=comprobanteX;
         comprobanteLFacade.create(comprobanteX);
     }
