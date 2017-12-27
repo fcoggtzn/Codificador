@@ -49,6 +49,10 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ComprobanteL.findByUuid", query = "SELECT c FROM ComprobanteL c WHERE c.uuid = :uuid")})
 public class ComprobanteL implements Serializable {
 
+    @Size(max = 45)
+    @Column(name = "pago")
+    private String pago;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,11 +89,8 @@ public class ComprobanteL implements Serializable {
     @Column(name = "impuestoRetenido")
     private Double impuestoRetenido;
      @Size(min = 1, max = 40)
-    @Column(name = "Pago")
-    private String pago;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 40)
+
+
     @Column(name = "uuid")
     private String uuid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobanteL")
@@ -272,5 +273,5 @@ public class ComprobanteL implements Serializable {
     public String toString() {
         return "nomina.entidad.ComprobanteL[ idComprobante=" + idComprobante + " ]";
     }
-    
+
 }

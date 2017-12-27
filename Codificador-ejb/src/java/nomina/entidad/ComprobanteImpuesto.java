@@ -40,10 +40,12 @@ public class ComprobanteImpuesto implements Serializable {
     @Column(name = "idcomprobante_impuesto")
     private Integer idcomprobanteImpuesto;
     @Column(name = "tipo_impuesto")
-    private Integer tipoImpuesto;
+    private String tipoImpuesto;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "cantidad")
     private Double cantidad;
+      @Column(name = "traslado")
+    private Short traslado;
     @JoinColumn(name = "comprobante_id_comprobante1", referencedColumnName = "id_comprobante")
     @ManyToOne(optional = false)
     private ComprobanteL comprobanteL;
@@ -63,11 +65,11 @@ public class ComprobanteImpuesto implements Serializable {
         this.idcomprobanteImpuesto = idcomprobanteImpuesto;
     }
 
-    public Integer getTipoImpuesto() {
+    public String getTipoImpuesto() {
         return tipoImpuesto;
     }
 
-    public void setTipoImpuesto(Integer tipoImpuesto) {
+    public void setTipoImpuesto(String tipoImpuesto) {
         this.tipoImpuesto = tipoImpuesto;
     }
 
@@ -86,6 +88,16 @@ public class ComprobanteImpuesto implements Serializable {
     public void setComprobanteL(ComprobanteL comprobanteL) {
         this.comprobanteL = comprobanteL;
     }
+
+    public Short getTraslado() {
+        return traslado;
+    }
+
+    public void setTraslado(Short traslado) {
+        this.traslado = traslado;
+    }
+    
+    
 
     @Override
     public int hashCode() {

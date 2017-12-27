@@ -422,6 +422,9 @@ public class GeneraCFDI implements Serializable {
         Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
         conceptos.getConcepto().add(concepto);
         cfdi.setConceptos(conceptos);
+        /*Comprobante.Impuestos imps=new Comprobante.Impuestos();
+        imps.setTotalImpuestosTrasladados(BigDecimal.ZERO);
+        cfdi.setImpuestos(imps);*/
 
     }
 
@@ -436,9 +439,11 @@ public class GeneraCFDI implements Serializable {
         comprobanteX.setTotal(cfdi.getTotal().doubleValue());
         comprobanteX.setFecha(cfdi.getFecha().toGregorianCalendar().getTime());
         comprobanteX.setEstatus(estatus);
-        comprobanteX.setImpuesto(deducciones.getTotalImpuestosRetenidos().doubleValue() + deducciones.getTotalOtrasDeducciones().byteValue());
+        //comprobanteX.setImpuesto(cfdi.getImpuestos().getTotalImpuestosTrasladados().doubleValue());
+        comprobanteX.setImpuestoRetenido(deducciones.getTotalImpuestosRetenidos().doubleValue() + deducciones.getTotalOtrasDeducciones().byteValue());
         comprobanteX.setSubtotal(cfdi.getSubTotal().doubleValue());
         comprobanteX.setUuid(cfdi.getNoCertificado());
+        comprobanteX.setPago("Nomina");
         comprobanteFacade.create(comprobanteX);
     }
 
