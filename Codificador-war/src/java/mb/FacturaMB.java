@@ -188,8 +188,7 @@ public class FacturaMB extends BaseController implements Serializable {
                 facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
                         formaPago, referencia, metodoPago, esPagado);
           
-                 facturaRuta = facturarXML.generaCFDI();
-                 
+                 facturaRuta = facturarXML.generaCFDI();                 
                 this.msgOk("Comprobante grabado", "Comprobante grabado");
                 clean();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");

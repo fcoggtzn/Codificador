@@ -2,21 +2,33 @@
 <Scene Scope="Project" version="2">
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
-        <Node id="iDeduccion.xhtml" x="900" y="300" zoom="true"/>
+        <Node id="factura/iNominaView.xhtml" x="650" y="600" zoom="true"/>
         <Node id="resources/ezcomp/menu.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="factura/impuestos_1.xhtml" x="1400" y="150" zoom="true"/>
+        <Node id="iEmpresaContribuyente.xhtml" x="650" y="450" zoom="true"/>
+        <Node id="factura/iProducto_1.xhtml" x="900" y="600" zoom="true"/>
+        <Node id="iEmpresa.xhtml" x="400" y="450" zoom="true"/>
+        <Node id="iComprobante.xhtml" x="400" y="750" zoom="true"/>
+        <Node id="iComprobantes.xhtml" x="1150" y="300" zoom="true"/>
+        <Node id="factura/iProducto.xhtml" x="1400" y="300" zoom="true"/>
+        <Node id="factura/impuestos.xhtml" x="1650" y="150" zoom="true"/>
+        <Node id="resources/menu.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="factura/iCatalogoSAT_1.xhtml" x="150" y="900" zoom="true"/>
+        <Node id="iContribuyente.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="iDeduccion.xhtml" x="900" y="300" zoom="true"/>
         <Node id="index.xhtml" x="150" y="300" zoom="true"/>
         <Node id="iDeduccionPercepcion.xhtml" x="650" y="300" zoom="true"/>
         <Node id="Login.xhtml" x="150" y="600" zoom="true"/>
-        <Node id="iEmpresaContribuyente.xhtml" x="650" y="450" zoom="true"/>
         <Node id="iNomina.xhtml" x="400" y="300" zoom="true"/>
         <Node id="iUsuario.xhtml" x="1150" y="150" zoom="true"/>
-        <Node id="iEmpresa.xhtml" x="400" y="450" zoom="true"/>
         <Node id="iPercepcion.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="factura/iFactura.xhtml" x="320" y="801" zoom="true"/>
         <Node id="iEmpleado.xhtml" x="150" y="750" zoom="true"/>
+        <Node id="zPrueba.xhtml" x="900" y="450" zoom="true"/>
         <Node id="iCFDI.xhtml" x="400" y="600" zoom="true"/>
-        <Node id="resources/menu.xhtml" x="900" y="150" zoom="true"/>
         <Node id="iConfiguracion.xhtml" x="150" y="450" zoom="true"/>
-        <Node id="iContribuyente.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="factura/iCatalogoSAT.xhtml" x="650" y="750" zoom="true"/>
+        <Node id="factura/iFacturaView.xhtml" x="704" y="818" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>
 </Scene>

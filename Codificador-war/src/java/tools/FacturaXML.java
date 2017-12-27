@@ -397,7 +397,7 @@ public class FacturaXML implements Serializable {
         comprobanteX.setImpuestoRetenido(cfdi.getImpuestos().getTotalImpuestosRetenidos().doubleValue());
         //comprobanteX.getComprobanteImpuestoCollection()
         List<ComprobanteImpuesto> impuestosLista = new ArrayList<ComprobanteImpuesto>();
-        
+        if (cfdi.getImpuestos().getTraslados() != null ) 
         for (Traslado traslado : cfdi.getImpuestos().getTraslados().getTraslado()) {
             ComprobanteImpuesto comprobanteImpuesto = new ComprobanteImpuesto();
             comprobanteImpuesto.setCantidad(traslado.getImporte().doubleValue());
@@ -405,9 +405,9 @@ public class FacturaXML implements Serializable {
             comprobanteImpuesto.setTraslado((short) 1);
             comprobanteImpuesto.setComprobanteL(comprobanteX);
             impuestosLista.add(comprobanteImpuesto);
-            
         }
         
+        if (cfdi.getImpuestos().getRetenciones() != null )
         for (Retencion retencion : cfdi.getImpuestos().getRetenciones().getRetencion()) {
             ComprobanteImpuesto comprobanteImpuesto = new ComprobanteImpuesto();
             comprobanteImpuesto.setCantidad(retencion.getImporte().doubleValue());

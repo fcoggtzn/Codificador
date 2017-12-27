@@ -292,9 +292,9 @@ and open the template in the editor.
                         </p:column>
                     </p:autoComplete>
                     <h:outputLabel value="#{facturaMB.metodoPago.descripcion}" ></h:outputLabel>
-                    <h:outputLabel value=" Pagado  "></h:outputLabel>  
+                    <!-- <h:outputLabel value=" Pagado  "></h:outputLabel>  
                     <p:selectBooleanCheckbox  value="#{facturaMB.esPagado}">
-                    </p:selectBooleanCheckbox>
+                    </p:selectBooleanCheckbox> !-->
                     <h:outputLabel value="   "></h:outputLabel>  
                 </p:panelGrid>
             </p:panel>  
@@ -304,8 +304,8 @@ and open the template in the editor.
             <p:growl id="growl1" showDetail="true" autoUpdate="true" life="15000" for="guardar"/>
             <center>
                 <p:panel header="Acción">
-                    <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar" update=":formAct" actionListener="#{facturaMB.guardar()}" >
-                        <p:ajax update=":formAct:growl1" onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"  />
+                    <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar"   actionListener="#{facturaMB.guardar()}" >
+                        <p:ajax  onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
                     </p:commandButton>
                     <p:commandButton value="Limpiar" id="limpiar" actionListener="#{facturaMB.limpiar()}" ajax="false" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>

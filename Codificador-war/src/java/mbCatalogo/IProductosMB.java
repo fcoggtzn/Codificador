@@ -80,7 +80,7 @@ public class IProductosMB implements Serializable {
     
     public void grabar(){
         try{
-            if (producto.getIdproducto() != 0) {
+            if ("Nuevo".equals(this.textoBoton)) {
                 this.productoFacade.create(producto);
             } else {
                 this.productoFacade.edit(producto);
