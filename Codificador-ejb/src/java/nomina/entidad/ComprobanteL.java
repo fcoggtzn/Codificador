@@ -52,7 +52,8 @@ public class ComprobanteL implements Serializable {
     @Size(max = 45)
     @Column(name = "pago")
     private String pago;
-
+  @Column(name = "notas")
+    private String notas;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,6 +119,16 @@ public class ComprobanteL implements Serializable {
         this.tipo = tipo;
         this.uuid = uuid;
     }
+
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
+    }
+    
+    
 
     public Integer getIdComprobante() {
         return idComprobante;

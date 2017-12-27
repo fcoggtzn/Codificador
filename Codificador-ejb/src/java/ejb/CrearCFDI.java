@@ -236,6 +236,9 @@ public class CrearCFDI implements CrearCFDILocal {
         /*mandar excepcion que no lo timbro  */
         System.out.println(resultadoDeTimbre.getStatus());
         if (!resultadoDeTimbre.getStatus().isEmpty()){
+            this.comprobanteX.setEstatus(-2);
+            this.comprobanteX.setNotas("Error: "+resultadoDeTimbre.getStatus());
+            this.comprobanteLFacade.edit(comprobanteX);
            throw new EJBException("Error: "+resultadoDeTimbre.getStatus());           
         }
         System.out.println(resultadoDeTimbre.getCodigo());

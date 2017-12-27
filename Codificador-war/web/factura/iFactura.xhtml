@@ -125,7 +125,7 @@ and open the template in the editor.
 
 
                     </p:column>
-                    <p:column headerText="Descripción">
+                    <p:column headerText="Descripcion">
                         <p:cellEditor>
                             <f:facet name="output"><h:outputText value="#{detalle.descripcion}" /></f:facet>
                             <f:facet name="input">
@@ -175,7 +175,7 @@ and open the template in the editor.
                         </h:outputLabel>
                         <h:outputText value="#{facturaMB.subTotalFactura}">
                         </h:outputText>
-                        <h:outputLabel value="Translado : ">
+                        <h:outputLabel value="Traslado : ">
                         </h:outputLabel>
                         <h:outputText value="#{facturaMB.totalFacturaImpuestosTrasladado}">
                         </h:outputText>
@@ -305,13 +305,14 @@ and open the template in the editor.
             <center>
                 <p:panel header="Acción">
                     <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar"   actionListener="#{facturaMB.guardar()}" >
-                        <p:ajax  onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"  />
+                        <p:ajax  onstart="PF('statusDialog').show()"   />
                     </p:commandButton>
                     <p:commandButton value="Limpiar" id="limpiar" actionListener="#{facturaMB.limpiar()}" ajax="false" />
                     <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
                 </p:panel>
             </center>
-            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false" hideEffect="fade">
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"  hideEffect="fade">
+            
                 <img src="../Style/icon/ajaxloadingbar.gif" alt=""/>
             </p:dialog>
         </h:form>

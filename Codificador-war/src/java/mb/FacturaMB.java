@@ -27,6 +27,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nomina.entidad.Contribuyente;
+import org.primefaces.context.RequestContext;
 import tools.DetalleFactura;
 import tools.FacturaXML;
 
@@ -192,11 +193,16 @@ public class FacturaMB extends BaseController implements Serializable {
                 this.msgOk("Comprobante grabado", "Comprobante grabado");
                 clean();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");
+              
             } catch (Exception ex) {
-                this.msgError(ex.getMessage());
+               
+               
+                 this.msgError(ex.getMessage());
             }
+        
         }
-
+      RequestContext requestContext = RequestContext.getCurrentInstance();
+      requestContext.execute("PF('statusDialog').hide()");
     }
 
     public void limpiar() {
