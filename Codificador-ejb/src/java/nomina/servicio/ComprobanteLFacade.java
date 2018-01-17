@@ -37,7 +37,7 @@ public class ComprobanteLFacade extends AbstractFacade<ComprobanteL> implements 
     
     @Override
     public ComprobanteL comprobanteBySFE(String serie, String folio, String rfc){
-        Query q=em.createQuery("SELECT c FROM ComprobanteL c WHERE c.serie=:serie and c.folio=:folio and c.contribuyente.rfc=:rfc ");
+        Query q=em.createQuery("SELECT c FROM ComprobanteL c WHERE c.serie=:serie and c.folio=:folio and c.contribuyente.rfc=:rfc and c.estatus != -2");
         q.setParameter("serie", serie);
         q.setParameter("folio", folio);
         q.setParameter("rfc", rfc);

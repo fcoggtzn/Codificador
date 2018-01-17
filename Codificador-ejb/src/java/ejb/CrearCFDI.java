@@ -14,12 +14,15 @@ import catalogo.servicio.MetodoPagoFacadeLocal;
 import catalogo.servicio.RegimenFiscalFacadeLocal;
 import catalogo.servicio.TipoRegimenFacadeLocal;
 import catalogo.servicio.UsoCfdiFacadeLocal;
+import com.sun.xml.ws.util.Pool;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -52,11 +55,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -65,6 +70,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.WebServiceRef;
+import nomina.entidad.Archivos;
 import nomina.entidad.ComprobanteL;
 import nomina.entidad.Configuracion;
 import nomina.entidad.Contribuyente;
@@ -236,9 +242,7 @@ public class CrearCFDI implements CrearCFDILocal {
         /*mandar excepcion que no lo timbro  */
         System.out.println(resultadoDeTimbre.getStatus());
         if (!resultadoDeTimbre.getStatus().isEmpty()){
-            this.comprobanteX.setEstatus(-2);
-            this.comprobanteX.setNotas("Error: "+resultadoDeTimbre.getStatus());
-            this.comprobanteLFacade.edit(comprobanteX);
+          
            throw new EJBException("Error: "+resultadoDeTimbre.getStatus());           
         }
         System.out.println(resultadoDeTimbre.getCodigo());
@@ -387,7 +391,8 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
             //Empleado empleadoN = (Empleado) this.recuperarParametroObject("empleadoN");
             List<Contribuyente> findcontribuyentesByRFC = contribuyenteFacade.findcontribuyentesByRFC(cfdi.getReceptor().getRfc());
             Contribuyente contrib = findcontribuyentesByRFC.get(0);
-            this.sendMail(contrib.getEmail()/*"fco@ovante.com.mx"*/, "Correo", "Documentos Nomina", cfdi);
+            this.sendMail(comprobanteX.getContribuyente().getEmail(),comprobanteX.getContribuyente1().getEmail(), "Documentos cfdi "+comprobanteX.getContribuyente().getNotas(), cfdi,comprobanteX);
+            
         } catch (Exception e) {
 
         }
@@ -422,10 +427,12 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         return port.timbrado(cfdiString, usuario, clave);
     }
 
-    private void sendMail(String email, String subject, String body, Comprobante cfdi) throws NamingException, MessagingException {
+    @Override
+    public void sendMail(String email, String emailto, String body, Comprobante cfdi,ComprobanteL comprobanteX) throws NamingException, MessagingException {
         MimeMessage message = new MimeMessage(correo);
-        message.setSubject(subject);
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+        message.setSubject("Sistema Sole 3.3 CFDI "+cfdi.getEmisor().getRfc()+"  "+cfdi.getSerie()+"-"+cfdi.getFolio());
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailto, false));
+        message.setFrom(email);
         // Create the message part
         BodyPart messageBodyPart = new MimeBodyPart();
 
@@ -441,22 +448,42 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
 
         // Part two is attachment
         messageBodyPart = new MimeBodyPart();
+        /*
         File baseDir = new File(ruta+"empresas/"+cfdi.getEmisor().getRfc());
         File outDir = new File(baseDir, "out");
-        File pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".pdf");
-        DataSource source = new FileDataSource(pdffile);
-        messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName(pdffile.getName());
+        File pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".pdf");               
+        DataSource source = new FileDataSource(pdffile);*/
+        
+        byte[] bytesPDF=null;
+        byte[] bytesXML=null;
+         for( Archivos archivo: comprobanteX.getArchivosCollection()){
+            if(archivo.getTipo().equals("XML")){
+             bytesXML= archivo.getContenido();
+
+            }
+            if(archivo.getTipo().equals("PDF")){
+             bytesPDF= archivo.getContenido();
+
+            }
+        }
+         
+        ByteArrayDataSource bds = new ByteArrayDataSource(bytesPDF, "application/pdf"); 
+        messageBodyPart.setDataHandler(new DataHandler(bds));        
+        messageBodyPart.setFileName(cfdi.getSerie()+"-"+cfdi.getFolio()+".pdf");
         multipart.addBodyPart(messageBodyPart);
 
         // Part two is attachment
         messageBodyPart = new MimeBodyPart();
 //        baseDir = new File(".");
   //      outDir = new File(baseDir, "out");
-        pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
+        /*pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
         source = new FileDataSource(pdffile);
         messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName(pdffile.getName());
+*/
+        ByteArrayDataSource bdxml = new ByteArrayDataSource(bytesXML,"application/xml"); 
+                messageBodyPart.setDataHandler(new DataHandler(bdxml));        
+
+        messageBodyPart.setFileName(cfdi.getSerie()+"-"+cfdi.getFolio()+".xml");
         multipart.addBodyPart(messageBodyPart);
 
         // Send the complete message parts
@@ -483,4 +510,25 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         produccion.TimbradoService port = service_1.getTimbradoServicePort();
         return port.timbrado(cfdiString, usuario, clave);
     }
+
+    @Override
+    public Comprobante leerCFDI(ComprobanteL comprobanteX) {
+        Comprobante regreso = null;
+        for( Archivos archivo: comprobanteX.getArchivosCollection()){
+            if(archivo.getTipo().equals("XML")){
+                try{
+                 JAXBContext context = JAXBContext.newInstance(Comprobante.class);
+
+	    Unmarshaller unmarshaller = context.createUnmarshaller();
+	    regreso = (Comprobante) unmarshaller.unmarshal( new ByteArrayInputStream(archivo.getContenido()));
+                }
+                catch(Exception e){
+                    LOG.severe(e.getMessage());
+                }
+
+            }
+        }
+        return regreso;
+    }
+    private static final Logger LOG = Logger.getLogger(CrearCFDI.class.getName());
 }

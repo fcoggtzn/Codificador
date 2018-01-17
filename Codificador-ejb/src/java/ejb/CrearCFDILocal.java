@@ -28,6 +28,9 @@ public interface CrearCFDILocal {
     public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws EJBException, FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException;
 
     public void generaPDF() throws NamingException, MessagingException;
+    
+    public Comprobante leerCFDI(ComprobanteL comprobanteX);
+    public void sendMail(String email, String emailto, String body, Comprobante cfdi,ComprobanteL comprobanteX) throws NamingException, MessagingException;
 
   
 }

@@ -54,6 +54,8 @@ import sat.CTipoFactor;
 import sat.CTipoNomina;
 import sat.CUsoCFDI;
 import sat.Comprobante;
+import sat.Comprobante.CfdiRelacionados;
+import sat.Comprobante.CfdiRelacionados.CfdiRelacionado;
 import sat.Comprobante.Impuestos.Retenciones.Retencion;
 import sat.Comprobante.Impuestos.Traslados.Traslado;
 import sat.Nomina;
@@ -114,7 +116,7 @@ public class FacturaXML implements Serializable {
         return retorno;
     }
     
-    public void llenarCFDI() throws DatatypeConfigurationException {
+    public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados) throws DatatypeConfigurationException {
         
         Double descuentos = 0.0;
         Double importes = 0.0;
@@ -125,6 +127,15 @@ public class FacturaXML implements Serializable {
 
         /*  Crear xml */
         cfdi = new Comprobante();
+        if (UUIDRelacionados != null ) /*solo funciona para notas de credito de un solo comprobante */
+            if(!UUIDRelacionados.trim().equals("")){
+                 CfdiRelacionados cfdiR = new CfdiRelacionados();
+                 CfdiRelacionado cfdiRelacionado1 = new CfdiRelacionado();
+                 cfdiRelacionado1.setUUID(UUIDRelacionados);
+                 cfdiR.setTipoRelacion("01");
+                 cfdiR.getCfdiRelacionado().add(cfdiRelacionado1);
+                cfdi.setCfdiRelacionados(cfdiR);
+            }
         folio = folioFacade.getFolioEmpresa(empresa);
         cfdi.setSerie(folio.getSerie());
         cfdi.setFolio(folio.getFolio().toString());
@@ -182,7 +193,7 @@ public class FacturaXML implements Serializable {
         cfdi.setFormaPago(this.formaPago.getFormaPago());
         //  cfdi.setCondicionesDePago("CONTADO");
         
-        cfdi.setTipoDeComprobante(CTipoDeComprobante.I);
+        cfdi.setTipoDeComprobante(tipoDeComprobante);
         
         Comprobante.Conceptos conceptos = new Comprobante.Conceptos();
         
@@ -297,6 +308,7 @@ public class FacturaXML implements Serializable {
                 impuestosConcepto.setRetenciones(retencionesConcepto);
             }
             /*agregar impuesto al concepto*/
+            if (impuestosConcepto.getRetenciones() != null || impuestosConcepto.getTraslados() != null)
             concepto.setImpuestos(impuestosConcepto);
 
             //sumar total de Descuentos
@@ -336,15 +348,24 @@ public class FacturaXML implements Serializable {
             retenciones.getRetencion().add(retencion);
         });
         
-        impuestos.setTotalImpuestosTrasladados(new BigDecimal(trasladoT).setScale(2, RoundingMode.HALF_UP));
-        impuestos.setTotalImpuestosRetenidos(new BigDecimal(retencionT).setScale(2, RoundingMode.HALF_UP));
+        boolean noTraslados=true;
+        boolean noRetenciones=true;
+
+        
         if (traslados.getTraslado().size() > 0) {
+            impuestos.setTotalImpuestosTrasladados(new BigDecimal(trasladoT).setScale(2, RoundingMode.HALF_UP));
             impuestos.setTraslados(traslados);
+            noTraslados =false;
         }
-        if (retenciones.getRetencion().size() > 0) {
+        if (retenciones.getRetencion().size() > 0) {           
+            impuestos.setTotalImpuestosRetenidos(new BigDecimal(retencionT).setScale(2, RoundingMode.HALF_UP));
             impuestos.setRetenciones(retenciones);
+            noRetenciones =false;
         }
+        
+        if (noTraslados || noRetenciones){
         cfdi.setImpuestos(impuestos);
+        }
         
         cfdi.setTotal(new BigDecimal(importes - descuentos - retencionT + trasladoT).setScale(2, RoundingMode.HALF_UP));
         
@@ -393,8 +414,20 @@ public class FacturaXML implements Serializable {
         comprobanteX.setTotal(cfdi.getTotal().doubleValue());
         comprobanteX.setFecha(cfdi.getFecha().toGregorianCalendar().getTime());
         comprobanteX.setEstatus(estatus);
+        if (cfdi.getImpuestos().getTotalImpuestosTrasladados() != null ){
         comprobanteX.setImpuesto(cfdi.getImpuestos().getTotalImpuestosTrasladados().doubleValue());
+        }
+        else {
+                    comprobanteX.setImpuesto(0.0);
+
+        }
+        if (cfdi.getImpuestos().getTotalImpuestosRetenidos() != null){
         comprobanteX.setImpuestoRetenido(cfdi.getImpuestos().getTotalImpuestosRetenidos().doubleValue());
+        }
+        else
+        {
+            comprobanteX.setImpuestoRetenido(0.0);
+        }
         //comprobanteX.getComprobanteImpuestoCollection()
         List<ComprobanteImpuesto> impuestosLista = new ArrayList<ComprobanteImpuesto>();
         if (cfdi.getImpuestos().getTraslados() != null ) 
@@ -425,13 +458,19 @@ public class FacturaXML implements Serializable {
         comprobanteLFacade.create(comprobanteX);
     }
     
-    public String generaCFDI() throws Exception {
+    public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados) throws Exception {
         
-        llenarCFDI();
+        llenarCFDI(tipoDeComprobante,UUIDRelacionados);
         
-        guardarComprobante("I", 1);
-        
+        guardarComprobante(tipoDeComprobante.value() ,1);
+       try{ 
         this.crearCFDI.crear(cfdi, comprobanteX);
+       }catch (Exception e){
+          this.comprobanteX.setEstatus(-2);
+            this.comprobanteX.setNotas(e.getMessage());
+            this.comprobanteLFacade.edit(comprobanteX);
+            throw  e;
+       }
         this.crearCFDI.generaPDF();
         return "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF";
         //    RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");

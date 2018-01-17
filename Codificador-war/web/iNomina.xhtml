@@ -49,8 +49,11 @@ and open the template in the editor.
                         <p:separator/>
                         <h:outputLabel value="Fecha de inicio de Pago:" styleClass="it-align-right"/>
                         <p:calendar id="fip" value="#{generaCFDI.fechaIPago}" pattern = "dd-MM-yyyy" mask = "true"  styleClass="it-negrita"/>
+                        <h:outputLabel value="Fecha de Fin de Pago:" styleClass="it-align-right"/>
+                        <p:calendar id="ffp" value="#{generaCFDI.fechaFPago}" pattern = "dd-MM-yyyy" mask = "true"  styleClass="it-negrita"/>
+                        <h:outputLabel value="Fecha de pago:" styleClass="it-align-right"/>
+                         <p:calendar id="fp" value="#{generaCFDI.fechaPago}" pattern = "dd-MM-yyyy" mask = "true"  styleClass="it-negrita"/>
                         <h:outputLabel value="Numero de días pagados:" styleClass="it-align-right"/>
-                        
                         <p:inputText value="#{generaCFDI.diasPagados}"  styleClass="it-size" onkeypress="if (event.which &lt; 46 || event.which &gt; 57) if (event.which != 10) return false;">
                             <p:ajax immediate="true"/>
                         </p:inputText>

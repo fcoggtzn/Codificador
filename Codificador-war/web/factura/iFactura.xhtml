@@ -24,7 +24,7 @@ and open the template in the editor.
         </h:form>
 
         <h:form id="formGrid">
-            <p:panel header="Factura" id="panelprod" toggleable="true" >
+            <p:panel header="Comprobante" id="panelprod" toggleable="true" >
                 <p:panelGrid columns="3" >
                     <h:outputLabel value="Contribuyente" ></h:outputLabel>
                     <p:autoComplete id="acSimple" value="#{facturaMB.contribuyente}"
@@ -66,6 +66,8 @@ and open the template in the editor.
                         </p:column>
                     </p:autoComplete>
                     <h:outputLabel value="#{facturaMB.usoCfdi.descripcion}" ></h:outputLabel>
+                    <h:outputText value="CFDI Relacionados"></h:outputText>
+                    <h:inputText value="#{facturaMB.cfdiRelacionado}"></h:inputText>
                 </p:panelGrid>
 
 
@@ -73,9 +75,9 @@ and open the template in the editor.
         </h:form>
 
         <h:form id="formDetalleFactura">
-            <p:panel header="DetalleFactura" id="detalle"> 
+            <p:panel header="Detalle de Comprobante" id="detalle"> 
 
-                <p:dataTable value="#{facturaMB.detallesDeFactura}" var="detalle" editable="true" editMode="cell" >
+                <p:dataTable value="#{facturaMB.detallesDeFactura}" var="detalle" editable="true" editMode="cell"  resizableColumns="true">
                     <p:column headerText="Cantidad">
                         <p:cellEditor>
                             <f:facet name="output"><h:outputText value="#{detalle.cantidad}" /></f:facet>
@@ -119,17 +121,18 @@ and open the template in the editor.
                         <p:cellEditor>
                             <f:facet name="output"><h:outputText value="#{detalle.producto.nombre}" /></f:facet>
                             <f:facet name="input">
-                                <p:inputText value="#{detalle.producto.nombre}" />
+                                <p:inputTextarea autoResize="true" value="#{detalle.producto.nombre}" />
                             </f:facet>
                         </p:cellEditor>
 
 
                     </p:column>
-                    <p:column headerText="Descripcion">
+                    <p:column headerText="Descripcion" resizable="true">
                         <p:cellEditor>
                             <f:facet name="output"><h:outputText value="#{detalle.descripcion}" /></f:facet>
                             <f:facet name="input">
-                                <p:inputText value="#{detalle.descripcion}" />
+                                <p:inputTextarea autoResize="true"
+                                   value="#{detalle.descripcion}" />
                             </f:facet>
                         </p:cellEditor>
 
@@ -173,20 +176,27 @@ and open the template in the editor.
                         <p:panelGrid columns="2"   >
                         <h:outputLabel value="Subtotal : ">
                         </h:outputLabel>
-                        <h:outputText value="#{facturaMB.subTotalFactura}">
-                        </h:outputText>
-                        <h:outputLabel value="Traslado : ">
-                        </h:outputLabel>
-                        <h:outputText value="#{facturaMB.totalFacturaImpuestosTrasladado}">
-                        </h:outputText>
-                        <h:outputLabel value="Retencion : ">
-                        </h:outputLabel>
-                        <h:outputText value="#{facturaMB.totalFacturaImpuestosRetenido}">
-                        </h:outputText>
-                        <h:outputLabel value="Total : ">
-                        </h:outputLabel>
-                        <h:outputText value="#{facturaMB.totalFactura}">
-                        </h:outputText>
+                            <h:outputText value="#{facturaMB.subTotalFactura}">
+                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+                            </h:outputText>
+                            <h:outputLabel value="Traslado : ">
+                            </h:outputLabel>
+                            <h:outputText value="#{facturaMB.totalFacturaImpuestosTrasladado}">
+                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+
+                            </h:outputText>
+                            <h:outputLabel value="Retencion : ">
+                            </h:outputLabel>
+                            <h:outputText value="#{facturaMB.totalFacturaImpuestosRetenido}">
+                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+
+                            </h:outputText>
+                            <h:outputLabel value="Total : ">
+                            </h:outputLabel>
+                            <h:outputText value="#{facturaMB.totalFactura}">
+                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+
+                            </h:outputText>
                         </p:panelGrid>
                         <p:commandButton value="+" immediate="true" actionListener="#{facturaMB.agregarDetalle()}" update="@form">
                         </p:commandButton>
@@ -304,7 +314,10 @@ and open the template in the editor.
             <p:growl id="growl1" showDetail="true" autoUpdate="true" life="15000" for="guardar"/>
             <center>
                 <p:panel header="Acción">
-                    <p:commandButton   value="#{facturaMB.textoBoton}" id="guardar"   actionListener="#{facturaMB.guardar()}" >
+                    <p:commandButton   value=" Factura " id="guardar"   actionListener="#{facturaMB.guardar()}" >
+                        <p:ajax  onstart="PF('statusDialog').show()"   />
+                    </p:commandButton>
+                    <p:commandButton   value=" Nota de Credito " id="notaCredito"   actionListener="#{facturaMB.notaCredito()}" >
                         <p:ajax  onstart="PF('statusDialog').show()"   />
                     </p:commandButton>
                     <p:commandButton value="Limpiar" id="limpiar" actionListener="#{facturaMB.limpiar()}" ajax="false" />

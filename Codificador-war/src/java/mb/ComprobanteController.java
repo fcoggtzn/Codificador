@@ -46,13 +46,14 @@ public class ComprobanteController implements Serializable {
      */
     public ComprobanteController() {
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
-        Calendar calendar = Calendar.getInstance();                
-        fechaFin= calendar.getTime();
-        calendar.add(Calendar.HOUR, -24);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, 1);
+        fechaFin = calendar.getTime();
+        calendar.add(Calendar.HOUR, -25);
         fechaInicio = calendar.getTime();
-        
-
     }
+    
+   
 
     private Object recuperarParametroObject(String parametro) {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -92,33 +93,32 @@ public class ComprobanteController implements Serializable {
     public void setFechaFin(Date FechaFin) {
         this.fechaFin = FechaFin;
     }
-    
-     public List<Contribuyente> completeTextEmpleado(String query) {        
-        
+
+    public List<Contribuyente> completeTextEmpleado(String query) {
+
         List<Contribuyente> valor = this.contribuyenteFacade.findcontribuyentesByRFC(query);
         System.out.println(valor.size());
         return valor;
     }
-     
-    public void buscarComprobantes (ActionEvent actionEvent){
-      comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa,fechaInicio,fechaFin,contribuyente);
-     
-    }
-    
-    
-    public String valorEstatus(int estatus){
-        String retorno= null;
-        if (estatus == 1){
-            retorno ="A";
-        }
-        if (estatus ==-1){
-            retorno ="C";
-        }
-        
-        
-        return retorno;
-        
+
+    public void buscarComprobantes(ActionEvent actionEvent) {
+        comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa, fechaInicio, fechaFin, contribuyente);
+
     }
 
+    public String valorEstatus(int estatus) {
+        String retorno = null;
+        if (estatus == 1) {
+            retorno = "A";
+        }
+        if (estatus == -1) {
+            retorno = "C";
+        }
+        if (estatus == -2) {
+            retorno = "X";
+        }
+        return retorno;
+
+    }
 
 }

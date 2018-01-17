@@ -61,19 +61,21 @@ and open the template in the editor.
         </h:form>
         <br/>
         <h:form id="formGrid">
-            <p:dataTable id="out2" var="contr" value="#{contribuyenteController.contribuyentes}">
-                <p:column headerText="id">
+            <p:dataTable id="out2" var="contr" value="#{contribuyenteController.contribuyentes}" rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,20,50,100" resizableColumns="true">
+                <p:column headerText="id" filterBy="#{contr.idContribuyente}">
                     <h:outputLabel value="#{contr.idContribuyente}"/>
                 </p:column>
-                <p:column headerText="Contribuyente">
-                    <h:outputLabel value="#{contr.nombre}"/>
+                <p:column headerText="Contribuyente" filterBy="#{contr.nombre}" sortBy="#{contr.nombre}">
+                    <h:outputLabel value="#{contr.nombre}" />
                 </p:column>
-                <p:column headerText="RFC">
-                    <h:outputLabel value="#{contr.rfc}"/>
+                <p:column headerText="RFC" filterBy="#{contr.rfc}" sortBy="#{contr.rfc}" >
+                    <h:outputLabel value="#{contr.rfc}" />
                 </p:column>
                 <p:column headerText="E-mail">
                     <h:outputLabel value="#{contr.email}"/>
                 </p:column>
+                
                 <p:column headerText="">
                     <center>
                         <p:commandButton id="modif" icon="ui-icon-pencil" process="@form" actionListener="#{contribuyenteController.actualizar(contr)}" immediate="true" update=":formemp :formAct">

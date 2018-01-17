@@ -10,6 +10,7 @@ import catalogo.servicio.RiesgoPuestoFacadeLocal;
 import catalogo.servicio.TipoContratoFacadeLocal;
 import catalogo.servicio.TipoRegimenFacadeLocal;
 import ejb.CancelaCfdiEjbLocal;
+import ejb.CrearCFDILocal;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -23,6 +24,8 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.mail.MessagingException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import nomina.entidad.Archivos;
 import nomina.entidad.ComprobanteL;
@@ -46,6 +49,7 @@ import nomina.servicio.DeduccionPercepcionFacadeLocal;
 import nomina.servicio.EmpleadoFacadeLocal;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
+import sat.Comprobante;
 
 /**
  *
@@ -54,6 +58,9 @@ import org.primefaces.event.RowEditEvent;
 @Named(value = "contribuyenteController")
 @SessionScoped
 public class ContribuyenteController extends BaseController implements Serializable {
+
+    @EJB
+    private CrearCFDILocal crearCFDI;
 
     @EJB
     private CancelaCfdiEjbLocal cancelaCfdiEjb;
@@ -85,6 +92,8 @@ public class ContribuyenteController extends BaseController implements Serializa
     PeriodicidadPagoFacadeLocal periodicidadPagoFacade;
     @EJB
     ComprobanteLFacadeLocal comprobanteLFacade;
+    
+     
 
     private Contribuyente contribuyente;
     private List<Contribuyente> contribuyentes;
@@ -655,6 +664,20 @@ public class ContribuyenteController extends BaseController implements Serializa
 
     ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
     externalContext.redirect("descargas?serie="+compr.getSerie()+"&folio="+compr.getFolio()+"&rfc="+compr.getContribuyente().getRfc()+"&tipo="+tipo);
+     
+}
+    
+    public void sendEmail(ComprobanteL compr) throws IOException {
+        Comprobante leerCFDI = this.crearCFDI.leerCFDI(compr);
+        
+        try {
+            this.crearCFDI.sendMail(compr.getContribuyente().getEmail(), compr.getContribuyente1().getEmail(), "CFDI Renvio "+ compr.getContribuyente().getNotas(), leerCFDI,compr);
+            
+        } catch (NamingException ex) {
+            Logger.getLogger(ContribuyenteController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            Logger.getLogger(ContribuyenteController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 }
     
     public void cancelarCFDI(ComprobanteL comprobante){

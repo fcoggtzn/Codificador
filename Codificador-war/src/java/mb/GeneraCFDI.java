@@ -73,7 +73,11 @@ public class GeneraCFDI implements Serializable {
     private Comprobante cfdi;
     private final boolean activoNomina = true;
     private Date fechaIPago;
-    private Double diasPagados = 0.0;
+    private Date fechaFPago;
+    private Date fechaPago;
+
+
+    private Double diasPagados = 30.0;
     private ComprobanteL comprobanteX;
     private   String facturaRuta ;
 
@@ -93,6 +97,24 @@ public class GeneraCFDI implements Serializable {
         this.fechaIPago = fechaIPago;
     }
 
+    public Date getFechaFPago() {
+        return fechaFPago;
+    }
+
+    public void setFechaFPago(Date fechaFPago) {
+        this.fechaFPago = fechaFPago;
+    }
+
+    public Date getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(Date fechaPago) {
+        this.fechaPago = fechaPago;
+    }
+    
+    
+
     public Double getDiasPagados() {
         return diasPagados;
     }
@@ -108,6 +130,8 @@ public class GeneraCFDI implements Serializable {
         empleado = (Empleado) this.recuperarParametroObject("empleadoN");
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
         Calendar calendar = Calendar.getInstance();
+        fechaFPago = calendar.getTime();
+        fechaPago  = calendar.getTime();
         calendar.add(Calendar.MONTH, -1);
         fechaIPago = calendar.getTime();
     }
@@ -146,27 +170,32 @@ public class GeneraCFDI implements Serializable {
                     this.crearCFDI.crear(cfdi, comprobanteX);
                     this.crearCFDI.generaPDF();
                     //RequestContext.getCurrentInstance().execute("window.open('" + "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF" + "','_blank')");
-                     facturaRuta = "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc()+"&tipo=PDF";
-                    
+                    facturaRuta = "/Codificador-war/faces/descargas?serie=" + cfdi.getSerie() + "&folio=" + cfdi.getFolio() + "&rfc=" + cfdi.getEmisor().getRfc() + "&tipo=PDF";
+
+                    try {
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iNominaView.xhtml");
+                    } catch (IOException ex) {
+                        addMessageError(ex.getMessage());
+
+                        Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } else {
                     addMessageError("Días a pagar debe ser mayor a cero");
                 }
             } else {
                 addMessageError("El valor de la fecha no debe ser nulo");
             }
-        } catch (NullPointerException e) {
-            addMessageError("No debe haber valores nulos");
-        } catch (FileNotFoundException ex) {
+
+        } catch (Exception ex) {
+            this.comprobanteX.setEstatus(-2);
+            this.comprobanteX.setNotas(ex.getMessage());
+            this.comprobanteFacade.edit(comprobanteX);
+            addMessageError(ex.getMessage());
             Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DatatypeConfigurationException | TransformerException | NoSuchAlgorithmException | IOException ex) {
-            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
+
         }
 
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iNominaView.xhtml");
-        } catch (IOException ex) {
-            Logger.getLogger(GeneraCFDI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
     }
 
     public void llenarCFDI() throws DatatypeConfigurationException {
@@ -219,11 +248,11 @@ public class GeneraCFDI implements Serializable {
         newXMLGregorianCalendar.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         newXMLGregorianCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
 
-        c.setTime(calendar.getTime());
-        XMLGregorianCalendar fechaPago = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        fechaPago.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
-        fechaPago.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        fechaPago.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+        c.setTime(fechaPago);
+        XMLGregorianCalendar fechaPapgo = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaPapgo.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+        fechaPapgo.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        fechaPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
 
         calendar.add(Calendar.MONTH, -1);
         c.setTime(this.fechaIPago);
@@ -231,6 +260,15 @@ public class GeneraCFDI implements Serializable {
         fechaIPapgo.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
         fechaIPapgo.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
         fechaIPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+        
+        
+        calendar.add(Calendar.MONTH, -1);
+        c.setTime(this.fechaFPago);
+        XMLGregorianCalendar fechaFPapgo = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        fechaFPapgo.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
+        fechaFPapgo.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        fechaFPapgo.setTime(DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+
 
         calendar.add(Calendar.YEAR, -1);
         c.setTime(empleado.getFechaInicio());
@@ -267,10 +305,10 @@ public class GeneraCFDI implements Serializable {
             Nomina nomina = new Nomina();
             nomina.setVersion("1.2");
             nomina.setTipoNomina(CTipoNomina.O);
-            nomina.setFechaPago(fechaPago);
+            nomina.setFechaPago(fechaPapgo);
 
             nomina.setFechaInicialPago(fechaIPapgo);
-            nomina.setFechaFinalPago(fechaPago);
+            nomina.setFechaFinalPago(fechaFPapgo);
             nomina.setNumDiasPagados(new BigDecimal(this.diasPagados).setScale(3, RoundingMode.HALF_UP));
             Nomina.Emisor emisorNomina = new Nomina.Emisor();
             //    emisorNomina.setRfcPatronOrigen(emisor.getRfc());
@@ -440,7 +478,11 @@ public class GeneraCFDI implements Serializable {
         comprobanteX.setFecha(cfdi.getFecha().toGregorianCalendar().getTime());
         comprobanteX.setEstatus(estatus);
         //comprobanteX.setImpuesto(cfdi.getImpuestos().getTotalImpuestosTrasladados().doubleValue());
+        comprobanteX.setImpuesto(0.0);
         comprobanteX.setImpuestoRetenido(deducciones.getTotalImpuestosRetenidos().doubleValue() + deducciones.getTotalOtrasDeducciones().byteValue());
+        
+        
+        
         comprobanteX.setSubtotal(cfdi.getSubTotal().doubleValue());
         comprobanteX.setUuid(cfdi.getNoCertificado());
         comprobanteX.setPago("Nomina");

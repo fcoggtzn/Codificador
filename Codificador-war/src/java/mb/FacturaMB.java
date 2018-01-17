@@ -28,6 +28,7 @@ import javax.faces.context.FacesContext;
 import javax.xml.datatype.DatatypeConfigurationException;
 import nomina.entidad.Contribuyente;
 import org.primefaces.context.RequestContext;
+import sat.CTipoDeComprobante;
 import tools.DetalleFactura;
 import tools.FacturaXML;
 
@@ -67,6 +68,7 @@ public class FacturaMB extends BaseController implements Serializable {
     private Double totalFacturaImpuestosTrasladado;
     private Double totalFacturaImpuestosRetenido;
     private boolean errorProducto;
+    private String cfdiRelacionado;
 
     /**
      * Creates a new instance of FacturaMB
@@ -189,13 +191,55 @@ public class FacturaMB extends BaseController implements Serializable {
                 facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
                         formaPago, referencia, metodoPago, esPagado);
           
-                 facturaRuta = facturarXML.generaCFDI();                 
+                 facturaRuta = facturarXML.generaCFDI(CTipoDeComprobante.I,this.cfdiRelacionado);                 
                 this.msgOk("Comprobante grabado", "Comprobante grabado");
                 clean();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");
               
             } catch (Exception ex) {
+            
                
+                 this.msgError(ex.getMessage());
+            }
+        
+        }
+      RequestContext requestContext = RequestContext.getCurrentInstance();
+      requestContext.execute("PF('statusDialog').hide()");
+    }
+    
+    
+     public void notaCredito() {
+
+        if (contribuyente == null) {
+            this.msgError("Timbrando sin contriuyente");
+
+        } else if (usoCfdi == null) {
+            this.msgError("Error en uso de CFDI");
+        } else if (detallesDeFactura.size() <= 0) {
+            this.msgError("No tiene detalle de facturación");
+
+        } else if (errorProducto) {
+            this.msgError("Detalle de producto sin producto");
+
+        } else if (formaPago == null) {
+            this.msgError("No tiene Forma de Pago");
+        } else if (referencia.isEmpty()) {
+            this.msgError("S/N");
+        } else if (metodoPago == null) {
+            this.msgError("No tiene Metodo de Pago");
+        } else {
+            try {
+                FacturaXML facturarXML;
+                facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
+                        formaPago, referencia, metodoPago, esPagado);
+          
+                 facturaRuta = facturarXML.generaCFDI(CTipoDeComprobante.E,this.cfdiRelacionado);                 
+                this.msgOk("Comprobante grabado", "Comprobante grabado");
+                clean();
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");
+              
+            } catch (Exception ex) {
+            
                
                  this.msgError(ex.getMessage());
             }
@@ -273,6 +317,17 @@ public class FacturaMB extends BaseController implements Serializable {
 
         }
     }
+
+    public String getCfdiRelacionado() {
+        return cfdiRelacionado;
+    }
+
+    public void setCfdiRelacionado(String cfdiRelacionado) {
+        this.cfdiRelacionado = cfdiRelacionado;
+    }
+    
+    
+    
 
     public MetodoPago getMetodoPago() {
         return metodoPago;
