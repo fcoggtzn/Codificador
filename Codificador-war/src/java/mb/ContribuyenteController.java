@@ -671,6 +671,7 @@ public class ContribuyenteController extends BaseController implements Serializa
         Comprobante leerCFDI = this.crearCFDI.leerCFDI(compr);
         
         try {
+            System.out.println("Enviando correo");
             this.crearCFDI.sendMail(compr.getContribuyente().getEmail(), compr.getContribuyente1().getEmail(), "CFDI Renvio "+ compr.getContribuyente().getNotas(), leerCFDI,compr);
             
         } catch (NamingException ex) {

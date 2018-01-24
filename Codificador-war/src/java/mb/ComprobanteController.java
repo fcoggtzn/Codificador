@@ -48,9 +48,12 @@ public class ComprobanteController implements Serializable {
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, 1);
+        calendar.add(Calendar.HOUR, +25);
         fechaFin = calendar.getTime();
-        calendar.add(Calendar.HOUR, -25);
+        calendar.add(Calendar.HOUR, -50);
         fechaInicio = calendar.getTime();
+      //  comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa, fechaInicio, fechaFin, contribuyente);
+
     }
     
    

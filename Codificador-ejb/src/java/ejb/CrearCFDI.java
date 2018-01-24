@@ -431,14 +431,15 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
     public void sendMail(String email, String emailto, String body, Comprobante cfdi,ComprobanteL comprobanteX) throws NamingException, MessagingException {
         MimeMessage message = new MimeMessage(correo);
         message.setSubject("Sistema Sole 3.3 CFDI "+cfdi.getEmisor().getRfc()+"  "+cfdi.getSerie()+"-"+cfdi.getFolio());
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailto, false));
+        message.setRecipients(Message.RecipientType.TO, emailto);        
+        message.setRecipients(Message.RecipientType.BCC, email);        
         message.setFrom(email);
         // Create the message part
         BodyPart messageBodyPart = new MimeBodyPart();
 
         //message.setText(body);
         // Now set the actual message
-        messageBodyPart.setText(body);
+        messageBodyPart.setText(body );
 
         // Create a multipar message
         Multipart multipart = new MimeMultipart();
@@ -480,7 +481,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         source = new FileDataSource(pdffile);
         messageBodyPart.setDataHandler(new DataHandler(source));
 */
-        ByteArrayDataSource bdxml = new ByteArrayDataSource(bytesXML,"application/xml"); 
+        ByteArrayDataSource bdxml = new ByteArrayDataSource(bytesXML,"text/xml"); 
                 messageBodyPart.setDataHandler(new DataHandler(bdxml));        
 
         messageBodyPart.setFileName(cfdi.getSerie()+"-"+cfdi.getFolio()+".xml");
@@ -528,6 +529,8 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
 
             }
         }
+        System.out.println("Lectura de cfdi");
+        System.out.println(regreso.getEmisor().getRfc());
         return regreso;
     }
     private static final Logger LOG = Logger.getLogger(CrearCFDI.class.getName());

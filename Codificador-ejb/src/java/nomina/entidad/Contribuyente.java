@@ -107,15 +107,20 @@ public class Contribuyente implements Serializable {
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = nombre.toUpperCase();
     }
 
     public String getRfc() {
         return rfc;
     }
 
-    public void setRfc(String rfc) {
-        this.rfc = rfc;
+    public void setRfc(String rfc) throws Exception {
+    //    if(rfc.matches("/^([A-Z,Ñ,&]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[A-Z|\\d]{3})$/")){
+                 this.rfc = rfc.toUpperCase();
+      /*  }
+        else{
+            throw new Exception ("Error en RFC");
+        }*/
     }
 
     public String getEmail() {
