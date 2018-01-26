@@ -363,7 +363,7 @@ public class FacturaXML implements Serializable {
             noRetenciones =false;
         }
         
-        if (!noTraslados || !noRetenciones){
+        if (!(noTraslados || noRetenciones)){
         cfdi.setImpuestos(impuestos);
         }
         
@@ -429,7 +429,7 @@ public class FacturaXML implements Serializable {
         {
             comprobanteX.setImpuestoRetenido(0.0);
         }
-        }
+        
         //comprobanteX.getComprobanteImpuestoCollection()
         List<ComprobanteImpuesto> impuestosLista = new ArrayList<ComprobanteImpuesto>();
         if (cfdi.getImpuestos().getTraslados() != null ) 
@@ -453,6 +453,7 @@ public class FacturaXML implements Serializable {
             
         }
         comprobanteX.setComprobanteImpuestoCollection(impuestosLista);
+        }
         comprobanteX.setSubtotal(cfdi.getSubTotal().doubleValue());
         comprobanteX.setUuid(cfdi.getNoCertificado());
         comprobanteX.setPago(formaPago.getDescripcion());

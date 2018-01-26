@@ -391,10 +391,13 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
             //Empleado empleadoN = (Empleado) this.recuperarParametroObject("empleadoN");
             List<Contribuyente> findcontribuyentesByRFC = contribuyenteFacade.findcontribuyentesByRFC(cfdi.getReceptor().getRfc());
             Contribuyente contrib = findcontribuyentesByRFC.get(0);
+            System.out.println("Enviando comprobante");
+            comprobanteX = this.comprobanteLFacade.find(comprobanteX.getIdComprobante());
             this.sendMail(comprobanteX.getContribuyente().getEmail(),comprobanteX.getContribuyente1().getEmail(), "Documentos cfdi "+comprobanteX.getContribuyente().getNotas(), cfdi,comprobanteX);
             
         } catch (Exception e) {
-
+           System.out.println(e.getMessage());
+           throw e;
         }
     }
 
