@@ -8,6 +8,7 @@ package nomina.servicio;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import nomina.entidad.Archivos;
 import nomina.entidad.ComprobanteL;
 import nomina.entidad.Contribuyente;
 import nomina.entidad.Empleado;
@@ -39,5 +40,19 @@ public interface ComprobanteLFacadeLocal {
     public List<ComprobanteL> findComprobanteEmpleadoEmpresa(Empleado empleado, Empresa empresa);
 
     public List<ComprobanteL> findComprobanteEmpresaContribuyente(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente);
+
+    public List<ComprobanteL> findComprobanteEmpresaContribuyenteConSaldo(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente);
+
+    public void crearPago(ComprobanteL entity);
+
+    public List<ComprobanteL> findComprobanteEmpresaContribuyenteSinSaldo(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente);
+
+    public ComprobanteL findByUUID(String UUID);
+
+    public Archivos findXML(ComprobanteL comprobanteX);
+
+    public Archivos findPDF(ComprobanteL comprobanteX);
+
+    public List<ComprobanteL> findComprobanteEmpresaContribuyente(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente, String tipo);
     
 }

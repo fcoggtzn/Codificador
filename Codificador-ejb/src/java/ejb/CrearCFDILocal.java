@@ -30,7 +30,6 @@ public interface CrearCFDILocal {
     public void generaPDF() throws NamingException, MessagingException;
     
     public Comprobante leerCFDI(ComprobanteL comprobanteX);
-    public void sendMail(String email, String emailto, String body, Comprobante cfdi,ComprobanteL comprobanteX) throws NamingException, MessagingException;
 
   
 }

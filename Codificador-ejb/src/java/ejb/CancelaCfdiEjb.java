@@ -10,19 +10,29 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
+import javax.mail.MessagingException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceRef;
+import nomina.entidad.Archivos;
+import nomina.entidad.ComprobanteL;
 import nomina.entidad.Configuracion;
+import nomina.entidad.Contribuyente;
 import nomina.entidad.Empresa;
+import nomina.servicio.ArchivosFacadeLocal;
+import nomina.servicio.ComprobanteLFacadeLocal;
 import utilerias.CertificadoUsuario;
+import utilerias.Transformacion;
 import webServiceSatPrueba.TimbradoServiceService;
 
 /**
@@ -37,6 +47,19 @@ public class CancelaCfdiEjb implements CancelaCfdiEjbLocal {
 
     @WebServiceRef(wsdlLocation = "META-INF/wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/TimbradoService.wsdl")
     private TimbradoServiceService service;
+    
+    
+    @EJB
+    private ComprobanteLFacadeLocal comprobanteFacade;
+    
+    @EJB
+    private ArchivosFacadeLocal archivoFacade;
+    
+      @EJB
+    private EmailLocal email;
+    
+    private ComprobanteL comprobanteX;
+    private Archivos findXML;
     
     
     
@@ -84,6 +107,16 @@ public class CancelaCfdiEjb implements CancelaCfdiEjbLocal {
                 String cancelacion = cancelacionProduccion(solicitud,configura.getLoginWeb(),configura.getPassWeb());
                 System.out.println(cancelacion);
         }
+         comprobanteX = comprobanteFacade.findByUUID(UUID); 
+        /*encontrar el XSL del comprobante */
+         findXML = comprobanteFacade.findXML(comprobanteX);
+        try {
+            regeneraPDF();
+        } catch (NamingException ex) {
+            Logger.getLogger(CancelaCfdiEjb.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MessagingException ex) {
+            Logger.getLogger(CancelaCfdiEjb.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
      
      protected Object recuperarParametroObject(String parametro) {
@@ -111,4 +144,29 @@ public class CancelaCfdiEjb implements CancelaCfdiEjbLocal {
         return port.cancelacion(solicitud, usuario, clave);
     }
     
+    
+    
+      public void regeneraPDF() throws NamingException, MessagingException {
+
+        //crear archivo pdf
+        try {
+            Transformacion transforma = new Transformacion();
+            byte datos[] = transforma.generaPDF(CertificadoUsuario.getXSL(comprobanteX.getContribuyente().getRfc(),"C"),  findXML.getContenido(), comprobanteX.getContribuyente().getRfc(),comprobanteX.getFolio(),comprobanteX.getSerie());
+            nomina.entidad.Archivos archivo_PDF  = this.comprobanteFacade.findPDF(comprobanteX);
+            
+            archivo_PDF.setContenido(datos);
+            
+            archivoFacade.edit(archivo_PDF);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+        try {            
+            
+            email.sendMail( "Su cfdi fue cancelado por datos erroneos  "+comprobanteX.getContribuyente().getNotas(), comprobanteX);
+            
+        } catch (Exception e) {
+           System.out.println(e.getMessage());
+           throw e;
+        }
+    }
 }

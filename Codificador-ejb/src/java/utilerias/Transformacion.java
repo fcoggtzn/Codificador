@@ -33,16 +33,20 @@ import sat.Comprobante;
 
 public class Transformacion {
         private static final String ruta = System.getProperty("user.dir");
-
+        
+        
+        public byte[] generaPDF(byte[] archivoXslt,byte[] archivoXml, Comprobante cfdi){
+           return generaPDF(archivoXslt,archivoXml,cfdi.getEmisor().getRfc(),cfdi.getFolio(),cfdi.getSerie());
+        }
     
-      public byte[] generaPDF(byte[] archivoXslt,byte[] archivoXml, Comprobante cfdi){
+      public byte[] generaPDF(byte[] archivoXslt,byte[] archivoXml,String emisorRFC,String folio,String serie){
      try {
 	            System.out.println("FOP ExampleXML2PDF\n");
 	            System.out.println("Preparing...");
 	
 	            // Setup directories
 	           // File baseDir = new File(".");
-                    File baseDir = new File(ruta+"/empresas/"+cfdi.getEmisor().getRfc());
+                    File baseDir = new File(ruta+"/empresas/"+emisorRFC);
 	            File outDir = new File(baseDir, "out");
 	            outDir.mkdirs();
                     
@@ -57,7 +61,7 @@ public class Transformacion {
 	            // Setup input and output files
 	            File xmlfile = new File("xml");
 	            File xsltfile = new File("xslt");
-                    File pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".pdf");
+                    File pdffile = new File(outDir, "factura" + folio + "-" + serie + ".pdf");
 	
 	            System.out.println("Input: XML (" + xmlfile + ")");
 	            System.out.println("Stylesheet: " + xsltfile);

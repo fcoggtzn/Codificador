@@ -116,8 +116,7 @@ public class CrearCFDI implements CrearCFDILocal {
     @EJB
     private EmpresaFacadeLocal empresaFacade;
 
-    @Resource(name = "correo")
-    private Session correo;
+   
 
     @EJB
     private ArchivosFacadeLocal archivosFacade;
@@ -133,6 +132,7 @@ public class CrearCFDI implements CrearCFDILocal {
     private ContribuyenteFacadeLocal contribuyenteFacade;
     @EJB
     private FolioFacadeLocal folioFacade;
+  
     
     /*paga gener el formato de impresion */ 
     @EJB
@@ -143,6 +143,10 @@ public class CrearCFDI implements CrearCFDILocal {
     RegimenFiscalFacadeLocal regimenFiscalFacade;
     @EJB
     UsoCfdiFacadeLocal usoCfdiFacade;
+    
+    /*generar envio por Correo*/
+      @EJB
+    private EmailLocal email;
     
 
     private String cadenaOriginal;
@@ -247,7 +251,7 @@ public class CrearCFDI implements CrearCFDILocal {
         }
         System.out.println(resultadoDeTimbre.getCodigo());
         System.out.println(resultadoDeTimbre.getTimbre());
-        int val1 = resultadoDeTimbre.getTimbre().indexOf("UUID=\"") + 6;
+        int val1 = resultadoDeTimbre.getTimbre().indexOf("==\" UUID=\"") + 10;
         int val2 = resultadoDeTimbre.getTimbre().indexOf("\" Version=\"1.1\"");
         String uuidT = resultadoDeTimbre.getTimbre().substring(val1, val2);
         System.out.println("UUID:" + uuidT);
@@ -285,6 +289,7 @@ public class CrearCFDI implements CrearCFDILocal {
                 + "            <cfdi:DomicilioCliente"
                 + " direccion=\""+comprobanteX.getContribuyente().getImpresion() +"\" />"
                 + "</clienteDatos>"
+                + "<notas notas=\""+comprobanteX.getNotas()+"\" />"
                 + "</cfdi:Addenda>"
                 + "</cfdi:Comprobante>";
 
@@ -393,7 +398,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
             Contribuyente contrib = findcontribuyentesByRFC.get(0);
             System.out.println("Enviando comprobante");
             comprobanteX = this.comprobanteLFacade.find(comprobanteX.getIdComprobante());
-            this.sendMail(comprobanteX.getContribuyente().getEmail(),comprobanteX.getContribuyente1().getEmail(), "Documentos cfdi "+comprobanteX.getContribuyente().getNotas(), cfdi,comprobanteX);
+            email.sendMail( "Documentos cfdi "+comprobanteX.getContribuyente().getNotas(), comprobanteX);
             
         } catch (Exception e) {
            System.out.println(e.getMessage());
@@ -430,72 +435,7 @@ comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -
         return port.timbrado(cfdiString, usuario, clave);
     }
 
-    @Override
-    public void sendMail(String email, String emailto, String body, Comprobante cfdi,ComprobanteL comprobanteX) throws NamingException, MessagingException {
-        MimeMessage message = new MimeMessage(correo);
-        message.setSubject("Sistema Sole 3.3 CFDI "+cfdi.getEmisor().getRfc()+"  "+cfdi.getSerie()+"-"+cfdi.getFolio());
-        message.setRecipients(Message.RecipientType.TO, emailto);        
-        message.setRecipients(Message.RecipientType.BCC, email);        
-        message.setFrom(email);
-        // Create the message part
-        BodyPart messageBodyPart = new MimeBodyPart();
-
-        //message.setText(body);
-        // Now set the actual message
-        messageBodyPart.setText(body );
-
-        // Create a multipar message
-        Multipart multipart = new MimeMultipart();
-
-        // Set text message part
-        multipart.addBodyPart(messageBodyPart);
-
-        // Part two is attachment
-        messageBodyPart = new MimeBodyPart();
-        /*
-        File baseDir = new File(ruta+"empresas/"+cfdi.getEmisor().getRfc());
-        File outDir = new File(baseDir, "out");
-        File pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".pdf");               
-        DataSource source = new FileDataSource(pdffile);*/
-        
-        byte[] bytesPDF=null;
-        byte[] bytesXML=null;
-         for( Archivos archivo: comprobanteX.getArchivosCollection()){
-            if(archivo.getTipo().equals("XML")){
-             bytesXML= archivo.getContenido();
-
-            }
-            if(archivo.getTipo().equals("PDF")){
-             bytesPDF= archivo.getContenido();
-
-            }
-        }
-         
-        ByteArrayDataSource bds = new ByteArrayDataSource(bytesPDF, "application/pdf"); 
-        messageBodyPart.setDataHandler(new DataHandler(bds));        
-        messageBodyPart.setFileName(cfdi.getSerie()+"-"+cfdi.getFolio()+".pdf");
-        multipart.addBodyPart(messageBodyPart);
-
-        // Part two is attachment
-        messageBodyPart = new MimeBodyPart();
-//        baseDir = new File(".");
-  //      outDir = new File(baseDir, "out");
-        /*pdffile = new File(outDir, "factura" + cfdi.getFolio() + "-" + cfdi.getSerie() + ".xml");
-        source = new FileDataSource(pdffile);
-        messageBodyPart.setDataHandler(new DataHandler(source));
-*/
-        ByteArrayDataSource bdxml = new ByteArrayDataSource(bytesXML,"text/xml"); 
-                messageBodyPart.setDataHandler(new DataHandler(bdxml));        
-
-        messageBodyPart.setFileName(cfdi.getSerie()+"-"+cfdi.getFolio()+".xml");
-        multipart.addBodyPart(messageBodyPart);
-
-        // Send the complete message parts
-        message.setContent(multipart);
-
-        // Send message
-        Transport.send(message);
-    }
+   
 
     protected Object recuperarParametroObject(String parametro) {
         FacesContext context = FacesContext.getCurrentInstance();

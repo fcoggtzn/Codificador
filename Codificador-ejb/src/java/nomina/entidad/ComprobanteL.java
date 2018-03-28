@@ -49,6 +49,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ComprobanteL.findByUuid", query = "SELECT c FROM ComprobanteL c WHERE c.uuid = :uuid")})
 public class ComprobanteL implements Serializable {
 
+    @Column(name = "saldo")
+    private Double saldo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pago")
+    private Collection<Pago> pagoCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comprobantePagado")
+    private Collection<Pago> pagoCollection1;
+
     @Size(max = 45)
     @Column(name = "pago")
     private String pago;
@@ -283,6 +290,32 @@ public class ComprobanteL implements Serializable {
     @Override
     public String toString() {
         return "nomina.entidad.ComprobanteL[ idComprobante=" + idComprobante + " ]";
+    }
+
+    public Double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(Double saldo) {
+        this.saldo = saldo;
+    }
+
+    @XmlTransient
+    public Collection<Pago> getPagoCollection() {
+        return pagoCollection;
+    }
+
+    public void setPagoCollection(Collection<Pago> pagoCollection) {
+        this.pagoCollection = pagoCollection;
+    }
+
+    @XmlTransient
+    public Collection<Pago> getPagoCollection1() {
+        return pagoCollection1;
+    }
+
+    public void setPagoCollection1(Collection<Pago> pagoCollection1) {
+        this.pagoCollection1 = pagoCollection1;
     }
 
 }
