@@ -11,6 +11,7 @@ import catalogo.servicio.TipoContratoFacadeLocal;
 import catalogo.servicio.TipoRegimenFacadeLocal;
 import ejb.CancelaCfdiEjbLocal;
 import ejb.CrearCFDILocal;
+import ejb.EmailLocal;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -92,6 +93,9 @@ public class ContribuyenteController extends BaseController implements Serializa
     PeriodicidadPagoFacadeLocal periodicidadPagoFacade;
     @EJB
     ComprobanteLFacadeLocal comprobanteLFacade;
+    
+    @EJB
+    EmailLocal email;
     
      
 
@@ -672,7 +676,9 @@ public class ContribuyenteController extends BaseController implements Serializa
         
         try {
             System.out.println("Enviando correo");
-            this.crearCFDI.sendMail(compr.getContribuyente().getEmail(), compr.getContribuyente1().getEmail(), "CFDI Renvio "+ compr.getContribuyente().getNotas(), leerCFDI,compr);
+            //this.crearCFDI.sendMail(compr.getContribuyente().getEmail(), compr.getContribuyente1().getEmail(), "CFDI Renvio "+ compr.getContribuyente().getNotas(), leerCFDI,compr);
+            
+            email.sendMail("CFDI Renvio "+ compr.getContribuyente().getNotas(),compr);
             
         } catch (NamingException ex) {
             Logger.getLogger(ContribuyenteController.class.getName()).log(Level.SEVERE, null, ex);

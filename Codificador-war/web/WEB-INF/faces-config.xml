@@ -17,4 +17,18 @@
             <to-view-id>/factura/iFacturaView.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>pago</from-outcome>
+            <to-view-id>/iPago.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+     <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>rpago</from-outcome>
+            <to-view-id>/iReportePago.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

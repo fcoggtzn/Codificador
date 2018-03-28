@@ -115,8 +115,11 @@ public class FacturaXML implements Serializable {
         Object retorno = session.getAttribute(parametro);
         return retorno;
     }
+     public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados) throws DatatypeConfigurationException {
+           llenarCFDI( tipoDeComprobante,  UUIDRelacionados ,"" ) ;
+     }
     
-    public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados) throws DatatypeConfigurationException {
+    public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados, String notas) throws DatatypeConfigurationException {
         
         Double descuentos = 0.0;
         Double importes = 0.0;
@@ -139,6 +142,7 @@ public class FacturaXML implements Serializable {
         folio = folioFacade.getFolioEmpresa(empresa);
         cfdi.setSerie(folio.getSerie());
         cfdi.setFolio(folio.getFolio().toString());
+      
         // no incrementar en 1 el folio mejor al grabar    folioFacade.folioInc(folio);
         emisor = new Comprobante.Emisor();
         emisor.setNombre(empresa.getContribuyente().getNombre());
@@ -363,11 +367,15 @@ public class FacturaXML implements Serializable {
             noRetenciones =false;
         }
         
-        if (!(noTraslados || noRetenciones)){
+        if (!(noTraslados && noRetenciones)){
         cfdi.setImpuestos(impuestos);
         }
         
-        cfdi.setTotal(new BigDecimal(importes - descuentos - retencionT + trasladoT).setScale(2, RoundingMode.HALF_UP));
+           importes = Math.round(importes*100)/100.00;
+            retencionT= Math.round(retencionT*100)/100.00;
+            trasladoT=Math.round(trasladoT*100)/100.00;
+        cfdi.setTotal(new BigDecimal(importes  - retencionT + trasladoT).setScale(2, RoundingMode.HALF_UP));
+        
         
         cfdi.setConceptos(conceptos);
         
@@ -403,8 +411,9 @@ public class FacturaXML implements Serializable {
         }
     }
     
-    public void guardarComprobante(String tipo, int estatus) {
+    public void guardarComprobante(String tipo, int estatus,String notas) {
         comprobanteX = new ComprobanteL();
+        comprobanteX.setNotas(notas);
         comprobanteX.setIdComprobante(0);
         comprobanteX.setFolio(cfdi.getFolio());
         comprobanteX.setSerie(cfdi.getSerie());
@@ -458,14 +467,25 @@ public class FacturaXML implements Serializable {
         comprobanteX.setUuid(cfdi.getNoCertificado());
         comprobanteX.setPago(formaPago.getDescripcion());
         this.comprobanteX = comprobanteX;
+        if (metodoPago.getMetodoPago().equals("PUE")){
+                    comprobanteX.setSaldo(0.0);
+
+        }else {
+             comprobanteX.setSaldo(comprobanteX.getTotal());
+        }
+            
         comprobanteLFacade.create(comprobanteX);
     }
     
-    public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados) throws Exception {
+    public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados) throws Exception{
+        return generaCFDI(tipoDeComprobante, UUIDRelacionados,"");
+    }
+    
+    public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados,String notas) throws Exception {
         
         llenarCFDI(tipoDeComprobante,UUIDRelacionados);
         
-        guardarComprobante(tipoDeComprobante.value() ,1);
+        guardarComprobante(tipoDeComprobante.value() ,1,notas);
        try{ 
         this.crearCFDI.crear(cfdi, comprobanteX);
        }catch (Exception e){

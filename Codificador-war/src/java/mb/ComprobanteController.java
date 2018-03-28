@@ -8,9 +8,11 @@ package mb;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -38,8 +40,16 @@ public class ComprobanteController implements Serializable {
     private final Empresa empresa;
     private Contribuyente contribuyente;
     private List<ComprobanteL> comprobantes;
+    private List<ComprobanteL> comprobantesSinPago;
+
     private Date fechaInicio;
     private Date fechaFin;
+    
+    private double totalAplicadas=0.0;
+    private double totalCanceladas=0.0;
+    private double totalSaldadas=0.0;
+    
+    private String tipo;
 
     /**
      * Creates a new instance of ComprobanteController
@@ -47,11 +57,20 @@ public class ComprobanteController implements Serializable {
     public ComprobanteController() {
         empresa = (Empresa) this.recuperarParametroObject("empresaActual");
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, 1);
-        calendar.add(Calendar.HOUR, +25);
-        fechaFin = calendar.getTime();
-        calendar.add(Calendar.HOUR, -50);
+        calendar.add(Calendar.DATE, -7);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         fechaInicio = calendar.getTime();
+         calendar.add(Calendar.DATE, 8);
+        calendar.set(Calendar.MILLISECOND, -1);
+        fechaFin = calendar.getTime();
+                System.out.println(fechaFin);
+                tipo="-";
+
+        
+       
       //  comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa, fechaInicio, fechaFin, contribuyente);
 
     }
@@ -72,6 +91,27 @@ public class ComprobanteController implements Serializable {
     public void setContribuyente(Contribuyente contribuyente) {
         this.contribuyente = contribuyente;
     }
+    
+    
+    public void filtraComprobantes(ComprobanteL comprobante) {
+            List<ComprobanteL> comprobantesSinPagoN = new ArrayList<ComprobanteL>();
+
+         for (ComprobanteL x:comprobantesSinPago){
+             if (Objects.equals(x.getContribuyente1().getIdContribuyente(), comprobante.getContribuyente1().getIdContribuyente())){                 
+                comprobantesSinPagoN.add(x);
+             }
+             if (Objects.equals(x.getIdComprobante(), comprobante.getIdComprobante())){
+                 comprobantesSinPagoN.remove(x);
+             }
+         }
+         comprobantesSinPago = comprobantesSinPagoN;
+    }
+    
+    public void agregarComprobante(ComprobanteL comprobante){
+          comprobantesSinPago.add(comprobante);
+        
+    }
+    
 
     public List<ComprobanteL> getComprobantes() {
         return comprobantes;
@@ -94,7 +134,13 @@ public class ComprobanteController implements Serializable {
     }
 
     public void setFechaFin(Date FechaFin) {
-        this.fechaFin = FechaFin;
+        this.fechaFin = FechaFin; 
+         Calendar calendar = Calendar.getInstance();
+         calendar.setTime(FechaFin);
+         calendar.add(Calendar.DATE, 1);
+        calendar.set(Calendar.MILLISECOND, -1);
+        fechaFin = calendar.getTime();
+        System.out.println(fechaFin);
     }
 
     public List<Contribuyente> completeTextEmpleado(String query) {
@@ -105,10 +151,43 @@ public class ComprobanteController implements Serializable {
     }
 
     public void buscarComprobantes(ActionEvent actionEvent) {
-        comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa, fechaInicio, fechaFin, contribuyente);
+        if (tipo.equals("-")){
+        comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa, fechaInicio, fechaFin, contribuyente);}
+        else
+        {
+            comprobantes = comprobanteLFacade.findComprobanteEmpresaContribuyente(empresa, fechaInicio, fechaFin, contribuyente,tipo);
+        }
+
+    }
+    
+    public void buscarComprobantesSinPago(ActionEvent actionEvent) {
+        //buscarComprobantes(actionEvent);
+       
+        comprobantesSinPago  = comprobanteLFacade.findComprobanteEmpresaContribuyenteConSaldo(empresa, fechaInicio, fechaFin, contribuyente);
+        
+
+    }
+    
+    
+    
+    public void buscarComprobantesPago(ActionEvent actionEvent) {
+        //buscarComprobantes(actionEvent);
+       
+        comprobantes  = comprobanteLFacade.findComprobanteEmpresaContribuyenteSinSaldo(empresa, fechaInicio, fechaFin, contribuyente);
+        
 
     }
 
+    public List<ComprobanteL> getComprobantesSinPago() {
+        return comprobantesSinPago;
+    }
+
+    public void setComprobantesSinPago(List<ComprobanteL> comprobantesSinPago) {
+        this.comprobantesSinPago = comprobantesSinPago;
+    }
+    
+    
+/* pendiente de meter el estado de pagada */
     public String valorEstatus(int estatus) {
         String retorno = null;
         if (estatus == 1) {
@@ -123,5 +202,60 @@ public class ComprobanteController implements Serializable {
         return retorno;
 
     }
+    
+    
+    public String getComprobantesTotal(){
+          totalAplicadas=0.0;
+          totalCanceladas=0.0;
+          totalSaldadas=0.0;
+        if (comprobantes != null)
+        for(ComprobanteL comp:comprobantes){
+            if (comp.getEstatus() == null || comp.getEstatus() == 1) {
+                totalAplicadas += comp.getTotal();
+                if (comp.getSaldo() == 0) {
+                    totalSaldadas += comp.getTotal();
+                }
+            }
+            if (comp.getEstatus() == null || comp.getEstatus() == -1) {
+                totalCanceladas += comp.getTotal();
+            }
+        }
+        return "Totales";
+    }
+
+    public double getTotalAplicadas() {
+        return totalAplicadas;
+    }
+
+    public void setTotalAplicadas(double totalAplicadas) {
+        this.totalAplicadas = totalAplicadas;
+    }
+
+    public double getTotalCanceladas() {
+        return totalCanceladas;
+    }
+
+    public void setTotalCanceladas(double totalCanceladas) {
+        this.totalCanceladas = totalCanceladas;
+    }
+
+    public double getTotalSaldadas() {
+        return totalSaldadas;
+    }
+
+    public void setTotalSaldadas(double totalSaldadas) {
+        this.totalSaldadas = totalSaldadas;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
+      
+    
 
 }

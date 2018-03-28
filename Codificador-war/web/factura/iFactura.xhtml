@@ -67,7 +67,18 @@ and open the template in the editor.
                     </p:autoComplete>
                     <h:outputLabel value="#{facturaMB.usoCfdi.descripcion}" ></h:outputLabel>
                     <h:outputText value="CFDI Relacionados"></h:outputText>
-                    <h:inputText value="#{facturaMB.cfdiRelacionado}"></h:inputText>
+                    <p:autoComplete id="RelacionadoCFDI" label="CFDI Relacionado" value="#{facturaMB.cfdiRelacionado}"
+                                    completeMethod="#{facturaMB.completaUUID}"
+                                 
+                                    size="55">
+                       
+                      <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                    </p:autoComplete> 
+                    <h:outputText value="#{facturaMB.cfdiRelacionado}"></h:outputText>
+                    <!-- h:inputText value="#{facturaMB.cfdiRelacionado}"  immediate="true">
+                        <p:ajax></p:ajax>
+                    </h:inputText !-->
                 </p:panelGrid>
 
 
@@ -177,24 +188,24 @@ and open the template in the editor.
                         <h:outputLabel value="Subtotal : ">
                         </h:outputLabel>
                             <h:outputText value="#{facturaMB.subTotalFactura}">
-                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+                                <f:convertNumber maxFractionDigits="2" type="currency" currencySymbol="$"></f:convertNumber>
                             </h:outputText>
                             <h:outputLabel value="Traslado : ">
                             </h:outputLabel>
                             <h:outputText value="#{facturaMB.totalFacturaImpuestosTrasladado}">
-                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+                                <f:convertNumber maxFractionDigits="2" type="currency" currencySymbol="$"></f:convertNumber>
 
                             </h:outputText>
                             <h:outputLabel value="Retencion : ">
                             </h:outputLabel>
                             <h:outputText value="#{facturaMB.totalFacturaImpuestosRetenido}">
-                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+                                <f:convertNumber maxFractionDigits="2" type="currency" currencySymbol="$"> </f:convertNumber>
 
                             </h:outputText>
                             <h:outputLabel value="Total : ">
                             </h:outputLabel>
                             <h:outputText value="#{facturaMB.totalFactura}">
-                                <f:convertNumber maxFractionDigits="2" type="currency"></f:convertNumber>
+                                <f:convertNumber maxFractionDigits="2" type="currency" currencySymbol="$"></f:convertNumber>
 
                             </h:outputText>
                         </p:panelGrid>
@@ -305,8 +316,16 @@ and open the template in the editor.
                     <!-- <h:outputLabel value=" Pagado  "></h:outputLabel>  
                     <p:selectBooleanCheckbox  value="#{facturaMB.esPagado}">
                     </p:selectBooleanCheckbox> !-->
+                    <h:outputLabel value="   "></h:outputLabel> 
                     <h:outputLabel value="   "></h:outputLabel>  
+
+                     <h:outputLabel value="Observaciones"></h:outputLabel> 
+                     <p:inputTextarea value="#{facturaMB.notas}" style="width: 100%" autoResize="true" immediate="true"  >
+                         <p:ajax></p:ajax>
+                     </p:inputTextarea>
+                     <h:outputLabel value="   "></h:outputLabel> 
                 </p:panelGrid>
+                
             </p:panel>  
         </h:form>
 

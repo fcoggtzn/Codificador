@@ -26,6 +26,7 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.xml.datatype.DatatypeConfigurationException;
+import nomina.entidad.ComprobanteL;
 import nomina.entidad.Contribuyente;
 import org.primefaces.context.RequestContext;
 import sat.CTipoDeComprobante;
@@ -69,6 +70,7 @@ public class FacturaMB extends BaseController implements Serializable {
     private Double totalFacturaImpuestosRetenido;
     private boolean errorProducto;
     private String cfdiRelacionado;
+    private String notas;
 
     /**
      * Creates a new instance of FacturaMB
@@ -88,6 +90,7 @@ public class FacturaMB extends BaseController implements Serializable {
         this.referencia = "";
         this.contribuyente = null;
         this.usoCfdi = null;
+        notas="";
         subTotalFactura = 0.0;
         totalFactura = 0.0;
         totalFacturaImpuestosTrasladado = 0.0;
@@ -119,6 +122,9 @@ public class FacturaMB extends BaseController implements Serializable {
             else {
                 errorProducto=true;
             }
+            subTotalFactura = Math.round(subTotalFactura*100)/100.00;
+            totalFacturaImpuestosTrasladado= Math.round(totalFacturaImpuestosTrasladado*100)/100.00;
+            totalFacturaImpuestosRetenido=Math.round(totalFacturaImpuestosRetenido*100)/100.00;
            totalFactura = subTotalFactura + totalFacturaImpuestosTrasladado - totalFacturaImpuestosRetenido;
         }
         return subTotalFactura;
@@ -191,7 +197,7 @@ public class FacturaMB extends BaseController implements Serializable {
                 facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
                         formaPago, referencia, metodoPago, esPagado);
           
-                 facturaRuta = facturarXML.generaCFDI(CTipoDeComprobante.I,this.cfdiRelacionado);                 
+                 facturaRuta = facturarXML.generaCFDI(CTipoDeComprobante.I,this.cfdiRelacionado,notas);                 
                 this.msgOk("Comprobante grabado", "Comprobante grabado");
                 clean();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");
@@ -286,6 +292,24 @@ public class FacturaMB extends BaseController implements Serializable {
     public List<UsoCfdi> completaUsos(String query) {
         return this.usoCfdiFacade.findCombo(query);
     }
+    
+    /*
+    *Para obtener comprobantes de Ingreso y estan cancelados
+    */
+    public List<String> completaUUID(String query) {
+        query = query.toUpperCase();
+        List<String> uuids= new ArrayList<String>();
+        for (ComprobanteL comprobanteLtmp:this.contribuyente.getComprobanteLCollection1()){
+           if (comprobanteLtmp.getTipo().equals("I"))
+           if (comprobanteLtmp.getEstatus() == -1)
+           if ( comprobanteLtmp.getUuid().contains(query)) {
+               uuids.add(comprobanteLtmp.getUuid());
+               if(uuids.size() >10 ){
+                   break;}
+           }
+        
+        }
+        return uuids;    }
 
     public List<FormaPago> completaFormaPago(String query) {
         return this.formaPagoFacade.findCombo(query);
@@ -386,8 +410,16 @@ public class FacturaMB extends BaseController implements Serializable {
     public void setFacturaRuta(String facturaRuta) {
         this.facturaRuta = facturaRuta;
     }
+
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
+    }
     
     
-    
+     
 
 }
