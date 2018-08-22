@@ -34,6 +34,7 @@ and open the template in the editor.
                     <p:menuitem value="Comprobantes" actionListener="#{accesoController.redireccionar('iComprobantes.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
                     <p:menuitem value="Pagos" action="rpago" ajax="false" icon="ui-icon-transferthick-e-w" immediate="true"/>
             </p:submenu>
+            
             <p:submenu label="Configuraciones" icon="ico_settings" >
                 <p:menuitem value="Cliente" actionListener="#{accesoController.redireccionar('iContribuyente.xhtml')}" ajax="false" icon="ico_ec" immediate="true"/>
                 <p:submenu label="Nomina" icon="ui-icon-document">
@@ -43,6 +44,10 @@ and open the template in the editor.
                 </p:submenu>
 
             </p:submenu> 
+        </p:submenu>
+        <p:submenu label="CXP" icon="ico_money">            
+            <p:menuitem value="Cargar CFDI" action="cargaCFDI" icon="ico_keyboard" immediate="true"/>
+           
         </p:submenu>
         <p:submenu label="Productos" icon="ico_money">            
             <p:menuitem value="Productos" actionListener="#{accesoController.redireccionar('factura/iProducto.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>

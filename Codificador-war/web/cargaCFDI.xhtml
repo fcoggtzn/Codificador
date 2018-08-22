@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>Cargar CFDI</title>
+            </f:facet>
+        </h:head>
+
+        <h:body>
+
+        <h:form id="cargaCFDI">
+            <ui:include src="resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <p:panel menuTitle="Cargar CFDI">
+        
+       
+                <p:fileUpload fileUploadListener="#{cargaCFDIMB.handleFileUpload}" mode="advanced"
+                              update="@form" auto="true" sizeLimit="100000" allowTypes="/(\.|\/)(xml|txt)$/" dragDropSupport="true" />
+ </p:panel>
+                                            <p:growl id="messages" life="2000" />
+                                            <p:panel rendered="#{cargaCFDIMB.timbre != null }" >   
+                                                <h:panelGrid columns="2" cellpadding="1em">
+                                                     <h:outputLabel value="UUID"></h:outputLabel> 
+                                                    <h:outputLabel value="#{cargaCFDIMB.timbre.UUID}"></h:outputLabel>
+                                                    <h:outputLabel value="Emisor"></h:outputLabel> 
+
+                                                    <h:outputLabel value="#{cargaCFDIMB.comprobante.emisor.rfc}"></h:outputLabel> 
+                                                     <h:outputLabel value="Receptor"></h:outputLabel> 
+                                                    <h:outputLabel value="#{cargaCFDIMB.comprobante.receptor.rfc}"></h:outputLabel>
+                                                    
+                                                     <h:outputLabel value="Uso"></h:outputLabel> 
+                                                     <h:outputLabel value="#{cargaCFDIMB.comprobante.receptor.usoCFDI}"></h:outputLabel>
+                                                    
+                                                     <h:outputLabel value="Total"></h:outputLabel> 
+                                                    <h:outputLabel value="#{cargaCFDIMB.comprobante.total}"></h:outputLabel>
+                                                    
+                                                    <h:outputLabel value="Pagó"></h:outputLabel> 
+                                                    <h:outputLabel value="#{cargaCFDIMB.comprobante.metodoPago}/#{cargaCFDIMB.comprobante.formaPago}"></h:outputLabel>
+                                                    
+                                                    
+
+                                                </h:panelGrid>
+                                                <p:dataTable var="concepto" value="#{cargaCFDIMB.comprobante.conceptos.concepto}">
+                                                    <p:column headerText="Cantidad">
+                                                        <h:outputText value="#{concepto.cantidad}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Clave">
+                                                        <h:outputText value="#{concepto.claveProdServ}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Unidad">
+                                                        <h:outputText value="#{concepto.claveUnidad}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Descripcion">
+                                                        <h:outputText value="#{concepto.descripcion}" />
+                                                    </p:column>
+                                                    <p:column headerText="Importe">
+                                                        <h:outputText value="#{concepto.importe}" />
+                                                    </p:column>
+                                                    <p:column headerText="Traslado">
+                                                        <ui:repeat value="#{concepto.impuestos.traslados.traslado}" var="traslado" >
+                                                            <h:outputText value="#{traslado.impuesto} - #{traslado.importe}" />
+                                                        </ui:repeat>
+                                                    </p:column>    
+                                                    <p:column headerText="Retención">
+                                                        <ui:repeat value="#{concepto.impuestos.retenciones.retencion}" var="retencion" >
+                                                            <h:outputText value="#{retencion.impuesto} - #{retencion.importe}" />
+                                                        </ui:repeat>
+                                                    </p:column>    
+                                                </p:dataTable>
+
+                                                <p:commandButton  value="Guardar" update="@form" icon="ui-icon-disk" actionListener="#{cargaCFDIMB.cargar}" />
+                                            </p:panel>
+
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+

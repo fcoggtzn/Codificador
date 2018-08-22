@@ -212,7 +212,8 @@ public class FacturaXML implements Serializable {
             concepto.setUnidad(detalle.getProducto().getCategoria().getUnidad());
             concepto.setDescripcion(detalle.getDescripcion());
             concepto.setValorUnitario(new BigDecimal(detalle.getValorUnitario()).setScale(2, RoundingMode.HALF_UP));
-            concepto.setImporte(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
+            //PARA QUE CUADREN LAS LOQUEAS DEL SAT DONDE HASTA EL FINAL SE TOMA ENCUENTA EL DESCUENTO
+            concepto.setImporte(new BigDecimal(detalle.getImporte()+detalle.getCantidadDescuento()).setScale(2, RoundingMode.HALF_UP));
             concepto.setDescuento(new BigDecimal(detalle.getCantidadDescuento()).setScale(2, RoundingMode.HALF_UP));
 
             /*impuestos del concepto  de translados */
@@ -315,7 +316,7 @@ public class FacturaXML implements Serializable {
             if (impuestosConcepto.getRetenciones() != null || impuestosConcepto.getTraslados() != null)
             concepto.setImpuestos(impuestosConcepto);
 
-            //sumar total de Descuentos
+            //sumar total de /*Descuentos*/
             descuentos += detalle.getCantidadDescuento();
             importes += detalle.getImporte();
 
@@ -324,7 +325,7 @@ public class FacturaXML implements Serializable {
         }
         
         cfdi.setDescuento(new BigDecimal(descuentos).setScale(2, RoundingMode.HALF_UP));
-        cfdi.setSubTotal(new BigDecimal(importes).setScale(2, RoundingMode.HALF_UP));
+        cfdi.setSubTotal(new BigDecimal(importes+descuentos).setScale(2, RoundingMode.HALF_UP));
 
         /*manejo de impuestos para el comprobante */
         Comprobante.Impuestos impuestos = new Comprobante.Impuestos();

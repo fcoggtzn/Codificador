@@ -105,9 +105,11 @@ public class FacturaMB extends BaseController implements Serializable {
         totalFacturaImpuestosTrasladado = 0.0;
         totalFacturaImpuestosRetenido = 0.0;
         
+        
         for(DetalleFactura df:detallesDeFactura){
             
-            subTotalFactura += df.getImporte();
+            subTotalFactura += df.getImporte()+df.getPorDescuento();
+            
             if (df.getProducto() != null ){
             for(CategoriaImpuesto impPrd:  df.getProducto().getCategoria().getCategoriaImpuestoCollection()){
                 if (impPrd.getTraslado()){
