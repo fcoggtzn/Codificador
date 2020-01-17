@@ -23,6 +23,10 @@
             <from-outcome>pago</from-outcome>
             <to-view-id>/iPago.xhtml</to-view-id>
         </navigation-case>
+        <navigation-case>
+            <from-outcome>pagoView</from-outcome>
+            <to-view-id>/iPagoView.xhtml</to-view-id>
+        </navigation-case>
     </navigation-rule>
     <navigation-rule>
         <from-view-id>*</from-view-id>

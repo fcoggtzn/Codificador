@@ -112,7 +112,7 @@ and open the template in the editor.
                     </h:outputLabel>
                 </p:column>
                 <p:column headerText="" exportable="false">
-                    <p:commandButton  icon="ui-icon-plus" actionListener="#{pagoController.addPago(compr)}"  update="@form" >      
+                    <p:commandButton  icon="ui-icon-plus" actionListener="#{pagoController.addPago(compr)}" immediate="true"  update="@form" >      
                                  
                         <f:actionListener binding="#{comprobanteController.filtraComprobantes(compr)}"></f:actionListener>
 
@@ -128,8 +128,35 @@ and open the template in the editor.
                     <h:outputText value="#{pagoController.contribuyente.nombre}"></h:outputText>
                     <h:outputLabel value="Total del pago"></h:outputLabel>
                     <h:outputText value="#{pagoController.total}"></h:outputText>
+                     <h:outputLabel value="Fecha pago"></h:outputLabel>
+                     <p:calendar pattern="dd.MM.yyyy HH:mm:ss"  locale="es"  mode="popup" showOn="button"  value="#{pagoController.fecha}" />
+                    <h:outputLabel value=" Forma de Pago  "></h:outputLabel>  
+                    <h:panelGrid columns="2">
+                    <p:autoComplete id="formaPagoV" value="#{pagoController.formaPago}"
+                                    completeMethod="#{facturaMB.completaFormaPago}"
+                                    var="formaPago" itemLabel="#{formaPago.formaPago}" itemValue="#{formaPago}"
+                                    immediate="true" converter="formaPagoConverter"
+                                    size="55"
+                                    required="True">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{formaPago.formaPago}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{formaPago.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Banco">
+                            <h:outputLabel value="#{formaPago.bancarizado}"/>
+                        </p:column>
+                    </p:autoComplete>
+                    <h:outputLabel value="#{pagoController.formaPago.descripcion}" ></h:outputLabel>
+                    </h:panelGrid>
+                    <h:outputLabel value="UUID sustituye"></h:outputLabel>
+                    <p:inputText title="pago anterior"
+                      value="#{pagoController.uuidRelacionado}"   />
                      <h:outputLabel value="Generar"></h:outputLabel>
-                     <p:commandButton  icon="ui-icon-calculator" actionListener="#{pagoController.generar}" update="@all" rendered="#{pagoController.contribuyente != null}"  >      
+                     <p:commandButton  icon="ui-icon-calculator" action="pagoView" actionListener="#{pagoController.generar}" update="@all" rendered="#{pagoController.contribuyente != null}"  >      
                            <f:actionListener binding="#{pagoController.init()}"></f:actionListener>
                        </p:commandButton>
                 </h:panelGrid>

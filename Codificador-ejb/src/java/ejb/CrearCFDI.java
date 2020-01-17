@@ -98,6 +98,7 @@ import utilerias.MyNameSpaceMapper;
 import utilerias.Transformacion;
 import produccion.Resultado;
 import utilerias.MyNameSpaceMapperComprobante;
+import utilerias.MyNameSpaceMapperPago;
 import utilerias.NumeroALetras;
 import webServiceSatPrueba.TimbradoServiceService;
 
@@ -161,10 +162,12 @@ public class CrearCFDI implements CrearCFDILocal {
      */
     public void crear(Comprobante cfdi, ComprobanteL comprobanteX) throws EJBException, FileNotFoundException, DatatypeConfigurationException, TransformerConfigurationException, TransformerException, NoSuchAlgorithmException {
         Empresa empresaTemp = (Empresa) this.recuperarParametroObject("empresaActual");
-        Folio folioEmpresa = folioFacade.getFolioEmpresa(empresaTemp);
-        folioFacade.folioInc(folioEmpresa);
-        cfdi.setFolio(folioEmpresa.getFolio().toString());
-        comprobanteX.setFolio(folioEmpresa.getFolio().toString());
+        if (!cfdi.getTipoDeComprobante().value().equals("P")) {
+            Folio folioEmpresa = folioFacade.getFolioEmpresa(empresaTemp,cfdi.getTipoDeComprobante().value());
+            folioFacade.folioInc(folioEmpresa);
+            cfdi.setFolio(folioEmpresa.getFolio().toString());
+            comprobanteX.setFolio(folioEmpresa.getFolio().toString());
+        }
         
         this.cfdi = cfdi;
         this.comprobanteX = comprobanteX;
@@ -183,16 +186,33 @@ public class CrearCFDI implements CrearCFDILocal {
             m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
-            if (cfdi.getTipoDeComprobante().value().equals("N")) {
-                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
-                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+            
+            
+            if (cfdi.getTipoDeComprobante().value().equals("P")) {
+                jc = JAXBContext.newInstance(sat.Comprobante.class,sat.Pagos.class);
+               
+                m = jc.createMarshaller();
+                m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/Pagos http://www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos10.xsd");
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperPago());
             } else {
-                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante());
+                if (cfdi.getTipoDeComprobante().value().equals("N")) {
+                    jc = JAXBContext.newInstance(sat.Comprobante.class, sat.Nomina.class);
+                    m = jc.createMarshaller();
+                    m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                    m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
+                    m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+                } else {
+                    m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante());
+                }
             }
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
             m.marshal(cfdi, result);
         } catch (Exception e) {
             System.out.println(e.getCause());
+            throw new EJBException(e.getCause().toString());
         }
 
         /**
@@ -211,17 +231,31 @@ public class CrearCFDI implements CrearCFDILocal {
             m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd");
-            if (cfdi.getTipoDeComprobante().value().equals("N")) {
-                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
-                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+            if (cfdi.getTipoDeComprobante().value().equals("P")) {
+                jc = JAXBContext.newInstance(sat.Comprobante.class,sat.Pagos.class);
+                m = jc.createMarshaller();
+                m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/Pagos http://www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos10.xsd");
+                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperPago());
             } else {
-                m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante());
+                if (cfdi.getTipoDeComprobante().value().equals("N")) {
+                    jc = JAXBContext.newInstance(sat.Comprobante.class, sat.Nomina.class);
+                    m = jc.createMarshaller();
+                    m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+                    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                    m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/nomina12 http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina12.xsd");
+                    m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapper());
+                } else {
+                    m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MyNameSpaceMapperComprobante());
+                }
             }
             m.setProperty("com.sun.xml.bind.xmlDeclaration", Boolean.FALSE);
             //    m.setProperty("com.sun.xml.bind.marshaller.namespacePrefixMapper", new MyNamespaceMapper());
             m.marshal(cfdi, result);
         } catch (Exception e) {
             System.out.println(e.getCause());
+            throw new EJBException(e.getCause().toString());
         }
 
         /**
@@ -303,20 +337,21 @@ public class CrearCFDI implements CrearCFDILocal {
         replace = replace.replace("TipoDeComprobante=\"N\"", "TipoDeComprobante=\"N Nomina\"");
         replace = replace.replace("TipoDeComprobante=\"P\"", "TipoDeComprobante=\"P Pago\"");
 
-        //remplaza forma de pago
-        String formaPago = "FormaPago=\""+cfdi.getFormaPago() +"\"";
-        //Busca la forma de pago
-        FormaPago formaFind = this.formaPagoFacade.findbyID(cfdi.getFormaPago() );
-        String formaPagoR = "FormaPago=\""+cfdi.getFormaPago()+" " +formaFind.getDescripcion()+ "\"";
-        replace = replace.replace(formaPago, formaPagoR);
+       if(cfdi.getTipoDeComprobante() != CTipoDeComprobante.P) {
+           //remplaza forma de pago
+           String formaPago = "FormaPago=\"" + cfdi.getFormaPago() + "\"";
+           //Busca la forma de pago
+           FormaPago formaFind = this.formaPagoFacade.findbyID(cfdi.getFormaPago());
+           String formaPagoR = "FormaPago=\"" + cfdi.getFormaPago() + " " + formaFind.getDescripcion() + "\"";
+           replace = replace.replace(formaPago, formaPagoR);
+
+           //replaza metododePago
+           String metodoPago = "MetodoPago=\"" + cfdi.getMetodoPago() + "\"";
+           //Busca  metodo de pago
+           MetodoPago findMetodo = this.metodoPagoFacade.findbyID(cfdi.getMetodoPago().value());
+           String metodoPagoR = "MetodoPago=\"" + cfdi.getMetodoPago() + " " + findMetodo.getDescripcion() + "\"";
+           replace = replace.replace(metodoPago, metodoPagoR);
       
-        //replaza metododePago
-        String metodoPago = "MetodoPago=\""+cfdi.getMetodoPago()+"\"";
-        //Busca  metodo de pago
-        MetodoPago findMetodo = this.metodoPagoFacade.findbyID(cfdi.getMetodoPago().value());
-        String metodoPagoR = "MetodoPago=\""+cfdi.getMetodoPago()+" "+findMetodo.getDescripcion()+"\"";
-        replace = replace.replace(metodoPago, metodoPagoR);
-        
          //replaza Regimen
         String regimen = "RegimenFiscal=\""+cfdi.getEmisor().getRegimenFiscal()+"\"";
         
@@ -325,7 +360,7 @@ public class CrearCFDI implements CrearCFDILocal {
         String regimenR = "RegimenFiscal=\""+cfdi.getEmisor().getRegimenFiscal()+" "+findRegimen.getDescripcion()+"\"";
         replace = replace.replace(regimen, regimenR);
         
-    
+     
     
        //replaza metododePago
         String usoCfdi = "UsoCFDI=\""+cfdi.getReceptor().getUsoCFDI().value()+"\"";
@@ -334,7 +369,7 @@ public class CrearCFDI implements CrearCFDILocal {
         String usoCfdiR = "UsoCFDI=\""+cfdi.getReceptor().getUsoCFDI().value()+" "+findUso.getDescripcion()+"\"";
         replace = replace.replace(usoCfdi, usoCfdiR);
      
-  
+  }
         
         
         nomina.entidad.Archivos archivo_IMP = new nomina.entidad.Archivos();
@@ -373,6 +408,7 @@ public class CrearCFDI implements CrearCFDILocal {
 comprobanteX.setFolio(valorTempo.toString()); esta mamada que ----error en obj -- */
      //   comprobanteX.setPago(cfdi.getFormaPago());
         comprobanteLFacade.edit(comprobanteX);
+        
 
     }
 

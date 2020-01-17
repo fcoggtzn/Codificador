@@ -71,6 +71,7 @@ public class FacturaMB extends BaseController implements Serializable {
     private boolean errorProducto;
     private String cfdiRelacionado;
     private String notas;
+    private String tipoRelacion = "01";
 
     /**
      * Creates a new instance of FacturaMB
@@ -95,6 +96,7 @@ public class FacturaMB extends BaseController implements Serializable {
         totalFactura = 0.0;
         totalFacturaImpuestosTrasladado = 0.0;
         totalFacturaImpuestosRetenido = 0.0;
+        tipoRelacion="01";
     }
     
     
@@ -199,7 +201,7 @@ public class FacturaMB extends BaseController implements Serializable {
                 facturarXML = new FacturaXML(contribuyente, usoCfdi, detallesDeFactura,
                         formaPago, referencia, metodoPago, esPagado);
           
-                 facturaRuta = facturarXML.generaCFDI(CTipoDeComprobante.I,this.cfdiRelacionado,notas);                 
+                 facturaRuta = facturarXML.generaCFDI(CTipoDeComprobante.I,this.cfdiRelacionado,notas,tipoRelacion);                 
                 this.msgOk("Comprobante grabado", "Comprobante grabado");
                 clean();
                 FacesContext.getCurrentInstance().getExternalContext().redirect("/Codificador-war/faces/factura/iFacturaView.xhtml");
@@ -419,6 +421,14 @@ public class FacturaMB extends BaseController implements Serializable {
 
     public void setNotas(String notas) {
         this.notas = notas;
+    }
+
+    public String getTipoRelacion() {
+        return tipoRelacion;
+    }
+
+    public void setTipoRelacion(String tipoRelacion) {
+        this.tipoRelacion = tipoRelacion;
     }
     
     

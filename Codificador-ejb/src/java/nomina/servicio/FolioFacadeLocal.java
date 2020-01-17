@@ -31,7 +31,7 @@ public interface FolioFacadeLocal {
 
     int count();
 
-    public Folio getFolioEmpresa(Empresa empresa);
+    public Folio getFolioEmpresa(Empresa empresa,String tipo);
 
     public void folioInc(Folio folio);
     

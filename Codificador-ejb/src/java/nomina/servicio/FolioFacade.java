@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import nomina.entidad.Empresa;
 import nomina.entidad.Folio;
 
@@ -33,9 +34,15 @@ public class FolioFacade extends AbstractFacade<Folio> implements FolioFacadeLoc
     }
     
     @Override
-    public Folio getFolioEmpresa(Empresa empresa){
+    public Folio getFolioEmpresa(Empresa empresa,String tipo){
         Folio folio= new Folio();
-        List<Folio> query = em.createQuery("Select f from Folio f where f.activo=TRUE and f.empresa.idempresa=:empresa").setParameter("empresa", empresa.getIdempresa()).setMaxResults(1).getResultList();
+        Query querySql = em.createQuery("Select f from Folio f where f.activo=TRUE and f.tipoComprobante =:tipo and f.empresa.idempresa=:empresa");
+      //  Query querySql = em.createQuery("Select f from Folio f where f.activo=TRUE and  f.empresa.idempresa=:empresa");
+          
+      querySql.setParameter("empresa", empresa.getIdempresa());
+      querySql.setParameter("tipo", tipo);
+
+        List<Folio> query = querySql.setMaxResults(1).getResultList();
         if (!query.isEmpty()){
             folio=query.get(0);
         }

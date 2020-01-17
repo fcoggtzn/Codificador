@@ -5,12 +5,9 @@
  */
 package ejb;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -19,15 +16,13 @@ import javax.faces.context.FacesContext;
 import javax.mail.MessagingException;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.ws.WebServiceRef;
 import nomina.entidad.Archivos;
 import nomina.entidad.ComprobanteL;
 import nomina.entidad.Configuracion;
-import nomina.entidad.Contribuyente;
 import nomina.entidad.Empresa;
 import nomina.servicio.ArchivosFacadeLocal;
 import nomina.servicio.ComprobanteLFacadeLocal;
@@ -71,22 +66,11 @@ public class CancelaCfdiEjb implements CancelaCfdiEjbLocal {
            configura = (Configuracion) vectorConfiguracion[0];
 
 
-        try {
+  
             if (UUID == null) {
                 UUID = "6F288FE6-98B5-4820-89E6-A448212913EF";
             }
           
-            GregorianCalendar c = new GregorianCalendar();
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MINUTE, -2);
-            Date time = calendar.getTime();
-            c.setTime(time);
-               XMLGregorianCalendar fecha_actual = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-            fecha_actual.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
-            fecha_actual.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
-        } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(CancelaCfdiEjb.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         if ( configura.isPrueba()){
                 webServiceSatPrueba.SolCancelacion solicitud = new    webServiceSatPrueba.SolCancelacion();
@@ -110,6 +94,10 @@ public class CancelaCfdiEjb implements CancelaCfdiEjbLocal {
          comprobanteX = comprobanteFacade.findByUUID(UUID); 
         /*encontrar el XSL del comprobante */
          findXML = comprobanteFacade.findXML(comprobanteX);
+         if (comprobanteX.getTipo().equals("P")){
+              this.comprobanteFacade.bonifica(findXML);
+            
+         }
         try {
             regeneraPDF();
         } catch (NamingException ex) {

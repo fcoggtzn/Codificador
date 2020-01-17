@@ -76,6 +76,27 @@ and open the template in the editor.
                         <p:ajax event="itemSelect" update="@form"/>
                     </p:autoComplete> 
                     <h:outputText value="#{facturaMB.cfdiRelacionado}"></h:outputText>
+                    
+                    
+                     <h:outputText value="Tipo Relación:"></h:outputText>
+                     <p:selectOneMenu id="TipoRelacionCfdi" label="Tipo de Relacion CFDI" value="#{facturaMB.tipoRelacion}"
+                                     
+                                 
+                                    >                         
+      
+                         <f:selectItem itemValue="01" itemLabel="Nota de crédito de los documentos relacionados"></f:selectItem>
+                        <f:selectItem itemValue="02" itemLabel="Nota de débito de los documentos relacionados"></f:selectItem>
+                         <f:selectItem itemValue="03" itemLabel="Devolución de mercancía sobre facturas o traslados previos"></f:selectItem>
+                          <f:selectItem itemValue="04" itemLabel="Sustitución de los CFDI previos"></f:selectItem>
+                          <f:selectItem itemValue="05" itemLabel="Traslados de mercancias facturados previamente"></f:selectItem>
+                          <f:selectItem itemValue="06" itemLabel="Factura generada por los traslados previos"></f:selectItem>
+                          <f:selectItem itemValue="07" itemLabel="CFDI por aplicación de anticipo"></f:selectItem>
+                      <p:ajax immediate="true"/>
+                      <p:ajax  event="change" update="@form"/>
+                     </p:selectOneMenu>
+                    <h:outputText value="#{facturaMB.tipoRelacion}"></h:outputText>
+                    
+                    
                     <!-- h:inputText value="#{facturaMB.cfdiRelacionado}"  immediate="true">
                         <p:ajax></p:ajax>
                     </h:inputText !-->
@@ -291,13 +312,13 @@ and open the template in the editor.
                         </p:column>
                     </p:autoComplete>
                     <h:outputLabel value="#{facturaMB.formaPago.descripcion}" ></h:outputLabel>
-                    <h:outputLabel value=" Refencia  "></h:outputLabel> 
+                    <h:outputLabel value=" Referencia  "></h:outputLabel> 
                     <p:inputText value="#{facturaMB.referencia}"  id="Referencia" style="width: 98%"  >
                         <p:ajax  update="@this" ></p:ajax >
                         <f:validateRegex pattern="#{facturaMB.patron}" />
                     </p:inputText>
                     <h:outputLabel></h:outputLabel>
-                    <h:outputLabel value=" Metodo de Pago  "></h:outputLabel>  
+                    <h:outputLabel value=" Método de Pago  "></h:outputLabel>  
                     <p:autoComplete id="metodoPagoV" value="#{facturaMB.metodoPago}"
                                     completeMethod="#{facturaMB.completaMetodoPago}"
                                     var="metodoPago" itemLabel="#{metodoPago.metodoPago}" itemValue="#{metodoPago}"

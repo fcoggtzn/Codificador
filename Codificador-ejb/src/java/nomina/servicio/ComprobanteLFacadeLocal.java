@@ -54,5 +54,7 @@ public interface ComprobanteLFacadeLocal {
     public Archivos findPDF(ComprobanteL comprobanteX);
 
     public List<ComprobanteL> findComprobanteEmpresaContribuyente(Empresa empresa, Date fechaInicio, Date fechaFin, Contribuyente contribuyente, String tipo);
+
+    public void bonifica(nomina.entidad.Archivos findXML);
     
 }

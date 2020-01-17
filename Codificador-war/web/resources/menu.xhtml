@@ -54,6 +54,16 @@ and open the template in the editor.
             <p:menuitem value="Catalogo" actionListener="#{accesoController.redireccionar('factura/iCatalogoSAT.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
             <p:menuitem value="Impuestos" actionListener="#{accesoController.redireccionar('factura/impuestos.xhtml')}" ajax="false" icon="ico_cfdi" immediate="true"/>
         </p:submenu>
+        
+         <p:submenu label="Servicios" icon="ico_money">
+                         <p:menuitem value="Servicio"  actionListener="#{accesoController.redireccionar('servicio/iservicio.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
+
+            <p:menuitem value="Operador"  actionListener="#{accesoController.redireccionar('servicio/operador.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
+           <p:submenu label="Reportes">
+                         <p:menuitem value="Servicio"  actionListener="#{accesoController.redireccionar('servicio/iservicios.xhtml')}" ajax="false" icon="ico_keyboard" immediate="true"/>
+        
+           </p:submenu>
+         </p:submenu>
         <p:menuitem   value="Cerrar" actionListener="#{accesoController.logoutAmbito()}" ajax="false" icon="ico_power" immediate="true"/>
 
     </p:menubar>

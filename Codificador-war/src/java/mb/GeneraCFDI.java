@@ -204,7 +204,15 @@ public class GeneraCFDI implements Serializable {
         empleado = (Empleado) this.recuperarParametroObject("empleadoN");
 
         cfdi = new Comprobante();
-        folio = folioFacade.getFolioEmpresa(empresa);
+            if (this.activoNomina) {
+         
+            cfdi.setTipoDeComprobante(CTipoDeComprobante.N);
+                  } 
+            else {
+       
+            cfdi.setTipoDeComprobante(CTipoDeComprobante.I);
+             }
+              folio = folioFacade.getFolioEmpresa(empresa,cfdi.getTipoDeComprobante().value());
         cfdi.setSerie(folio.getSerie());
         cfdi.setFolio(folio.getFolio().toString());
   //      folioFacade.folioInc(folio);

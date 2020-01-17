@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Contribuyente</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formoperador">
+            <ui:include src="../resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+           
+                <p:panel header="Servicio" id="paneloperador">
+                   <p:panelGrid columns="2" columnClasses="no-border, no-border" style="width:100%">
+                    <h:outputLabel value="Cliente " styleClass="it-align-right"/>
+                    <p:autoComplete id="clienteComplete" value="#{servicioMB.cliente}"
+                                    completeMethod="#{contribuyenteController.completeTextRFC}"
+                                    var="valor" itemLabel="#{valor.rfc}" itemValue="#{valor}"
+                                    immediate="true" converter="contribuyenteConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{valor.rfc}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{valor.nombre}"/>
+                        </p:column>
+                    </p:autoComplete>
+
+           
+                   
+                        <h:outputLabel value="Operador " styleClass="it-align-right"/>
+                        <p:autoComplete id="operadorComplete" value="#{servicioMB.operador}"
+                                        completeMethod="#{operadorMB.completeTexto}"
+                                    var="valor" itemLabel="#{valor.alias}" itemValue="#{valor}"
+                                    immediate="true" converter="operadorConverter"
+                                    size="55">
+                        <p:ajax immediate="true"/>
+                        <p:ajax event="itemSelect" update="@form"/>
+                        <p:column>
+                            <h:outputLabel value="#{valor.alias}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{valor.nombre}"/>
+                        </p:column>
+                    </p:autoComplete>
+                        
+                        
+                      
+                         
+                    </p:panelGrid>
+                </p:panel>
+            <p:panelGrid columns="4" style="width:100%">
+                <h:outputLabel value="#{servicioMB.cliente.rfc}" ></h:outputLabel>
+                <h:outputLabel value="#{servicioMB.operador.alias}" ></h:outputLabel>
+                <h:outputLabel value="folio" ></h:outputLabel>
+                <p:inputText value="#{servicioMB.servicio.folio}" ></p:inputText>
+
+            </p:panelGrid>
+            <p:panel header="Orden" rendered="#{servicioMB.cliente != null and servicioMB.operador != null }">
+                <p:panelGrid columns="2" style="width:100%">
+                    <h:outputLabel value="Nota de arrastre No."></h:outputLabel>
+                    <h:outputLabel value="Fecha"></h:outputLabel>
+                    <p:inputText value="#{servicioMB.servicio.notaDeArrastre}" ></p:inputText>
+                    <p:calendar value="#{servicioMB.servicio.fecha}" ></p:calendar>
+
+                </p:panelGrid>
+                <p:panel header="Traslado"  >
+                    <p:panelGrid columns="2" style="width:100%">
+                        <h:outputLabel value="DE:"></h:outputLabel>
+                        <p:inputText value="#{servicioMB.servicio.transladode}" style="width:100%"></p:inputText>
+                        <h:outputLabel value="A:"></h:outputLabel>
+                        <p:inputText value="#{servicioMB.servicio.transladoa}"  style="width:100%"></p:inputText>
+                    </p:panelGrid>    
+                </p:panel>
+                <p:panelGrid columns="3" style="width:100%" >
+                    <h:outputLabel value="Vehiculo"></h:outputLabel>
+                    <h:outputLabel value="Color"></h:outputLabel>
+                    <h:outputLabel value="Placas"></h:outputLabel>
+                    <p:inputTextarea value="#{servicioMB.servicio.vehiculo}"></p:inputTextarea>
+                    <p:inputTextarea value="#{servicioMB.servicio.color}"></p:inputTextarea>
+                    <p:inputTextarea value="#{servicioMB.servicio.placas}"></p:inputTextarea>
+                </p:panelGrid>   
+                <p:panel header="Total a pagar"  >
+                    <p:panelGrid columns="2">
+                        <h:outputLabel value="Total"></h:outputLabel>
+                        <p:inputText label="Total a pagar" value="#{servicioMB.servicio.totalAPagar}" ></p:inputText>
+                        <p:outputLabel for="@next" value="Estado" />
+                        <p:selectOneMenu id="estatusServicio" value="#{servicioMB.servicio.estatus}" style="width:125px">
+                            <f:selectItem itemLabel="En proceso" itemValue="0" />
+                            <f:selectItem itemLabel="Realizada" itemValue="1" />
+                            <f:selectItem itemLabel="Cobrada" itemValue="2" />
+                            <f:selectItem itemLabel="Facturada" itemValue="3" />
+                            <f:selectItem itemLabel="Cancelada" itemValue="99" />
+                            <f:facet name="footer">
+                                <p:separator />
+                                <h:outputText value="5 estatus" style="font-weight:bold;"/>
+                            </f:facet>
+                        </p:selectOneMenu>
+                        <p:outputLabel for="@next" value="Forma de pago" />
+                        <p:selectOneMenu id="formaPagoServicio" value="#{servicioMB.servicio.formaDePago}" style="width:125px">
+                            <f:selectItem itemLabel="Pendiente" itemValue="0" />
+                            <f:selectItem itemLabel="Efectivo" itemValue="1" />
+                            <f:selectItem itemLabel="Credito" itemValue="2" />
+                            <f:selectItem itemLabel="Tarjeta" itemValue="3" />
+                            <f:facet name="footer">
+                                <p:separator />
+                                <h:outputText value="4 formas" style="font-weight:bold;"/>
+                            </f:facet>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="Es factura"></h:outputLabel>
+                        <p:selectOneMenu id="esfacturaForm" value="#{servicioMB.servicio.esfactura}" style="width:125px">
+                            <f:selectItem itemLabel="No" itemValue="0" />
+                            <f:selectItem itemLabel="Si" itemValue="1" />
+                        </p:selectOneMenu>
+
+
+                    </p:panelGrid>    
+                </p:panel>
+                  </p:panel>
+            <p:panel header="Controles">
+                <p:panelGrid columns="2"  style="width:100%" >
+                    <p:commandButton value="Grabar" actionListener="#{servicioMB.grabar()}" update="@all"></p:commandButton>
+                    <p:commandButton value="limpiar" actionListener="#{servicioMB.limpiar()}" update="@all"></p:commandButton>
+
+                </p:panelGrid>                
+            </p:panel>
+        </h:form>
+      
+    </h:body>
+</html>

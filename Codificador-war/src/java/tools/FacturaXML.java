@@ -115,11 +115,11 @@ public class FacturaXML implements Serializable {
         Object retorno = session.getAttribute(parametro);
         return retorno;
     }
-     public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados) throws DatatypeConfigurationException {
-           llenarCFDI( tipoDeComprobante,  UUIDRelacionados ,"" ) ;
+     public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados,String tipoRelacion) throws DatatypeConfigurationException {
+           llenarCFDI( tipoDeComprobante,  UUIDRelacionados ,"",tipoRelacion ) ;
      }
     
-    public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados, String notas) throws DatatypeConfigurationException {
+    public void llenarCFDI(CTipoDeComprobante tipoDeComprobante, String UUIDRelacionados, String notas,String tipoRelacion) throws DatatypeConfigurationException {
         
         Double descuentos = 0.0;
         Double importes = 0.0;
@@ -130,16 +130,23 @@ public class FacturaXML implements Serializable {
 
         /*  Crear xml */
         cfdi = new Comprobante();
-        if (UUIDRelacionados != null ) /*solo funciona para notas de credito de un solo comprobante */
-            if(!UUIDRelacionados.trim().equals("")){
-                 CfdiRelacionados cfdiR = new CfdiRelacionados();
-                 CfdiRelacionado cfdiRelacionado1 = new CfdiRelacionado();
-                 cfdiRelacionado1.setUUID(UUIDRelacionados);
-                 cfdiR.setTipoRelacion("01");
-                 cfdiR.getCfdiRelacionado().add(cfdiRelacionado1);
+        if (UUIDRelacionados != null) {
+            /*solo funciona para notas de credito de un solo comprobante */
+            if (!UUIDRelacionados.trim().equals("")) {
+                String[] UUIDRelacionadoV = UUIDRelacionados.split(" ");
+                CfdiRelacionados cfdiR = new CfdiRelacionados();
+                for (String UUIDRelacionado : UUIDRelacionadoV) {
+                    if (!UUIDRelacionado.equals("")) {
+                        CfdiRelacionado cfdiRelacionado1 = new CfdiRelacionado();
+                        cfdiRelacionado1.setUUID(UUIDRelacionado);
+                        cfdiR.getCfdiRelacionado().add(cfdiRelacionado1);
+                    }
+                }
+                cfdiR.setTipoRelacion(tipoRelacion);
                 cfdi.setCfdiRelacionados(cfdiR);
             }
-        folio = folioFacade.getFolioEmpresa(empresa);
+        }
+        folio = folioFacade.getFolioEmpresa(empresa,tipoDeComprobante.value());
         cfdi.setSerie(folio.getSerie());
         cfdi.setFolio(folio.getFolio().toString());
       
@@ -238,15 +245,15 @@ public class FacturaXML implements Serializable {
                         translado.setTipoFactor(CTipoFactor.TASA);
                         translado.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getPorciento()).setScale(6, RoundingMode.HALF_UP));
                         importeTraslado = detalle.getImporte() * impuestoPrd.getImpuestoP().getPorciento();
-                        translado.setImporte(new BigDecimal(importeTraslado).setScale(2, RoundingMode.HALF_UP));
-                        translado.setBase(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
+                        translado.setImporte(new BigDecimal(importeTraslado).setScale(6, RoundingMode.HALF_UP));
+                        translado.setBase(new BigDecimal(detalle.getImporte()).setScale(6, RoundingMode.HALF_UP));
                         
                     } else {
                         translado.setTipoFactor(CTipoFactor.CUOTA);
                         translado.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getCantidad()).setScale(6, RoundingMode.HALF_UP));
                         importeTraslado = detalle.getCantidad() * impuestoPrd.getImpuestoP().getCantidad();
-                        translado.setImporte(new BigDecimal(importeTraslado).setScale(2, RoundingMode.HALF_UP));
-                        translado.setBase(new BigDecimal(detalle.getCantidad()).setScale(2, RoundingMode.HALF_UP));
+                        translado.setImporte(new BigDecimal(importeTraslado).setScale(6, RoundingMode.HALF_UP));
+                        translado.setBase(new BigDecimal(detalle.getCantidad()).setScale(6, RoundingMode.HALF_UP));
                         
                     }
                     // translado.setBase(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
@@ -271,15 +278,15 @@ public class FacturaXML implements Serializable {
                         importeRetencion = detalle.getImporte() * impuestoPrd.getImpuestoP().getPorciento();
                         retencion.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getPorciento()).setScale(6, RoundingMode.HALF_UP));
                         
-                        retencion.setImporte(new BigDecimal(importeRetencion).setScale(2, RoundingMode.HALF_UP));
-                        retencion.setBase(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
+                        retencion.setImporte(new BigDecimal(importeRetencion).setScale(6, RoundingMode.HALF_UP));
+                        retencion.setBase(new BigDecimal(detalle.getImporte()).setScale(6, RoundingMode.HALF_UP));
                         
                     } else {
                         retencion.setTipoFactor(CTipoFactor.CUOTA);
                         retencion.setTasaOCuota(new BigDecimal(impuestoPrd.getImpuestoP().getCantidad()).setScale(6, RoundingMode.HALF_UP));
                         importeRetencion = detalle.getCantidad() * impuestoPrd.getImpuestoP().getCantidad();
-                        retencion.setImporte(new BigDecimal(importeRetencion).setScale(2, RoundingMode.HALF_UP));
-                        retencion.setBase(new BigDecimal(detalle.getCantidad()).setScale(2, RoundingMode.HALF_UP));
+                        retencion.setImporte(new BigDecimal(importeRetencion).setScale(6, RoundingMode.HALF_UP));
+                        retencion.setBase(new BigDecimal(detalle.getCantidad()).setScale(6, RoundingMode.HALF_UP));
                         
                     }
                     // retencion.setBase(new BigDecimal(detalle.getImporte()).setScale(2, RoundingMode.HALF_UP));
@@ -339,7 +346,7 @@ public class FacturaXML implements Serializable {
                 traslado.setTipoFactor(CTipoFactor.CUOTA);
             }
             traslado.setTasaOCuota(new BigDecimal(impuesto.getPorciento()).setScale(6, RoundingMode.HALF_UP));
-            traslado.setImporte(new BigDecimal(v).setScale(2, RoundingMode.HALF_UP));
+            traslado.setImporte(new BigDecimal(v).setScale(6, RoundingMode.HALF_UP));
             traslado.setImpuesto(impuesto.getImpuesto());
             
             traslados.getTraslado().add(traslado);
@@ -478,13 +485,14 @@ public class FacturaXML implements Serializable {
         comprobanteLFacade.create(comprobanteX);
     }
     
+    
     public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados) throws Exception{
-        return generaCFDI(tipoDeComprobante, UUIDRelacionados,"");
+        return generaCFDI(tipoDeComprobante, UUIDRelacionados,"","01");
     }
     
-    public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados,String notas) throws Exception {
+    public String generaCFDI(CTipoDeComprobante tipoDeComprobante,String UUIDRelacionados,String notas,String tipoRelacion) throws Exception {
         
-        llenarCFDI(tipoDeComprobante,UUIDRelacionados);
+        llenarCFDI(tipoDeComprobante,UUIDRelacionados,notas,tipoRelacion);
         
         guardarComprobante(tipoDeComprobante.value() ,1,notas);
        try{ 

@@ -49,6 +49,9 @@ public class Folio implements Serializable {
     private String serie;
     @Column(name = "activo")
     private Short activo;
+    @Size(max = 45)
+    @Column(name = "tipo_comprobante")
+    private String tipoComprobante;
     @JoinColumn(name = "empresa_idempresa", referencedColumnName = "idempresa")
     @ManyToOne(optional = false)
     private Empresa empresa;
@@ -91,6 +94,15 @@ public class Folio implements Serializable {
     public void setActivo(Short activo) {
         this.activo = activo;
     }
+
+    public String getTipoComprobante() {
+        return tipoComprobante;
+    }
+
+    public void setTipoComprobante(String tipoComprobante) {
+        this.tipoComprobante = tipoComprobante;
+    }
+    
 
     public Empresa getEmpresa() {
         return empresa;

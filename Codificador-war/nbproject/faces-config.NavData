@@ -5,6 +5,7 @@
         <Node id="factura/iNominaView.xhtml" x="650" y="600" zoom="true"/>
         <Node id="resources/ezcomp/menu.xhtml" x="150" y="150" zoom="true"/>
         <Node id="factura/impuestos_1.xhtml" x="1400" y="150" zoom="true"/>
+        <Node id="cargaCFDI.xhtml" x="1650" y="300" zoom="true"/>
         <Node id="iEmpresaContribuyente.xhtml" x="650" y="450" zoom="true"/>
         <Node id="factura/iProducto_1.xhtml" x="900" y="600" zoom="true"/>
         <Node id="iEmpresa.xhtml" x="400" y="450" zoom="true"/>
@@ -13,14 +14,17 @@
         <Node id="factura/iProducto.xhtml" x="1400" y="300" zoom="true"/>
         <Node id="factura/impuestos.xhtml" x="1650" y="150" zoom="true"/>
         <Node id="resources/menu.xhtml" x="900" y="150" zoom="true"/>
-        <Node id="iContribuyente.xhtml" x="650" y="150" zoom="true"/>
         <Node id="factura/iCatalogoSAT_1.xhtml" x="150" y="900" zoom="true"/>
+        <Node id="iContribuyente.xhtml" x="650" y="150" zoom="true"/>
         <Node id="iDeduccion.xhtml" x="900" y="300" zoom="true"/>
         <Node id="index.xhtml" x="150" y="300" zoom="true"/>
         <Node id="iDeduccionPercepcion.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="iPagoView.xhtml" x="635" y="992" zoom="true"/>
         <Node id="Login.xhtml" x="150" y="600" zoom="true"/>
         <Node id="iNomina.xhtml" x="400" y="300" zoom="true"/>
         <Node id="iUsuario.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="iReportePago.xhtml" x="1900" y="150" zoom="true"/>
+        <Node id="*" x="150" y="1050" zoom="true"/>
         <Node id="iPercepcion.xhtml" x="400" y="150" zoom="true"/>
         <Node id="iPago.xhtml" x="1150" y="450" zoom="true"/>
         <Node id="factura/iFactura.xhtml" x="320" y="801" zoom="true"/>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Contribuyente</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+        <h:form id="formServicios">
+            <ui:include src="../resources/menu.xhtml"/>
+            <p:panel header="Filtro">
+            <h:outputLabel value="Fecha Inicio"></h:outputLabel>
+            
+            <p:calendar value="#{servicioMB.fechaInicio}"></p:calendar>
+            
+              <h:outputLabel value="Fecha Fin"></h:outputLabel>
+              <p:calendar  value="#{servicioMB.fechaFin}"></p:calendar>
+              <p:commandButton  value="Buscar" icon="search" update="@all" ></p:commandButton>
+            </p:panel>
+            
+            
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+              <h:commandLink>
+                <p:graphicImage name="excel.png" />
+                <p:dataExporter type="xls" target="servicios_tabla" fileName="servicios" pageOnly="false"/>
+            </h:commandLink>
+            <h:commandLink>
+                <p:graphicImage name="csv.png" />
+                <p:dataExporter type="csv" target="servicios_tabla" fileName="servicios" pageOnly="false" />
+            </h:commandLink>
+
+            <h:commandLink>
+                <p:graphicImage name="xml.png" />
+                <p:dataExporter type="xml" target="servicios_tabla" fileName="servicios" pageOnly="false" />
+            </h:commandLink>
+            <p:dataTable id="servicios_tabla" value="#{servicioMB.servicios}" var="servicio">
+                <p:column headerText="Fecha" sortBy="#{servicio.fecha}">
+                    <h:outputLabel value="#{servicio.fecha}">
+                        <f:convertDateTime type="date" pattern="dd-MM-yyyy hh:mm"/>
+                    </h:outputLabel>
+                   
+                </p:column>
+                <p:column headerText="Folio" filterBy="#{servicio.folio}" sortBy="#{servicio.folio}">
+                    <h:outputLabel value="#{servicio.folio}"></h:outputLabel>
+                </p:column>
+                <p:column headerText="Nota" filterBy="#{servicio.notaDeArrastre}" sortBy="#{servicio.notaDeArrastre}">
+                    <h:outputLabel value="#{servicio.notaDeArrastre}"></h:outputLabel>
+                </p:column>
+                <p:column headerText="Cliente" filterBy="#{servicio.clienteRfc}" sortBy="#{servicio.clienteRfc}">
+                    <h:outputLabel value="#{servicio.clienteRfc}"></h:outputLabel>
+                </p:column>
+                <p:column headerText="Operador" filterBy="#{servicio.idOperador.alias}" sortBy="#{servicio.idOperador.alias}">
+                    <h:outputLabel value="#{servicio.idOperador.alias}"></h:outputLabel>
+                </p:column>
+                <p:column headerText="Total" sortBy="#{servicio.totalAPagar}">
+                    <h:outputLabel value="#{servicio.totalAPagar}"></h:outputLabel>
+                </p:column>
+                <p:column headerText="Estatus"  sortBy="#{servicio.estatus}">
+                    <h:outputLabel value="#{servicio.estatus}" >
+                        <f:converter converterId="estatusServicioConverter"></f:converter>
+                    </h:outputLabel>
+                    
+                 
+                </p:column>
+                <p:column headerText="FormaDePago"  sortBy="#{servicio.formaDePago}">
+                    
+                    <h:outputLabel value="#{servicio.formaDePago}" >
+                        <f:converter converterId="formaPagoServicioConverter"></f:converter>
+                    </h:outputLabel>
+                    
+                </p:column>
+                <p:column headerText="Factura"  sortBy="#{servicio.esfactura}">
+                    <h:outputLabel
+                     value="#{servicio.esfactura}"  />
+                                       
+                </p:column>
+                <p:column headerText=""  exportable="false" >
+                    <p:commandButton immediate="true" value="Seleciona"   actionListener="#{accesoController.redireccionar('servicio/iservicio.xhtml')}" >
+                                     
+                                                             <p:ajax event="click" listener="#{servicioMB.setServicio(servicio)}" ></p:ajax >
+
+                    </p:commandButton>
+                    
+             
+                  
+                </p:column>
+            </p:dataTable>
+     
+        </h:form>
+    </h:body>
+    
+    
+    
+    
+</html>

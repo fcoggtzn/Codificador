@@ -169,4 +169,10 @@
         <local>ejb.CrearCFDILocal</local>
         <ejb-link>Codificador-ejb.jar#CrearCFDI</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>OperadorFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>servicio.servicio.OperadorFacadeLocal</local>
+        <ejb-link>Codificador-ejb.jar#OperadorFacade</ejb-link>
+    </ejb-local-ref>
 </web-app>

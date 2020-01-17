@@ -11,20 +11,6 @@
     <target name="jaxb-code-generation" depends="xjc-typedef-target,-do-init,-init-macrodef-javac">
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
-        <mkdir dir="build/generated/jaxbCache/Comprobante"/>
-        <xjc package="sat" destdir="build/generated/jaxbCache/Comprobante" catalog="catalog.xml">
-            <classpath>
-                <pathelement location="${src.dir}"/>
-                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
-            </classpath>
-            <arg value="-xmlschema"/>
-            <schema file="src/conf/xml-resources/jaxb/Comprobante/www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"/>
-            <depends file="src/conf/xml-resources/jaxb/Comprobante/www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"/>
-            <produces dir="build/generated/jaxbCache/Comprobante"/>
-        </xjc>
-        <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/Comprobante"/>
-        </copy>
         <mkdir dir="build/generated/jaxbCache/Nomina"/>
         <xjc package="sat" destdir="build/generated/jaxbCache/Nomina" catalog="catalog.xml">
             <classpath>
@@ -53,6 +39,35 @@
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
             <fileset dir="build/generated/jaxbCache/Timbre"/>
+        </copy>
+        <mkdir dir="build/generated/jaxbCache/Comprobante"/>
+        <xjc package="sat" destdir="build/generated/jaxbCache/Comprobante" catalog="catalog.xml">
+            <classpath>
+                <pathelement location="${src.dir}"/>
+                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
+            </classpath>
+            <arg value="-xmlschema"/>
+            <schema file="src/conf/xml-resources/jaxb/Comprobante/www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"/>
+            <depends file="src/conf/xml-resources/jaxb/Comprobante/www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"/>
+            <produces dir="build/generated/jaxbCache/Comprobante"/>
+        </xjc>
+        <copy todir="${build.generated.sources.dir}/jaxb">
+            <fileset dir="build/generated/jaxbCache/Comprobante"/>
+        </copy>
+        <mkdir dir="build/generated/jaxbCache/Pagos"/>
+        <xjc package="sat" destdir="build/generated/jaxbCache/Pagos" catalog="catalog.xml">
+            <classpath>
+                <pathelement location="${src.dir}"/>
+                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
+            </classpath>
+            <arg value="-xmlschema"/>
+            <arg value="-npa"/>
+            <schema file="src/conf/xml-resources/jaxb/Pagos/www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos10.xsd"/>
+            <depends file="src/conf/xml-resources/jaxb/Pagos/www.sat.gob.mx/sitio_internet/cfd/Pagos/Pagos10.xsd"/>
+            <produces dir="build/generated/jaxbCache/Pagos"/>
+        </xjc>
+        <copy todir="${build.generated.sources.dir}/jaxb">
+            <fileset dir="build/generated/jaxbCache/Pagos"/>
         </copy>
         <!--*** EJB project javac macro does not support sourcepath attribute, so do not pass "sourcepath=${src.dir}"-->
     </target>

@@ -212,7 +212,7 @@ public class ComprobanteController implements Serializable {
         for(ComprobanteL comp:comprobantes){
             if (comp.getEstatus() == null || comp.getEstatus() == 1) {
                 totalAplicadas += comp.getTotal();
-                if (comp.getSaldo() == 0) {
+                if (comp.getSaldo() != null && comp.getSaldo() == 0) {
                     totalSaldadas += comp.getTotal();
                 }
             }

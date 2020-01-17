@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Contribuyente</title>
+        </f:facet>
+        <link href="Style/styleClass.css" rel="stylesheet" type="text/css"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formoperador">
+            <ui:include src="../resources/menu.xhtml"/>
+            <p:growl id="growl" showDetail="true" autoUpdate="true" life="5000"/>
+            <center>
+                <p:panel header="Operador" id="paneloperador">
+                    <p:panelGrid columns="2" columnClasses="no-border, no-border">
+                        <h:outputLabel value="Nombre: " styleClass="it-align-right"/>
+                        <p:inputText id="onombre" value="#{operadorMB.operador.nombre}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/> 
+                        </p:inputText>
+                        <h:outputLabel value="Apellido: " styleClass="it-align-right"/>
+                        <p:inputText id="oapellido" value="#{operadorMB.operador.apellidos}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                        <h:outputLabel value="Alias :" styleClass="it-align-right"/>
+                        <p:inputText id="oalias" value="#{operadorMB.operador.alias}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                        </p:inputText>
+                         <h:outputLabel value="Telefono: " styleClass="it-align-right"/>
+                         <p:inputText id="otelefono" value="#{operadorMB.operador.telefono}" styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                         </p:inputText>
+                         <h:outputLabel value="Grua : " styleClass="it-align-right"/>
+                         <p:inputText id="ogrua" value="#{operadorMB.operador.grua}"  styleClass="it-size" immediate="true">
+                            <p:ajax immediate="true"/>
+                         </p:inputText>
+                    </p:panelGrid>
+                </p:panel>
+            </center>
+        </h:form>
+        <h:form>
+                <p:panel header="Acción">
+                    
+                    <p:commandButton value="#{operadorMB.textoBoton}" id="guardar" update="@all" actionListener="#{operadorMB.guardar()}" />
+                    <p:commandButton value="Limpiar" id="limpiar" update="@all" actionListener="#{operadorMB.limpiar()}" />
+                    <p:commandButton value="Salir" actionListener="#{accesoController.redireccionar('index.xhtml')}" ajax="false"/>
+                </p:panel>
+       </h:form>
+           
+        <h:form>
+            
+            <p:dataTable value="#{operadorMB.operadores}" var="operador">
+                <p:column headerText="Nombre">
+                    <h:outputLabel value="#{operador.nombre} #{operador.apellidos}"></h:outputLabel>
+                </p:column>
+                 <p:column headerText="Apodo">
+                    <h:outputLabel value="#{operador.alias}"></h:outputLabel>
+                </p:column>
+                
+                 <p:column headerText="">
+                     <p:commandButton value="Seleccionar" update="@all"  actionListener="#{operadorMB.setOperador(operador)}"></p:commandButton>
+                 <p:commandButton value="Borrar" update="@all"  actionListener="#{operadorMB.borrar(operador)}"></p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+      
+    </h:body>
+</html>
