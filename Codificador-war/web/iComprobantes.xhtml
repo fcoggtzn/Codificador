@@ -170,6 +170,8 @@ and open the template in the editor.
                           
                             <p:commandButton id="cancelCFDI" icon="ui-icon-trash" action="#{contribuyenteController.cancelarCFDI(compr)}">
                                 <p:tooltip for="cancelCFDI" value="Cancelar Comprobante"/>
+                                <f:actionListener binding="#{comprobanteController.buscarComprobantes(null)}"/>
+
                                 <p:ajax update="@form"></p:ajax>
                             </p:commandButton>
                         </p:panelGrid>

@@ -12,4 +12,9 @@
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/catalogos/catCFDI.xsd" uri="src/conf/xml-resources/jaxb/Pagos/www.sat.gob.mx/sitio_internet/cfd/catalogos/catCFDI.xsd"/>
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI.xsd" uri="src/conf/xml-resources/jaxb/Pagos/www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI.xsd"/>
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/catalogos/Pagos/catPagos.xsd" uri="src/conf/xml-resources/jaxb/Pagos/www.sat.gob.mx/sitio_internet/cfd/catalogos/Pagos/catPagos.xsd"/>
+    <system systemId="http://pruebas.sefactura.com.mx:3014/sefacturapac/Cancelaciones_33?wsdl" uri="src/conf/xml-resources/web-service-references/Cancelaciones_33/wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/Cancelaciones_33.wsdl"/>
+    <system systemId="http://pruebas.sefactura.com.mx:3014/sefacturapac/Cancelaciones_33?xsd=1" uri="src/conf/xml-resources/web-service-references/Cancelaciones_33/wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/Cancelaciones_33.xsd_1.xsd"/>
+    <system systemId="http://www.sefactura.com.mx/sefacturapac/Cancelaciones_33" uri="src/conf/xml-resources/web-service-references/Cancelaciones_33_1/wsdl/www.sefactura.com.mx/sefacturapac/cancelaciones_33.xml"/>
+    <system systemId="http://www.sefactura.com.mx/sefacturapac/Cancelaciones_33?wsdl" uri="src/conf/xml-resources/web-service-references/Cancelaciones_33_1/wsdl/www.sefactura.com.mx/sefacturapac/Cancelaciones_33.wsdl"/>
+    <system systemId="http://www.sefactura.com.mx:80/sefacturapac/Cancelaciones_33?xsd=1" uri="src/conf/xml-resources/web-service-references/Cancelaciones_33_1/wsdl/www.sefactura.com.mx_80/sefacturapac/Cancelaciones_33.xsd_1.xsd"/>
 </catalog>

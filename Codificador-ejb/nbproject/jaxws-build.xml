@@ -58,5 +58,39 @@
         <delete dir="${build.generated.dir}/jax-wsCache/TimbradoService_1"/>
         <delete dir="${build.generated.sources.dir}/jax-ws/produccion"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-TimbradoService, wsimport-client-TimbradoService_1"/>
+    <target name="wsimport-client-Cancelaciones_33" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33"/>
+        <property name="wsdl-Cancelaciones_33" location="${meta.inf}/xml-resources/web-service-references/Cancelaciones_33/wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/Cancelaciones_33.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/Cancelaciones_33" destdir="${build.generated.dir}/jax-wsCache/Cancelaciones_33" wsdl="${wsdl-Cancelaciones_33}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://pruebas.sefactura.com.mx:3014/sefacturapac/Cancelaciones_33?wsdl" xnocompile="true" xendorsed="true" package="webServiceSat.prueba">
+            <depends file="${wsdl-Cancelaciones_33}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-Cancelaciones_33" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/webServiceSat/prueba"/>
+    </target>
+    <target name="wsimport-client-Cancelaciones_33_1" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33_1"/>
+        <property name="wsdl-Cancelaciones_33_1" location="${meta.inf}/xml-resources/web-service-references/Cancelaciones_33_1/wsdl/www.sefactura.com.mx/sefacturapac/Cancelaciones_33.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/Cancelaciones_33_1" destdir="${build.generated.dir}/jax-wsCache/Cancelaciones_33_1" wsdl="${wsdl-Cancelaciones_33_1}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://www.sefactura.com.mx/sefacturapac/Cancelaciones_33?wsdl" xnocompile="true" xendorsed="true" package="webServiceCancelacionProduccion">
+            <depends file="${wsdl-Cancelaciones_33_1}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33_1"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33_1">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-Cancelaciones_33_1" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/Cancelaciones_33_1"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/webServiceCancelacionProduccion"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-TimbradoService, wsimport-client-TimbradoService_1, wsimport-client-Cancelaciones_33, wsimport-client-Cancelaciones_33_1"/>
 </project>

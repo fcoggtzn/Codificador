@@ -690,8 +690,8 @@ public class ContribuyenteController extends BaseController implements Serializa
     public void cancelarCFDI(ComprobanteL comprobante){
         try {
             this.cancelaCfdiEjb.cancela(comprobante.getUuid());
-            comprobante.setEstatus(-1); /// para decir que se cancelo el comprobante
-            this.comprobanteLFacade.edit(comprobante);
+          //  comprobante.setEstatus(-1); /// para decir que se cancelo el comprobante
+          //  this.comprobanteLFacade.edit(comprobante);
             
         } catch (IOException ex) {
             Logger.getLogger(ContribuyenteController.class.getName()).log(Level.SEVERE, null, ex);

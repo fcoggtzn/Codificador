@@ -199,6 +199,9 @@ public class ComprobanteController implements Serializable {
         if (estatus == -2) {
             retorno = "X";
         }
+          if (estatus == -6) {
+            retorno = "PC";
+        }
         return retorno;
 
     }

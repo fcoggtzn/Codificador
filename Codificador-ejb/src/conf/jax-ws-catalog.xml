@@ -8,4 +8,6 @@
     <system systemId="http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI.xsd" uri="src/conf/xml-resources/jaxb/TimbreFiscal/www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI/tdCFDI.xsd"/>
     <system systemId="http://pruebas.sefactura.com.mx:3014/sefacturapac/TimbradoService?wsdl" uri="wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/TimbradoService.wsdl"/>
     <system systemId="http://pruebas.sefactura.com.mx:3014/sefacturapac/TimbradoService?xsd=1" uri="wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/TimbradoService.xsd_1.xsd"/>
+    <system systemId="http://pruebas.sefactura.com.mx:3014/sefacturapac/Cancelaciones_33?wsdl" uri="wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/Cancelaciones_33.wsdl"/>
+    <system systemId="http://pruebas.sefactura.com.mx:3014/sefacturapac/Cancelaciones_33?xsd=1" uri="wsdl/pruebas.sefactura.com.mx_3014/sefacturapac/Cancelaciones_33.xsd_1.xsd"/>
 </catalog>
